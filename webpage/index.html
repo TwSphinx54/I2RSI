@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="zh-cmn-Hans">
+<head>
+    <meta charset="UTF-8">
+    <title>遥感图像智能解译</title>
+    <link href="style.css" rel="stylesheet" type="text/css">
+    <link rel="icon" type="favicon.ico"/>
+</head>
+<body>
+<div class="background">
+    <div class="img_prev"></div>
+    <div class="img_prev2"></div>
+    <div class="main_title">
+        遥感图像智能解译
+    </div>
+    <div class="main_subtitle">
+        Intelligent Interpretation of Remote Sensing Images
+    </div>
+
+    <input type="file" id="file1" style="display:none; width: 150px;position: fixed;top: 60%;left: 17%;">
+    <div class="input1">
+        选择图片
+    </div>
+    <input type="file" id="file2" style="display:none; width: 150px;position: fixed;top: 60%;left: 35%;">
+    <div class="input2">
+        变化检测
+    </div>
+    <div class="start">
+        <svg width="60" height="60" viewBox="-8.5 -8 50 50" stroke-width="2" stroke="currentColor"
+             stroke-linecap="round" stroke-linejoin="round">
+            <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+            <path d="M5 19h14a2 2 0 0 0 1.84 -2.75l-7.1 -12.25a2 2 0 0 0 -3.5 0l-7.1 12.25a2 2 0 0 0 1.75 2.75"></path>
+        </svg>
+    </div>
+</div>
+<script src="jquery.js"></script>
+<script>
+    const input1 = document.getElementsByClassName('input1')[0];
+    const input_bt1 = document.getElementById('file1');
+    const input2 = document.getElementsByClassName('input2')[0];
+    const input_bt2 = document.getElementById('file2');
+    const start_bt = document.getElementsByClassName('start')[0];
+    const img_prev = document.getElementsByClassName('img_prev')[0];
+    const img_prev2 = document.getElementsByClassName('img_prev2')[0];
+    const main_title = document.getElementsByClassName('main_title')[0];
+    const main_subtitle = document.getElementsByClassName('main_subtitle')[0];
+    let img_ready = [0, 0];
+    let data1, data2;
+    input1.onmouseover = function () {
+        if (img_ready[0] === 0) {
+            input1.classList.add('hover');
+        }
+    }
+    input1.onmouseout = function () {
+        if (img_ready[0] === 0) {
+            input1.classList.remove('hover');
+        }
+    }
+    input1.onclick = function () {
+        input_bt1.click();
+    }
+
+    input_bt1.addEventListener('change', function () {
+        img_prev.classList.add('show');
+
+        let file = input_bt1.files[0];
+        // img_prev1.innerHTML = '文件: ' + file.name + '<br>' +
+        //     '大小: ' + file.size + '<br>' +
+        //     '修改: ' + file.lastModified;
+        let reader = new FileReader();
+        reader.onload = function (e) {
+            data1 = e.target.result;
+
+            img_prev.style.backgroundImage = 'url(' + data1 + ')';
+            img_prev.style.backgroundSize = '70%';
+            img_prev.style.backgroundPosition = '0 50%';
+            img_prev.style.backgroundRepeat = 'no-repeat';
+        };
+        reader.readAsDataURL(file);
+
+        main_title.classList.add('move');
+        main_subtitle.classList.add('move');
+
+        img_ready[0] = 1;
+        input1.classList.remove('hover');
+        input1.classList.add('ready');
+        input1.innerHTML = '<svg width="90" height="90" viewBox="-14 -1 50 50" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">\n' +
+            '   <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>\n' +
+            '   <path d="M5 12l5 5l10 -10"></path>\n' +
+            '</svg>';
+        input2.classList.add('show');
+        input2.onmouseover = function () {
+            if (img_ready[1] === 0) {
+                input2.classList.add('hover');
+            }
+        }
+        input2.onmouseout = function () {
+            if (img_ready[1] === 0) {
+                input2.classList.remove('hover');
+            }
+        }
+        input2.onclick = function () {
+            input_bt2.click();
+        }
+    })
+
+    input_bt2.addEventListener('change', function () {
+        img_prev.classList.add('move');
+        img_prev2.classList.add('show');
+
+        img_prev.onmouseover = function () {
+            img_prev.classList.add('focus');
+            img_prev2.classList.add('unfocus');
+        }
+
+        img_prev.onmouseout = function () {
+            img_prev.classList.remove('focus');
+            img_prev2.classList.remove('unfocus');
+        }
+
+        img_prev2.onmouseover = function () {
+            img_prev2.classList.add('focus');
+            img_prev.classList.add('unfocus');
+        }
+
+        img_prev2.onmouseout = function () {
+            img_prev2.classList.remove('focus');
+            img_prev.classList.remove('unfocus');
+        }
+
+        let file = input_bt2.files[0];
+        // img_prev1.innerHTML = '文件: ' + file.name + '<br>' +
+        //     '大小: ' + file.size + '<br>' +
+        //     '修改: ' + file.lastModified;
+        let reader = new FileReader();
+        reader.onload = function (e) {
+            data2 = e.target.result;
+
+            img_prev2.style.backgroundImage = 'url(' + data2 + ')';
+            img_prev2.style.backgroundSize = '70%';
+            img_prev2.style.backgroundPosition = '0 20%';
+            img_prev2.style.backgroundRepeat = 'no-repeat';
+        };
+        reader.readAsDataURL(file);
+
+        img_ready[1] = 1;
+        input2.classList.remove('hover');
+        input2.classList.add('ready');
+        input2.innerHTML = '<svg width="90" height="90" viewBox="-14 -1 50 50" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">\n' +
+            '   <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>\n' +
+            '   <path d="M5 12l5 5l10 -10"></path>\n' +
+            '</svg>';
+        start_bt.classList.add('show');
+        start_bt.onmouseover = function () {
+            start_bt.classList.add('hover');
+            start_bt.innerHTML = '开始处理';
+        }
+        start_bt.onmouseout = function () {
+            start_bt.classList.remove('hover');
+            start_bt.innerHTML = '  <svg width="60" height="60"\n' +
+                '             viewBox="-8.5 -8 50 50" stroke-width="2" stroke="currentColor" stroke-linecap="round"\n' +
+                '             stroke-linejoin="round">\n' +
+                '            <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>\n' +
+                '            <path d="M5 19h14a2 2 0 0 0 1.84 -2.75l-7.1 -12.25a2 2 0 0 0 -3.5 0l-7.1 12.25a2 2 0 0 0 1.75 2.75"></path>\n' +
+                '        </svg>';
+        }
+
+        start_bt.onclick = function () {
+            let url = 'http://127.0.0.1:8080'
+            let request = new XMLHttpRequest();
+            request.open('POST', url, true);
+            request.send('F')
+        }
+    })
+</script>
+</body>
+</html>
