@@ -169,7 +169,10 @@
             let url = 'http://127.0.0.1:8080'
             let request = new XMLHttpRequest();
             request.open('POST', url, true);
-            request.send('F')
+            let formData = new FormData();
+            formData.append('image1', input_bt1.files[0])
+            formData.append('image2', input_bt2.files[0])
+            request.send(formData)
         }
     })
 </script>
