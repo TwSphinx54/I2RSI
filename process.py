@@ -20,6 +20,7 @@ def upload_file():
     elif request.method == 'POST':
         print('yes')
         print(request.values)
+        print(request.__class__)
 
         # # check if the post request has the file part
         # if 'file1' not in request.files:
