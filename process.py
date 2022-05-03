@@ -29,7 +29,7 @@ def upload_file():
             file1.save(os.path.join(app.config['UPLOAD_FOLDER'], filename1))
             filename2 = secure_filename(file2.filename)
             file2.save(os.path.join(app.config['UPLOAD_FOLDER'], filename2))
-            return main_process()
+            return redirect(url_for('main_process'))
 
 
 @app.route('/result', methods=['GET', 'POST'])

@@ -33,7 +33,6 @@
         </svg>
     </div>
 </div>
-<script src="jquery.js"></script>
 <script>
     const input1 = document.getElementsByClassName('input1')[0];
     const input_bt1 = document.getElementById('file1');
@@ -167,12 +166,17 @@
 
         start_bt.onclick = function () {
             let url = 'http://127.0.0.1:8080'
-            let request = new XMLHttpRequest();
-            request.open('POST', url, true);
+            let xhr = new XMLHttpRequest();
+            xhr.open('POST', url, true);
             let formData = new FormData();
             formData.append('image1', input_bt1.files[0])
             formData.append('image2', input_bt2.files[0])
-            request.send(formData)
+            xhr.send(formData)
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState === XMLHttpRequest.DONE && xhr.status === 200) {
+                    window.location.href = xhr.responseURL
+                }
+            }
         }
     })
 </script>
