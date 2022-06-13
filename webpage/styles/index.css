@@ -1,0 +1,288 @@
+.input1 {
+    width: 250px;
+    height: 50px;
+    position: fixed;
+    top: 60%;
+    left: 15%;
+    text-align: center;
+    line-height: 50px;
+    font-family: "Source Han Sans CN";
+    font-weight: bold;
+    font-size: 25px;
+    color: var(--main-blueGray);
+
+    border-radius: 25px;
+    background: var(--main-white);
+    box-shadow: 5px 5px 10px var(--main-white-shadow),
+    -5px -5px 10px var(--main-white-light);
+
+    cursor: default;
+    animation: ease;
+    transition: all 0.5s;
+    -webkit-transition: all 0.5s;
+}
+
+.input1.hover {
+    background: var(--main-blue);
+    box-shadow: inset 5px 5px 10px var(--main-blue-shadow),
+    inset -5px -5px 10px var(--main-blue-light);
+    text-shadow: 3px 3px 5px var(--main-blue-shadow),
+    -3px -3px 5px var(--main-blue-light);
+    color: var(--main-white);
+}
+
+.input1.ready {
+    background: var(--main-marrsGreen);
+    box-shadow: 10px 10px 20px var(--main-white-shadow);
+    color: var(--main-white);
+    width: 150px;
+}
+
+.input2 {
+    width: 250px;
+    height: 50px;
+    position: fixed;
+    top: 60%;
+    left: 36%;
+    text-align: center;
+    line-height: 50px;
+    font-family: "Source Han Sans CN";
+    font-weight: bold;
+    font-size: 25px;
+    color: var(--main-blueGray);
+    opacity: 0;
+
+    border-radius: 25px;
+    background: var(--main-white);
+    box-shadow: 5px 5px 10px var(--main-white-shadow),
+    -5px -5px 10px var(--main-white-light);
+
+    cursor: default;
+    animation: ease;
+    transition: all 0.5s;
+    -webkit-transition: all 0.5s;
+}
+
+.input2.hover {
+    background: var(--main-blue);
+    box-shadow: inset 5px 5px 10px var(--main-blue-shadow),
+    inset -5px -5px 10px var(--main-blue-light);
+    text-shadow: 3px 3px 5px var(--main-blue-shadow),
+    -3px -3px 5px var(--main-blue-light);
+    color: var(--main-white);
+}
+
+.input2.show {
+    opacity: 100%;
+    left: 26%;
+}
+
+.input2.ready {
+    background: var(--main-marrsGreen);
+    box-shadow: 10px 10px 20px var(--main-white-shadow);
+    color: var(--main-white);
+    width: 150px;
+}
+
+.start {
+    width: 50px;
+    height: 50px;
+    position: fixed;
+    top: 60%;
+    left: 52%;
+    text-align: center;
+    line-height: 50px;
+    color: var(--main-white);
+    fill: var(--main-white);
+    font-size: 0;
+    opacity: 0;
+
+    border-radius: 25px;
+    background: var(--main-prussianBlue);
+    box-shadow: 5px -5px 10px var(--main-white-shadow),
+    -5px 5px 10px var(--main-white-light);
+
+    transform: rotate(90deg);
+    cursor: default;
+    animation: ease-out;
+    transition: all 0.5s;
+    -webkit-transition: all 0.5s;
+}
+
+.start.show {
+    opacity: 100%;
+    left: 42%;
+}
+
+.start.show_n {
+    opacity: 100%;
+    left: 31%;
+}
+
+.start.hover {
+    left: 37%;
+    width: 200px;
+    transform: none;
+    font-family: "Source Han Sans CN";
+    font-weight: bold;
+    font-size: 25px;
+
+    background: var(--main-blue);
+    box-shadow: inset 5px 5px 10px var(--main-blue-shadow),
+    inset -5px -5px 10px var(--main-blue-light);
+    text-shadow: 3px 3px 5px var(--main-blue-shadow),
+    -3px -3px 5px var(--main-blue-light);
+    color: var(--main-white);
+}
+
+.start.hover_n {
+    left: 26%;
+    width: 200px;
+    transform: none;
+    font-family: "Source Han Sans CN";
+    font-weight: bold;
+    font-size: 25px;
+
+    background: var(--main-blue);
+    box-shadow: inset 5px 5px 10px var(--main-blue-shadow),
+    inset -5px -5px 10px var(--main-blue-light);
+    text-shadow: 3px 3px 5px var(--main-blue-shadow),
+    -3px -3px 5px var(--main-blue-light);
+    color: var(--main-white);
+}
+
+.img_prev {
+    width: 1500px;
+    height: 1500px;
+    top: -60px;
+    right: -1500px;
+    margin-top: -300px;
+    margin-left: -425px;
+    position: fixed;
+    opacity: 0;
+    z-index: 1;
+
+    border-radius: 750px;
+    border: var(--main-white) solid 10px;
+    background: var(--main-white);
+    box-shadow: 5px 5px 10px var(--main-white-shadow),
+    -5px -5px 10px var(--main-white-light),
+    inset 5px 5px 10px var(--main-white-shadow),
+    inset -5px -5px 10px var(--main-white-light);
+
+    cursor: default;
+    animation: ease-out;
+    transition: all 1s;
+    -webkit-transition: all 1s;
+}
+
+.img_prev.show {
+    right: -850px;
+    opacity: 100%;
+}
+
+.img_prev.move {
+    top: -300px;
+    right: -880px;
+    opacity: 70%;
+}
+
+.img_prev.focus {
+    top: -60px;
+    right: -850px;
+    opacity: 100%;
+    z-index: 2;
+}
+
+.img_prev.unfocus {
+    top: 0;
+    right: -1000px;
+}
+
+.img_prev2 {
+    width: 1500px;
+    height: 1500px;
+    top: -60px;
+    right: -1500px;
+    margin-top: -300px;
+    margin-left: -425px;
+    position: fixed;
+    opacity: 0;
+    z-index: 2;
+
+    border-radius: 750px;
+    border: var(--main-white) solid 10px;
+    background: var(--main-white);
+    box-shadow: 5px 5px 10px var(--main-white-shadow),
+    -5px -5px 10px var(--main-white-light),
+    inset 5px 5px 10px var(--main-white-shadow),
+    inset -5px -5px 10px var(--main-white-light);
+
+    cursor: default;
+    animation: ease-out;
+    transition: all 1s;
+    -webkit-transition: all 1s;
+}
+
+.img_prev2.show {
+    right: -880px;
+    top: 200px;
+    opacity: 100%;
+}
+
+.img_prev2.unfocus {
+    right: -1500px;
+    top: 600px;
+}
+
+.img_prev2.focus {
+    top: -60px;
+    right: -850px;
+    opacity: 100%;
+}
+
+.main_title {
+    width: 800px;
+    height: 200px;
+    left: 15%;
+    top: 15%;
+    position: fixed;
+
+    font-family: "Source Han Sans CN";
+    font-size: 100px;
+    font-weight: bold;
+    color: var(--main-blueGray);
+
+    cursor: default;
+    animation: ease;
+    transition: all 0.6s;
+    -webkit-transition: all 0.6s;
+}
+
+.main_title.move {
+    font-size: 75px;
+    top: 20%;
+}
+
+.main_subtitle {
+    width: 1000px;
+    height: 50px;
+    left: 15%;
+    top: 33%;
+    position: fixed;
+
+    font-family: Ubuntu;
+    font-size: 30px;
+    color: var(--main-blueGray);
+
+    /*border: var(--main-kleinBlue) solid 1px;*/
+
+    cursor: default;
+    animation: ease;
+    transition: all 0.6s;
+    -webkit-transition: all 0.6s;
+}
+
+.main_subtitle.move {
+    font-size: 20px;
+}

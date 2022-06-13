@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="zh-cmn-Hans">
+<head>
+    <meta charset="UTF-8">
+    <title>遥感图像智能解译</title>
+    <link href="styles/style.css" rel="stylesheet" type="text/css">
+    <link href="styles/wel.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+<div class='pro'>目标提取</div>
+<div class="pro">变化检测</div>
+<div class="pro">目标检测</div>
+<div class="pro">地物分类</div>
+
+<script>
+    const pros = document.getElementsByClassName('pro');
+    for (let i = 0; i < pros.length; i++) {
+        pros[i].onclick = function () {
+            let url = 'http://127.0.0.1:8080/welcome'
+            let xhr = new XMLHttpRequest();
+            xhr.open('POST', url, true);
+            let formData = new FormData();
+            formData.append('pro', i)
+            xhr.send(formData)
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState === XMLHttpRequest.DONE && xhr.status === 200) {
+                    window.location.href = xhr.responseURL
+                }
+            }
+        }
+    }
+</script>
+</body>
+</html>

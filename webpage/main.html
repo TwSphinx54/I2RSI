@@ -2,640 +2,125 @@
 <html lang="zh-cmn-Hans">
 <head>
     <meta charset="UTF-8">
-    <title>Neumorphism</title>
-    <link href="style.css" rel="stylesheet" type="text/css">
+    <title>解译结果</title>
+    <link href="styles/style.css" rel="stylesheet" type="text/css">
 </head>
 <body>
-<div class="background">
-    <div class="title_bg"></div>
-    <div class="title">
-        检测结果
-    </div>
-    <div class="subtitle">
-        Detection Result Based on PaddlePaddle
-    </div>
-
-    <div class="no1">
-        <div class="no_title">
-            1
-        </div>
-    </div>
-    <div class="neu_flat_f1">
-        <div class="function_title">
-            目标提取
-        </div>
-        <div class="function_subtitle">
-            Object Extraction
-        </div>
-    </div>
-    <div class="triangle_1">
-        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-triangle" width="32" height="32"
-             viewBox="0 0 32 32" stroke-width="2" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
-            <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-            <path d="M5 19h14a2 2 0 0 0 1.84 -2.75l-7.1 -12.25a2 2 0 0 0 -3.5 0l-7.1 12.25a2 2 0 0 0 1.75 2.75"></path>
-        </svg>
-    </div>
-    <div class="no2">
-        <div class="no_title">
-            2
-        </div>
-    </div>
-    <div class="neu_flat_f2">
-        <div class="function_title">
-            变化检测
-        </div>
-        <div class="function_subtitle">
-            Change Detection
-        </div>
-    </div>
-    <div class="triangle_2">
-        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-triangle" width="32" height="32"
-             viewBox="0 0 32 32" stroke-width="2" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
-            <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-            <path d="M5 19h14a2 2 0 0 0 1.84 -2.75l-7.1 -12.25a2 2 0 0 0 -3.5 0l-7.1 12.25a2 2 0 0 0 1.75 2.75"></path>
-        </svg>
-    </div>
-    <div class="no3">
-        <div class="no_title">
-            3
-        </div>
-    </div>
-    <div class="neu_flat_f3">
-        <div class="function_title">
-            目标检测
-        </div>
-        <div class="function_subtitle">
-            Object Detection
-        </div>
-    </div>
-    <div class="triangle_3">
-        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-triangle" width="32" height="32"
-             viewBox="0 0 32 32" stroke-width="2" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
-            <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-            <path d="M5 19h14a2 2 0 0 0 1.84 -2.75l-7.1 -12.25a2 2 0 0 0 -3.5 0l-7.1 12.25a2 2 0 0 0 1.75 2.75"></path>
-        </svg>
-    </div>
-    <div class="no4">
-        <div class="no_title">
-            4
-        </div>
-    </div>
-    <div class="neu_flat_f4">
-        <div class="function_title">
-            地物分类
-        </div>
-        <div class="function_subtitle">
-            Feature Classification
-        </div>
-    </div>
-    <div class="triangle_4">
-        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-triangle" width="32" height="32"
-             viewBox="0 0 32 32" stroke-width="2" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
-            <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-            <path d="M5 19h14a2 2 0 0 0 1.84 -2.75l-7.1 -12.25a2 2 0 0 0 -3.5 0l-7.1 12.25a2 2 0 0 0 1.75 2.75"></path>
-        </svg>
-    </div>
-    <div class="info_bg">
-        <div class="info_panel">
-        </div>
-        <div class="info_panel">
-        </div>
-        <div class="info_panel">
-        </div>
-        <div class="info_panel">
-        </div>
-    </div>
-    <div class="button_detail">
-        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-report-analytics" width="300"
-             height="300" viewBox="-12 2 120 100" stroke-width="2" stroke="currentColor" fill="none"
-             stroke-linecap="round"
-             stroke-linejoin="round">
-            <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-            <path d="M9 5h-2a2 2 0 0 0 -2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-12a2 2 0 0 0 -2 -2h-2"></path>
-            <rect x="9" y="3" width="6" height="4" rx="2"></rect>
-            <path d="M9 17v-5"></path>
-            <path d="M12 17v-1"></path>
-            <path d="M15 17v-3"></path>
-        </svg>
-    </div>
-    <div class="button_detail">
-        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-report-analytics" width="300"
-             height="300" viewBox="-12 2 120 100" stroke-width="2" stroke="currentColor" fill="none"
-             stroke-linecap="round"
-             stroke-linejoin="round">
-            <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-            <path d="M9 5h-2a2 2 0 0 0 -2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-12a2 2 0 0 0 -2 -2h-2"></path>
-            <rect x="9" y="3" width="6" height="4" rx="2"></rect>
-            <path d="M9 17v-5"></path>
-            <path d="M12 17v-1"></path>
-            <path d="M15 17v-3"></path>
-        </svg>
-    </div>
-    <div class="button_detail">
-        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-report-analytics" width="300"
-             height="300" viewBox="-12 2 120 100" stroke-width="2" stroke="currentColor" fill="none"
-             stroke-linecap="round"
-             stroke-linejoin="round">
-            <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-            <path d="M9 5h-2a2 2 0 0 0 -2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-12a2 2 0 0 0 -2 -2h-2"></path>
-            <rect x="9" y="3" width="6" height="4" rx="2"></rect>
-            <path d="M9 17v-5"></path>
-            <path d="M12 17v-1"></path>
-            <path d="M15 17v-3"></path>
-        </svg>
-    </div>
-    <div class="button_detail">
-        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-report-analytics" width="300"
-             height="300" viewBox="-12 2 120 100" stroke-width="2" stroke="currentColor" fill="none"
-             stroke-linecap="round"
-             stroke-linejoin="round">
-            <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-            <path d="M9 5h-2a2 2 0 0 0 -2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-12a2 2 0 0 0 -2 -2h-2"></path>
-            <rect x="9" y="3" width="6" height="4" rx="2"></rect>
-            <path d="M9 17v-5"></path>
-            <path d="M12 17v-1"></path>
-            <path d="M15 17v-3"></path>
-        </svg>
-    </div>
-    <div class="back">
-        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-chevrons-left" width="150"
-             height="150" viewBox="-4.5 -4.5 70 70" stroke-width="2" stroke="currentColor" fill="none"
-             stroke-linecap="round"
-             stroke-linejoin="round">
-            <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-            <polyline points="11 7 6 12 11 17"></polyline>
-            <polyline points="17 7 12 12 17 17"></polyline>
-        </svg>
-    </div>
-    <div class="f_title_bg"></div>
-    <div class="f_main_title">
+<div id="background">
+    <div id="f_title_bg"></div>
+    <div id="f_main_title">
         目标提取
     </div>
-    <div class="f_main_subtitle">
+    <div id="f_main_subtitle">
         Object Detection
     </div>
-    <div class="card1">
-        <div class="hole1">
+    <div class="index">
+        <div class="card">
 
         </div>
+        <div class="card">
+
+        </div>
+        <div class="card">
+
+        </div>
+        <div class="card">
+
+        </div>
+    </div>
+    <div id='res_prev'>
+        <div id="back">
+            <svg width="80" height="80" viewBox="-4 -4 50 50" stroke-width="2" stroke="currentColor" fill="none"
+                 stroke-linecap="round" stroke-linejoin="round">
+                <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                <path d="M6 10h4v-4"></path>
+                <path d="M4 4l6 6"></path>
+                <path d="M18 14h-4v4"></path>
+                <path d="M14 14l6 6"></path>
+            </svg>
+        </div>
+    </div>
+    <div id='ring'></div>
+    <div id='fullscreen'>
+        <svg width="80" height="80" viewBox="-3 -3 50 50" stroke-width="2" stroke="currentColor" fill="none"
+             stroke-linecap="round" stroke-linejoin="round">
+            <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+            <polyline points="15 6 9 12 15 18"></polyline>
+        </svg>
     </div>
 </div>
 
 <script>
-    const f1 = document.getElementsByClassName('neu_flat_f1')[0];
-    const f2 = document.getElementsByClassName('neu_flat_f2')[0];
-    const f3 = document.getElementsByClassName('neu_flat_f3')[0];
-    const f4 = document.getElementsByClassName('neu_flat_f4')[0];
-    const no1 = document.getElementsByClassName('no1')[0];
-    const no2 = document.getElementsByClassName('no2')[0];
-    const no3 = document.getElementsByClassName('no3')[0];
-    const no4 = document.getElementsByClassName('no4')[0];
-    const f_title = document.getElementsByClassName('function_title');
-    const f_subtitle = document.getElementsByClassName('function_subtitle');
-    const t1 = document.getElementsByClassName('triangle_1')[0];
-    const t2 = document.getElementsByClassName('triangle_2')[0];
-    const t3 = document.getElementsByClassName('triangle_3')[0];
-    const t4 = document.getElementsByClassName('triangle_4')[0];
-    const info = document.getElementsByClassName('info_panel');
-    const bt_detail = document.getElementsByClassName('button_detail');
-    var flag = [1, 0, 0, 0];
-    f1.classList.add('clk');
-    no1.classList.add('clk');
-    t1.classList.add('move');
-    f_title[0].classList.add('clk');
-    f_subtitle[0].classList.add('clk');
-    info[0].classList.add('clk');
-    bt_detail[0].classList.add('clk');
+    const type = {{pro}};
+    // const type = {{pro}};
 
-    const f_array = [f1, f2, f3, f4];
-    const no_array = [no1, no2, no3, no4];
-    const t_array = [t1, t2, t3, t4];
+    const f_main_title = document.getElementById('f_main_title');
+    const f_main_subtitle = document.getElementById('f_main_subtitle');
+    const f_title_bg = document.getElementById('f_title_bg');
+    const card = document.getElementsByClassName('card');
+    const res_prev = document.getElementById('res_prev');
+    const ring = document.getElementById('ring');
+    const fullscreen = document.getElementById('fullscreen');
+    const back = document.getElementById('back');
 
-    f1.onclick = function () {
-        if (flag[0] === 0) {
-            f1.classList.add('clk');
-            no1.classList.add('clk');
-            t1.classList.add('move');
-            f_title[0].classList.add('clk');
-            f_subtitle[0].classList.add('clk');
-            info[0].classList.add('clk');
-            bt_detail[0].classList.add('clk');
+    const type_name = ['目标提取', '变化检测', '目标检测', '地物分类'];
+    const type_eng = ['Object extraction', 'Change detection', 'Object detection', 'Feature classification'];
+    let mode = 'prev';
 
-            var now_clk = flag.indexOf(1);
-            flag[now_clk] = 0;
-            f_array[now_clk].classList.remove('clk');
-            no_array[now_clk].classList.remove('clk');
-            t_array[now_clk].classList.remove('move');
-            f_title[now_clk].classList.remove('clk');
-            f_subtitle[now_clk].classList.remove('clk');
-            info[now_clk].classList.remove('clk');
-            bt_detail[now_clk].classList.remove('clk');
-            flag[0] = 1;
-        }
-    }
-
-    f2.onclick = function () {
-        if (flag[1] === 0) {
-            f2.classList.add('clk');
-            no2.classList.add('clk');
-            t2.classList.add('move');
-            f_title[1].classList.add('clk');
-            f_subtitle[1].classList.add('clk');
-            info[1].classList.add('clk');
-            bt_detail[1].classList.add('clk');
-
-            var now_clk = flag.indexOf(1);
-            flag[now_clk] = 0;
-            f_array[now_clk].classList.remove('clk');
-            no_array[now_clk].classList.remove('clk');
-            t_array[now_clk].classList.remove('move');
-            f_title[now_clk].classList.remove('clk');
-            f_subtitle[now_clk].classList.remove('clk');
-            info[now_clk].classList.remove('clk');
-            bt_detail[now_clk].classList.remove('clk');
-            flag[1] = 1;
-        }
-    }
-
-    f3.onclick = function () {
-        if (flag[2] === 0) {
-            f3.classList.add('clk');
-            no3.classList.add('clk');
-            t3.classList.add('move');
-            f_title[2].classList.add('clk');
-            f_subtitle[2].classList.add('clk');
-            info[2].classList.add('clk');
-            bt_detail[2].classList.add('clk');
-
-            var now_clk = flag.indexOf(1);
-            flag[now_clk] = 0;
-            f_array[now_clk].classList.remove('clk');
-            no_array[now_clk].classList.remove('clk');
-            t_array[now_clk].classList.remove('move');
-            f_title[now_clk].classList.remove('clk');
-            f_subtitle[now_clk].classList.remove('clk');
-            info[now_clk].classList.remove('clk');
-            bt_detail[now_clk].classList.remove('clk');
-            flag[2] = 1;
-        }
-    }
-
-    f4.onclick = function () {
-        if (flag[3] === 0) {
-            f4.classList.add('clk');
-            no4.classList.add('clk');
-            t4.classList.add('move');
-            f_title[3].classList.add('clk');
-            f_subtitle[3].classList.add('clk');
-            info[3].classList.add('clk');
-            bt_detail[3].classList.add('clk');
-
-            var now_clk = flag.indexOf(1);
-            flag[now_clk] = 0;
-            f_array[now_clk].classList.remove('clk');
-            no_array[now_clk].classList.remove('clk');
-            t_array[now_clk].classList.remove('move');
-            f_title[now_clk].classList.remove('clk');
-            f_subtitle[now_clk].classList.remove('clk');
-            info[now_clk].classList.remove('clk');
-            bt_detail[now_clk].classList.remove('clk');
-            flag[3] = 1;
-        }
-    }
-
-    f1.onmouseover = function () {
-        if (flag[0] === 0) {
-            f_title[0].classList.add('hover');
-        }
-    }
-    f1.onmouseout = function () {
-        f_title[0].classList.remove('hover');
-    }
-
-    f2.onmouseover = function () {
-        if (flag[1] === 0) {
-            f_title[1].classList.add('hover');
-        }
-    }
-    f2.onmouseout = function () {
-        f_title[1].classList.remove('hover');
-    }
-
-    f3.onmouseover = function () {
-        if (flag[2] === 0) {
-            f_title[2].classList.add('hover');
-        }
-    }
-    f3.onmouseout = function () {
-        f_title[2].classList.remove('hover');
-    }
-
-    f4.onmouseover = function () {
-        if (flag[3] === 0) {
-            f_title[3].classList.add('hover');
-        }
-    }
-    f4.onmouseout = function () {
-        f_title[3].classList.remove('hover');
-    }
-
-    bt_detail[0].onmouseover = function () {
-        bt_detail[0].classList.add('hover');
-    }
-    bt_detail[0].onmouseout = function () {
-        bt_detail[0].classList.remove('hover');
-    }
-
-    bt_detail[1].onmouseover = function () {
-        bt_detail[1].classList.add('hover');
-    }
-    bt_detail[1].onmouseout = function () {
-        bt_detail[1].classList.remove('hover');
-    }
-
-    bt_detail[2].onmouseover = function () {
-        bt_detail[2].classList.add('hover');
-    }
-    bt_detail[2].onmouseout = function () {
-        bt_detail[2].classList.remove('hover');
-    }
-
-    bt_detail[3].onmouseover = function () {
-        bt_detail[3].classList.add('hover');
-    }
-    bt_detail[3].onmouseout = function () {
-        bt_detail[3].classList.remove('hover');
-    }
-
-    title = document.getElementsByClassName('title')[0];
-    subtitle = document.getElementsByClassName('subtitle')[0];
-    title_bg = document.getElementsByClassName('title_bg')[0];
-    back = document.getElementsByClassName('back')[0];
-    f_main_title = document.getElementsByClassName('f_main_title')[0];
-    f_main_subtitle = document.getElementsByClassName('f_main_subtitle')[0];
-    f_title_bg = document.getElementsByClassName('f_title_bg')[0];
-    info_bg = document.getElementsByClassName('info_bg')[0];
-    card1 = document.getElementsByClassName('card1')[0];
-    hole1 = document.getElementsByClassName('hole1')[0];
-
-    bt_detail[0].onclick = function () {
-        title.classList.add('fade');
-        subtitle.classList.add('fade');
-        title_bg.classList.add('fade');
-
-        var now_clk = flag.indexOf(1);
-        f_array[now_clk].classList.remove('clk');
-        no_array[now_clk].classList.remove('clk');
-        t_array[now_clk].classList.remove('move');
-        f_title[now_clk].classList.remove('clk');
-        f_subtitle[now_clk].classList.remove('clk');
-
-        f1.classList.add('fade');
-        f2.classList.add('fade');
-        f3.classList.add('fade');
-        f4.classList.add('fade');
-        f_title[0].classList.add('fade');
-        f_title[1].classList.add('fade');
-        f_title[2].classList.add('fade');
-        f_title[3].classList.add('fade');
-        f_subtitle[0].classList.add('fade');
-        f_subtitle[1].classList.add('fade');
-        f_subtitle[2].classList.add('fade');
-        f_subtitle[3].classList.add('fade');
-        no1.classList.add('fade');
-        no2.classList.add('fade');
-        no3.classList.add('fade');
-        no4.classList.add('fade');
-        t1.classList.add('fade');
-        t2.classList.add('fade');
-        t3.classList.add('fade');
-        t4.classList.add('fade');
-        bt_detail[0].classList.add('fade');
-        bt_detail[1].classList.add('fade');
-        bt_detail[2].classList.add('fade');
-        bt_detail[3].classList.add('fade');
-
-
-        f_main_title.innerHTML = '目标提取';
-        f_main_subtitle.innerHTML = 'Object extraction';
-        back.classList.add('show');
+    function show(type) {
+        f_main_title.innerHTML = type_name[type];
+        f_main_subtitle.innerHTML = type_eng[type];
         f_main_title.classList.add('show');
         f_main_subtitle.classList.add('show');
         f_title_bg.classList.add('show');
-        card1.classList.add('show');
-        hole1.classList.add('show');
+        res_prev.classList.add('show');
 
-        info[0].classList.add('res');
-        info_bg.classList.add('res')
+        for (let i = 0; i < card.length; i++) {
+            card[i].classList.add('show');
+        }
     }
 
-    bt_detail[1].onclick = function () {
-        title.classList.add('fade');
-        subtitle.classList.add('fade');
-        title_bg.classList.add('fade');
+    show(type);
 
-        var now_clk = flag.indexOf(1);
-        f_array[now_clk].classList.remove('clk');
-        no_array[now_clk].classList.remove('clk');
-        t_array[now_clk].classList.remove('move');
-        f_title[now_clk].classList.remove('clk');
-        f_subtitle[now_clk].classList.remove('clk');
-
-        f1.classList.add('fade');
-        f2.classList.add('fade');
-        f3.classList.add('fade');
-        f4.classList.add('fade');
-        f_title[0].classList.add('fade');
-        f_title[1].classList.add('fade');
-        f_title[2].classList.add('fade');
-        f_title[3].classList.add('fade');
-        f_subtitle[0].classList.add('fade');
-        f_subtitle[1].classList.add('fade');
-        f_subtitle[2].classList.add('fade');
-        f_subtitle[3].classList.add('fade');
-        no1.classList.add('fade');
-        no2.classList.add('fade');
-        no3.classList.add('fade');
-        no4.classList.add('fade');
-        t1.classList.add('fade');
-        t2.classList.add('fade');
-        t3.classList.add('fade');
-        t4.classList.add('fade');
-        bt_detail[0].classList.add('fade');
-        bt_detail[1].classList.add('fade');
-        bt_detail[2].classList.add('fade');
-        bt_detail[3].classList.add('fade');
-
-        f_main_title.innerHTML = '变化检测';
-        f_main_subtitle.innerHTML = 'Change detection';
-        back.classList.add('show');
-        f_main_title.classList.add('show');
-        f_main_subtitle.classList.add('show');
-        f_title_bg.classList.add('show');
-        card1.classList.add('show');
-        hole1.classList.add('show');
-
-        info[1].classList.add('res');
-        info_bg.classList.add('res');
+    res_prev.onmouseover = function () {
+        if (mode === 'prev') {
+            ring.classList.add('show');
+            fullscreen.classList.add('show');
+        }
+    }
+    res_prev.onmouseout = function () {
+        if (mode === 'prev') {
+            ring.classList.remove('show');
+            fullscreen.classList.remove('show');
+            if (fullscreen.classList.contains('clicked')) {
+                fullscreen.classList.remove('clicked');
+            }
+        }
     }
 
-    bt_detail[2].onclick = function () {
-        title.classList.add('fade');
-        subtitle.classList.add('fade');
-        title_bg.classList.add('fade');
-
-        var now_clk = flag.indexOf(1);
-        f_array[now_clk].classList.remove('clk');
-        no_array[now_clk].classList.remove('clk');
-        t_array[now_clk].classList.remove('move');
-        f_title[now_clk].classList.remove('clk');
-        f_subtitle[now_clk].classList.remove('clk');
-
-        f1.classList.add('fade');
-        f2.classList.add('fade');
-        f3.classList.add('fade');
-        f4.classList.add('fade');
-        f_title[0].classList.add('fade');
-        f_title[1].classList.add('fade');
-        f_title[2].classList.add('fade');
-        f_title[3].classList.add('fade');
-        f_subtitle[0].classList.add('fade');
-        f_subtitle[1].classList.add('fade');
-        f_subtitle[2].classList.add('fade');
-        f_subtitle[3].classList.add('fade');
-        no1.classList.add('fade');
-        no2.classList.add('fade');
-        no3.classList.add('fade');
-        no4.classList.add('fade');
-        t1.classList.add('fade');
-        t2.classList.add('fade');
-        t3.classList.add('fade');
-        t4.classList.add('fade');
-        bt_detail[0].classList.add('fade');
-        bt_detail[1].classList.add('fade');
-        bt_detail[2].classList.add('fade');
-        bt_detail[3].classList.add('fade');
-
-        f_main_title.innerHTML = '目标检测'
-        f_main_subtitle.innerHTML = 'Object detection';
-        back.classList.add('show');
-        f_main_title.classList.add('show');
-        f_main_subtitle.classList.add('show');
-        f_title_bg.classList.add('show');
-        card1.classList.add('show');
-        hole1.classList.add('show');
-
-        info[2].classList.add('res');
-        info_bg.classList.add('res');
+    fullscreen.onmouseover = function () {
+        if (mode === 'prev') {
+            ring.classList.add('show');
+            fullscreen.classList.add('show');
+        }
     }
-
-    bt_detail[3].onclick = function () {
-        title.classList.add('fade');
-        subtitle.classList.add('fade');
-        title_bg.classList.add('fade');
-
-        var now_clk = flag.indexOf(1);
-        f_array[now_clk].classList.remove('clk');
-        no_array[now_clk].classList.remove('clk');
-        t_array[now_clk].classList.remove('move');
-        f_title[now_clk].classList.remove('clk');
-        f_subtitle[now_clk].classList.remove('clk');
-
-        f1.classList.add('fade');
-        f2.classList.add('fade');
-        f3.classList.add('fade');
-        f4.classList.add('fade');
-        f_title[0].classList.add('fade');
-        f_title[1].classList.add('fade');
-        f_title[2].classList.add('fade');
-        f_title[3].classList.add('fade');
-        f_subtitle[0].classList.add('fade');
-        f_subtitle[1].classList.add('fade');
-        f_subtitle[2].classList.add('fade');
-        f_subtitle[3].classList.add('fade');
-        no1.classList.add('fade');
-        no2.classList.add('fade');
-        no3.classList.add('fade');
-        no4.classList.add('fade');
-        t1.classList.add('fade');
-        t2.classList.add('fade');
-        t3.classList.add('fade');
-        t4.classList.add('fade');
-        bt_detail[0].classList.add('fade');
-        bt_detail[1].classList.add('fade');
-        bt_detail[2].classList.add('fade');
-        bt_detail[3].classList.add('fade');
-
-        f_main_title.innerHTML = '地物分类';
-        f_main_subtitle.innerHTML = 'Feature classification';
-        back.classList.add('show');
-        f_main_title.classList.add('show');
-        f_main_subtitle.classList.add('show');
-        f_title_bg.classList.add('show');
-        card1.classList.add('show');
-        hole1.classList.add('show');
-
-        info[3].classList.add('res');
-        info_bg.classList.add('res');
-    }
-
-    back.onmouseover = function () {
-        back.classList.add('hover');
-    }
-    back.onmouseout = function () {
-        back.classList.remove('hover');
+    fullscreen.onclick = function () {
+        mode = 'detail';
+        fullscreen.classList.add('clicked');
+        ring.classList.remove('show');
+        fullscreen.classList.remove('show');
+        res_prev.classList.add('full')
     }
 
     back.onclick = function () {
-        title.classList.remove('fade');
-        subtitle.classList.remove('fade');
-        title_bg.classList.remove('fade');
-
-        var now_clk = flag.indexOf(1);
-        f_array[now_clk].classList.add('clk');
-        no_array[now_clk].classList.add('clk');
-        t_array[now_clk].classList.add('move');
-        f_title[now_clk].classList.add('clk');
-        f_subtitle[now_clk].classList.add('clk');
-        bt_detail[now_clk].classList.add('clk');
-
-        f1.classList.remove('fade');
-        f2.classList.remove('fade');
-        f3.classList.remove('fade');
-        f4.classList.remove('fade');
-        f_title[0].classList.remove('fade');
-        f_title[1].classList.remove('fade');
-        f_title[2].classList.remove('fade');
-        f_title[3].classList.remove('fade');
-        f_subtitle[0].classList.remove('fade');
-        f_subtitle[1].classList.remove('fade');
-        f_subtitle[2].classList.remove('fade');
-        f_subtitle[3].classList.remove('fade');
-        no1.classList.remove('fade');
-        no2.classList.remove('fade');
-        no3.classList.remove('fade');
-        no4.classList.remove('fade');
-        t1.classList.remove('fade');
-        t2.classList.remove('fade');
-        t3.classList.remove('fade');
-        t4.classList.remove('fade');
-        bt_detail[0].classList.remove('fade');
-        bt_detail[1].classList.remove('fade');
-        bt_detail[2].classList.remove('fade');
-        bt_detail[3].classList.remove('fade');
-
-        back.classList.remove('show');
-        f_main_title.classList.remove('show');
-        f_main_subtitle.classList.remove('show');
-        f_title_bg.classList.remove('show');
-        card1.classList.remove('show');
-        card1.classList.remove('show');
-        hole1.classList.remove('show');
-        info[0].classList.remove('res');
-        info[1].classList.remove('res');
-        info[2].classList.remove('res');
-        info[3].classList.remove('res');
-        info_bg.classList.remove('res');
+        mode = 'prev';
+        res_prev.classList.remove('full');
+    }
+    back.onmousedown = function () {
+        back.classList.add('down');
+    }
+    back.onmouseup = function () {
+        back.classList.remove('down');
     }
 </script>
 </body>
