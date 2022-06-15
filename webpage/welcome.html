@@ -11,9 +11,22 @@
 <div class="pro">变化检测</div>
 <div class="pro">目标检测</div>
 <div class="pro">地物分类</div>
+<div class="od_type">playground</div>
+<div class="od_type">aircraft</div>
+<div class="od_type">oiltank</div>
+<div class="od_type">overpass</div>
 
 <script>
     const pros = document.getElementsByClassName('pro');
+    const od_types = document.getElementsByClassName('od_type');
+
+    let type = 0
+    for (let i = 0; i < od_types.length; i++) {
+        od_types[i].onclick = function () {
+            type = i;
+        }
+    }
+
     for (let i = 0; i < pros.length; i++) {
         pros[i].onclick = function () {
             let url = 'http://127.0.0.1:8080/welcome'
@@ -21,6 +34,7 @@
             xhr.open('POST', url, true);
             let formData = new FormData();
             formData.append('pro', i)
+            formData.append('type', type)
             xhr.send(formData)
             xhr.onreadystatechange = function () {
                 if (xhr.readyState === XMLHttpRequest.DONE && xhr.status === 200) {

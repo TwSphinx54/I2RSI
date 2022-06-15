@@ -21,6 +21,17 @@ body {
     --main-blueGray: #3a455b;
     --main-prussianBlue: #004469;
     --main-marrsGreen: #008c8c;
+    --main-gardenGreen: #0f505e;
+    --main-oceanBlue: #216185;
+    --main-oceanskyBlue: #b5cfd4;
+    --main-moliGreen: #b5d2b4;
+    --main-vieenaGray: #d6d6d6;
+    --main-vieenaGreen: #008c9f;
+    --main-lightGreen: #bbd2cf;
+    --main-lightGreen-light: #e0fdf6;
+    --main-lightGreen-shadow: #869695;
+    --main-lightBlue: #acc0d2;
+    --main-lightPurple: #bcc1d9;
 }
 
 #background {
@@ -48,7 +59,8 @@ body {
     font-weight: bold;
     font-size: 50px;
     padding-left: 35px;
-    font-family: "Source Han Sans CN";
+    /*font-family: "Source Han Sans CN";*/
+    font-family: Ubuntu, "Microsoft YaHei", serif;
 
     border-radius: 15px;
     background: var(--main-white);
@@ -79,7 +91,7 @@ body {
     line-height: 100px;
     font-size: 20px;
     padding-left: 40px;
-    font-family: Ubuntu;
+    font-family: Ubuntu, "Microsoft YaHei", serif;
 
     border-radius: 15px;
 
@@ -134,7 +146,16 @@ body {
     border-radius: 15px;
     background: var(--main-white);
     box-shadow: 5px 5px 10px var(--main-white-shadow),
-    -5px -5px 10px var(--main-white-light);
+    -5px -5px 10px var(--main-white-light),
+    inset 0 0 0 transparent,
+    inset 0 0 0 transparent;
+
+    font-family: Ubuntu, "Microsoft YaHei", serif;
+    text-align: center;
+    font-weight: bold;
+    font-size: 25px;
+    line-height: 50px;
+    color: var(--main-blueGray);
 
     opacity: 0;
     transform: translateX(100px);
@@ -148,6 +169,69 @@ body {
 .card.show {
     opacity: 100%;
     transform: none;
+}
+
+.card.focus {
+    background: var(--main-lightGreen);
+    box-shadow: inset 2px 2px 5px var(--main-lightGreen-light),
+    inset -2px -2px 5px var(--main-lightGreen-shadow),
+    2px 2px 5px var(--main-white-shadow),
+    -2px -2px 5px var(--main-white-light);
+    color: var(--main-prussianBlue);
+}
+
+.content {
+    width: 300px;
+    height: 160px;
+    float: left;
+    margin-right: 30px;
+    margin-bottom: 20px;
+    margin-top: 70px;
+
+    border-radius: 15px;
+    background: var(--main-white);
+    box-sizing: border-box;
+    border-bottom: 0 transparent solid;
+
+    font-family: Ubuntu, "Microsoft YaHei", serif;
+    text-align: center;
+    font-weight: bold;
+    font-size: 100px;
+    line-height: 160px;
+    color: var(--main-blueGray);
+    text-shadow: 4px 4px 8px var(--main-white-shadow),
+    -4px -4px 8px var(--main-white-light);
+
+    opacity: 0;
+    transform: translateY(30px);
+
+    cursor: default;
+    animation: ease;
+    transition: all 1s;
+    -webkit-transition: all 1s;
+}
+
+.content.show {
+    transition-delay: 0.5s;
+    -webkit-transition-delay: 0.5s;
+    opacity: 100%;
+    transform: none;
+}
+
+.content.focus {
+    transition: all 0.5s;
+    -webkit-transition: all 0.5s;
+    transition-delay: 0s;
+    -webkit-transition-delay: 0s;
+    box-shadow: 5px 5px 10px var(--main-white-shadow),
+    -5px -5px 10px var(--main-white-light);
+    text-shadow: none;
+    border-bottom: 10px var(--main-lightBlue) solid;
+}
+
+.content.blur {
+    transition-delay: 0s;
+    -webkit-transition-delay: 0s;
 }
 
 .index {
@@ -198,6 +282,33 @@ body {
     box-sizing: border-box;
     transition: all 0.8s 0.5s;
     -webkit-transition: all 0.8s 0.5s;
+}
+
+#prev_img {
+    position: absolute;
+    left: 130px;
+    top: 450px;
+    height: 650px;
+    width: 550px;
+    padding: 10px;
+    border-radius: 15px;
+    box-shadow: 5px 5px 10px var(--main-white-shadow),
+    -5px -5px 10px var(--main-white-light);
+
+    opacity: 100%;
+    transform: none;
+
+    cursor: default;
+    animation: ease;
+    transition: all 0.5s 0.5s;
+    -webkit-transition: all 0.5s 0.5s;
+}
+
+#prev_img.fade {
+    transition: all 0.5s;
+    -webkit-transition: all 0.5s;
+    opacity: 0;
+    transform: translateY(-500px);
 }
 
 #ring {
@@ -325,14 +436,23 @@ body {
 
 #back {
     width: 50px;
-    height: 50px;
+    height: 100%;
     border-radius: 10px;
-    box-shadow: 3px 3px 5px var(--main-white-shadow);
+    line-height: 100%;
+    opacity: 0;
 
     cursor: pointer;
     animation: ease;
-    transition: all 0.5s;
-    -webkit-transition: all 0.5s;
+    transition: all 0.5s, opacity 0.5s ease 0.5s;
+    -webkit-transition: all 0.5s, opacity 0.5s ease 0.5s;
+}
+
+#back.show {
+    opacity: 100%;
+}
+
+#back svg {
+    height: 100%;
 }
 
 #back:hover {
@@ -344,4 +464,133 @@ body {
 #back.down {
     box-shadow: inset 2px 2px 5px var(--main-white-shadow),
     inset -2px -2px 5px var(--main-white-light);
+}
+
+#full_interact {
+    height: 100%;
+    width: 500px;
+    position: absolute;
+    right: 0;
+    top: 0;
+    z-index: -1;
+    /*border-radius: 15px;*/
+    /*border: 1px solid black;*/
+
+    opacity: 0;
+
+    cursor: default;
+    animation: ease;
+    transition: all 0.5s;
+    -webkit-transition: all 0.5s;
+}
+
+#ori_img {
+    height: 70%;
+    border-radius: 15px;
+    right: 0;
+    top: 0;
+    position: absolute;
+    border: 5px var(--main-white) solid;
+    box-sizing: border-box;
+
+    box-shadow: 2px 2px 5px var(--main-white-shadow),
+    -2px -2px 5px var(--main-white-light);
+
+    cursor: default;
+    animation: ease;
+    transition: all 0.5s;
+    -webkit-transition: all 0.5s;
+    transition-delay: 1s;
+}
+
+#ori_img.show {
+    transition-delay: 0s;
+    height: 100%;
+}
+
+#full_interact.show {
+    z-index: 1;
+    transition: all 0.5s 1s;
+    -webkit-transition: all 0.5s 1s;
+
+    opacity: 100%;
+}
+
+.bbox {
+    width: 0;
+    height: 0;
+    background: rgba(188, 193, 217, 0.5);
+    position: absolute;
+    top: 0;
+    left: 0;
+
+    font-family: Ubuntu, "Microsoft YaHei", serif;
+    font-weight: bold;
+    text-align: center;
+    color: midnightblue;
+    border-image-source: radial-gradient(60% 60%, transparent 0px, transparent 100%, deepskyblue);
+    border-image-outset: 1px;
+    border-image-slice: 1;
+    border-width: 2px;
+    border-style: solid;
+    border-color: deepskyblue;
+
+    cursor: default;
+    animation: ease;
+    transition: all 0.5s;
+    -webkit-transition: all 0.5s;
+}
+
+.bbox:hover {
+    border-image-outset: 7px;
+    background: rgba(0, 191, 255, 0.3);
+}
+
+.bbox.clicked {
+    box-sizing: border-box;
+    border: 3px deepskyblue solid;
+    border-radius: 5px;
+    background: rgba(188, 193, 217, 0.7);
+}
+
+#detail {
+    height: 100%;
+    width: 300px;
+    position: absolute;
+    top: 0;
+    left: 60px;
+    z-index: -1;
+    /*border: 1px black solid;*/
+
+    opacity: 0;
+
+    cursor: default;
+    animation: ease;
+    transition: all 0.5s;
+    -webkit-transition: all 0.5s;
+}
+
+#detail.show {
+    z-index: 1;
+    transition: all 0.5s 1s;
+    -webkit-transition: all 0.5s 1s;
+
+    opacity: 100%;
+}
+
+#detail_img {
+    border-radius: 15px;
+    left: 0;
+    top: 0;
+    position: absolute;
+    border: 5px var(--main-white) solid;
+    box-sizing: border-box;
+
+    box-shadow: 2px 2px 5px var(--main-white-shadow),
+    -2px -2px 5px var(--main-white-light);
+
+    cursor: default;
+    animation: ease;
+    transition: all 0.5s;
+    -webkit-transition: all 0.5s;
 }

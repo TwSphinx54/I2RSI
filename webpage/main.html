@@ -16,16 +16,30 @@
     </div>
     <div class="index">
         <div class="card">
-
+            预测耗时
         </div>
         <div class="card">
-
+            平均得分
         </div>
         <div class="card">
-
+            模型mAP
         </div>
         <div class="card">
-
+            模型loss
+        </div>
+    </div>
+    <div class="index">
+        <div class="content">
+            00
+        </div>
+        <div class="content">
+            00
+        </div>
+        <div class="content">
+            00
+        </div>
+        <div class="content">
+            00
         </div>
     </div>
     <div id='res_prev'>
@@ -38,6 +52,13 @@
                 <path d="M18 14h-4v4"></path>
                 <path d="M14 14l6 6"></path>
             </svg>
+        </div>
+        <img src="./res/result.png" id='prev_img' alt="process result">
+        <div id="full_interact">
+            <img src="./res/origin.png" id='ori_img' alt="process result">
+        </div>
+        <div id="detail">
+            <img src="./res/origin.png" id='detail_img' alt="process result">
         </div>
     </div>
     <div id='ring'></div>
@@ -52,16 +73,90 @@
 
 <script>
     const type = {{pro}};
+    const elements = {{ele}};
     // const type = {{pro}};
+
+    let loc, score, period, shape;
+    if (type === 2) {
+        [loc, score, period, shape] = elements;
+        const map = 68.30
+        const loss = 6.3706465
+
+        NumAutoPlusAnimation('content', {
+            time: 3500,
+            num: period.toFixed(2),
+            regulator: 50
+        }, 0)
+        if (score.length > 0) {
+            NumAutoPlusAnimation('content', {
+                time: 3500,
+                num: (score.reduce((a, b) => a + b) / score.length).toFixed(2),
+                regulator: 50
+            }, 1)
+        } else {
+            document.getElementsByClassName('content')[1].innerHTML = 'Null';
+        }
+        NumAutoPlusAnimation('content', {
+            time: 3500,
+            num: map.toFixed(2),
+            regulator: 50
+        }, 2)
+        NumAutoPlusAnimation('content', {
+            time: 3500,
+            num: loss.toFixed(2),
+            regulator: 50
+        }, 3)
+
+    } else if (type === 3) {
+        const [period] = elements;
+        console.log(period);
+    }
+
+    function NumAutoPlusAnimation(targetEle, options, i) {
+        options = options || {};
+
+        let $this = document.getElementsByClassName(targetEle)[i],
+            time = options.time || $this.data('time'), //总时间--毫秒为单位
+            finalNum = options.num || $this.data('value'), //要显示的真实数值
+            regulator = options.regulator || 100, //调速器，改变regulator的数值可以调节数字改变的速度
+
+            step = finalNum / (time / regulator),/*每30ms增加的数值--*/
+            count = 0, //计数器
+            initial = 0;
+
+        let timer = setInterval(function () {
+
+            count = count + step;
+
+            if (count >= finalNum) {
+                clearInterval(timer);
+                count = finalNum;
+            }
+            //t未发生改变的话就直接返回
+            //避免调用text函数，提高DOM性能
+            let t = count.toFixed(2);
+            if (t === initial) return;
+
+            initial = t;
+
+            $this.innerHTML = initial;
+        }, 30);
+    }
 
     const f_main_title = document.getElementById('f_main_title');
     const f_main_subtitle = document.getElementById('f_main_subtitle');
     const f_title_bg = document.getElementById('f_title_bg');
     const card = document.getElementsByClassName('card');
+    const content = document.getElementsByClassName('content');
     const res_prev = document.getElementById('res_prev');
     const ring = document.getElementById('ring');
     const fullscreen = document.getElementById('fullscreen');
     const back = document.getElementById('back');
+    const prev_img = document.getElementById('prev_img');
+    const full_interact = document.getElementById('full_interact');
+    const ori_img = document.getElementById('ori_img');
+    const detail = document.getElementById('detail');
+    const detail_img = document.getElementById('detail_img');
 
     const type_name = ['目标提取', '变化检测', '目标检测', '地物分类'];
     const type_eng = ['Object extraction', 'Change detection', 'Object detection', 'Feature classification'];
@@ -77,10 +172,23 @@
 
         for (let i = 0; i < card.length; i++) {
             card[i].classList.add('show');
+            content[i].classList.add('show');
         }
     }
 
     show(type);
+
+    for (let i = 0; i < content.length; i++) {
+        content[i].onmouseover = function () {
+            content[i].classList.add('blur');
+            content[i].classList.add('focus');
+            card[i].classList.add('focus');
+        }
+        content[i].onmouseout = function () {
+            content[i].classList.remove('focus');
+            card[i].classList.remove('focus');
+        }
+    }
 
     res_prev.onmouseover = function () {
         if (mode === 'prev') {
@@ -110,17 +218,118 @@
         ring.classList.remove('show');
         fullscreen.classList.remove('show');
         res_prev.classList.add('full')
+        prev_img.classList.add('fade');
+        full_interact.classList.add('show')
+        back.classList.add('show');
+        detail.classList.add('show');
+        ori_img.classList.add('show');
+    }
+
+    if (type === 2) {
+        function fit_img(w, h) {
+            let rrw = d_width / w;
+            let rrh = d_height / h;
+            if (rrh >= rrw) {
+                detail_img.style.width = d_width.toString() + 'px';
+                detail_img.style.height = (h * rrw).toString() + 'px';
+                detail_img.style.left = '0';
+                detail_img.style.top = '50%';
+                detail_img.style.marginLeft = '0';
+                detail_img.style.marginTop = '-' + (h * rrw / 2) + 'px';
+            } else {
+                detail_img.style.height = d_height.toString() + 'px';
+                detail_img.style.width = (w * rrh).toString() + 'px';
+                detail_img.style.top = '0';
+                detail_img.style.left = '50%';
+                detail_img.style.marginTop = '0';
+                detail_img.style.marginLeft = '-' + (w * rrh / 2) + 'px';
+            }
+        }
+
+        let r = window.innerHeight * 0.95 / shape[0]
+        full_interact.style.width = (r * shape[1]).toString() + 'px'
+        let d_width = window.innerWidth * 0.95 - r * shape[1] - 70;
+        detail.style.width = (d_width).toString() + 'px'
+        let d_height = window.innerHeight * 0.95
+        fit_img(shape[1], shape[0]);
+
+        let flag = new Uint8Array(loc.length);
+        let bbox_c = [];
+        for (let k = 0; k < loc.length; k++) {
+            let this_loc = loc[k];
+            const bbox = document.createElement('div');
+            bbox.className = 'bbox';
+            full_interact.appendChild(bbox);
+            let t_width = (this_loc[2] - this_loc[0]) * r;
+            let t_height = (this_loc[3] - this_loc[1]) * r;
+            let t_top = this_loc[1] * r;
+            let t_left = this_loc[0] * r;
+            bbox.style.width = t_width.toString() + 'px';
+            bbox.style.height = t_height.toString() + 'px';
+            bbox.style.top = t_top.toString() + 'px';
+            bbox.style.left = t_left.toString() + 'px';
+            bbox_c.push([t_width / r, t_height / r, t_top / r, t_left / r]);
+            bbox.style.lineHeight = t_height.toString() + 'px';
+            bbox.style.fontSize = (t_width / 3).toString() + 'px';
+        }
+
+        bbox = document.getElementsByClassName('bbox');
+        for (let i = 0; i < bbox.length; i++) {
+            bbox[i].onclick = function () {
+                if (flag[i] === 0) {
+                    let prev = flag.indexOf(1)
+                    if (prev > -1) {
+                        flag[prev] = 0;
+                        bbox[prev].classList.remove('clicked');
+                        bbox[prev].innerHTML = '';
+                    }
+                    flag[i] = 1;
+                    bbox[i].classList.add('clicked');
+                    bbox[i].innerHTML = score[i].toFixed(2);
+
+                    let url = 'http://127.0.0.1:8080/result'
+                    let xhr = new XMLHttpRequest();
+                    xhr.open('POST', url, true);
+                    let formData = new FormData();
+                    formData.append('status', 'clip')
+                    formData.append('x0', bbox_c[i][3])
+                    formData.append('y0', bbox_c[i][2])
+                    formData.append('x1', bbox_c[i][3] + bbox_c[i][0])
+                    formData.append('y1', bbox_c[i][2] + bbox_c[i][1])
+                    xhr.send(formData)
+                    xhr.onreadystatechange = function () {
+                        if (xhr.readyState === XMLHttpRequest.DONE && xhr.status === 200) {
+                            let size = JSON.parse(xhr.response)
+                            fit_img(size.w, size.h);
+                            detail_img.src = './res/clip.png?' + Math.random();
+                        }
+                    }
+                } else if (flag[i] === 1) {
+                    flag[i] = 0;
+                    bbox[i].classList.remove('clicked');
+                    bbox[i].innerHTML = '';
+                    detail_img.src = './res/origin.png';
+                    fit_img(shape[1], shape[0]);
+                }
+            }
+        }
     }
 
     back.onclick = function () {
         mode = 'prev';
         res_prev.classList.remove('full');
+        prev_img.classList.remove('fade');
+        full_interact.classList.remove('show');
+        detail.classList.remove('show');
+        ori_img.classList.remove('show');
     }
+
     back.onmousedown = function () {
         back.classList.add('down');
     }
     back.onmouseup = function () {
         back.classList.remove('down');
+        back.classList.remove('show');
     }
 </script>
 </body>
