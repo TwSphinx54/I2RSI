@@ -33,6 +33,13 @@
         </svg>
     </div>
 </div>
+
+<div id="load_bg">
+    <div class="container">
+        <div class="loader"></div>
+        <div class="loading_text">解译中</div>
+    </div>
+</div>
 <script>
     const method = {{pro}};
     // const method = {{pro}};
@@ -48,8 +55,16 @@
     const img_prev2 = document.getElementsByClassName('img_prev2')[0];
     const main_title = document.getElementsByClassName('main_title')[0];
     const main_subtitle = document.getElementsByClassName('main_subtitle')[0];
+    const load_bg = document.getElementById('load_bg');
+    const container = document.getElementsByClassName('container')[0];
+    const loading_text = document.getElementsByClassName('loading_text')[0];
+
     main_title.innerHTML = type_name[method];
     main_subtitle.innerHTML = type_eng[method];
+    main_title.classList.add('show');
+    main_subtitle.classList.add('show');
+    input1.classList.add('show');
+
 
     let img_ready = [0, 0];
     let data1, data2;
@@ -226,6 +241,10 @@
             }
 
             start_bt.onclick = function () {
+                load_bg.classList.add('show');
+                container.classList.add('show');
+                loading_text.classList.add('show');
+
                 let url = 'http://127.0.0.1:8080/upload'
                 let xhr = new XMLHttpRequest();
                 xhr.open('POST', url, true);
@@ -234,6 +253,7 @@
                 xhr.send(formData)
                 xhr.onreadystatechange = function () {
                     if (xhr.readyState === XMLHttpRequest.DONE && xhr.status === 200) {
+                        loading_text.innerHTML = '解译完毕';
                         window.location.href = xhr.responseURL
                     }
                 }

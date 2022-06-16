@@ -10,7 +10,7 @@
     --object_detection  
     --object_extraction
 
-Each bottom folder contains 4 files to describe the model used in the prediction:  
+Each bottom folder contains 5 files to describe the model used in the prediction:  
 
     model.pdiparams
     model.pdiparams.info
