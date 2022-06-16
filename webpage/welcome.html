@@ -7,16 +7,66 @@
     <link href="styles/wel.css" rel="stylesheet" type="text/css">
 </head>
 <body>
-<div class='pro'>目标提取</div>
-<div class="pro">变化检测</div>
-<div class="pro">目标检测</div>
-<div class="pro">地物分类</div>
-<div class="od_type">playground</div>
-<div class="od_type">aircraft</div>
-<div class="od_type">oiltank</div>
-<div class="od_type">overpass</div>
+
+<div id="background">
+    <div class="wrapper">
+        <div class="pre_text">
+            ACCESS PERMISSION REQUIRED
+        </div>
+    </div>
+    <div id="d_circle_bg">
+        <div id="d_circle"></div>
+    </div>
+    <div id="d_title_bg">
+        <div id="title_wrapper">
+            <div id="d_title">遥感图像智能解译</div>
+            <div id="d_subtitle">Intelligent Interpretation of Remote Sensing Images</div>
+        </div>
+    </div>
+    <div id="left_up">
+        <div style="font-size: 2em; font-weight: bold" id="logo_words1">I2RSI PROJECT<br></div>
+        <div style="font-size: 0.9em" id="logo_words2">VARIOUS REMOTE SENSING IMAGE<br></div>
+        <div style="font-size: 1.38em;" id="logo_words3">INTERPRETATION</div>
+        <div style="font-size: 1.38em; font-weight: bold" id="logo_words4">&nbsp;&nbsp;SYS</div>
+    </div>
+    <div id="right_down">
+        <div id="powered_words"><div id="words_box">POWERED BY <span style="font-weight: bold">WHU I2RSI TEAM</span></div></div>
+        <div id="small_bar"></div>
+    </div>
+
+    <div style="display: none">
+        <!--    <div>-->
+        <div class='pro'>目标提取</div>
+        <div class="pro">变化检测</div>
+        <div class="pro">目标检测</div>
+        <div class="pro">地物分类</div>
+        <div class="od_type">playground</div>
+        <div class="od_type">aircraft</div>
+        <div class="od_type">oiltank</div>
+        <div class="od_type">overpass</div>
+    </div>
+</div>
 
 <script>
+    const wrapper = document.getElementsByClassName('wrapper')[0];
+    const d_title = document.getElementById('d_title');
+    const d_subtitle = document.getElementById('d_subtitle');
+    const logo_words1 = document.getElementById('logo_words1');
+    const logo_words2 = document.getElementById('logo_words2');
+    const logo_words3 = document.getElementById('logo_words3');
+    const logo_words4 = document.getElementById('logo_words4');
+    const powered_words = document.getElementById('powered_words');
+    const small_bar = document.getElementById('small_bar');
+    wrapper.classList.add('fade');
+    d_title.classList.add('show');
+    d_subtitle.classList.add('show');
+    logo_words1.classList.add('show');
+    logo_words2.classList.add('show');
+    logo_words3.classList.add('show');
+    logo_words4.classList.add('show');
+    powered_words.classList.add('show');
+    small_bar.classList.add('show');
+
     const pros = document.getElementsByClassName('pro');
     const od_types = document.getElementsByClassName('od_type');
 
