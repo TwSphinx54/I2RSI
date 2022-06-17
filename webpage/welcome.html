@@ -5,17 +5,33 @@
     <title>遥感图像智能解译</title>
     <link href="styles/style.css" rel="stylesheet" type="text/css">
     <link href="styles/wel.css" rel="stylesheet" type="text/css">
+    <link href="styles/loader.css" rel="stylesheet" type="text/css">
 </head>
 <body>
 
 <div id="background">
-    <div class="wrapper">
+    <div id="no_touch"></div>
+    <div class="pre_wrapper">
         <div class="pre_text">
             ACCESS PERMISSION REQUIRED
         </div>
     </div>
     <div id="d_circle_bg">
         <div id="d_circle"></div>
+    </div>
+    <div id="ring_t"></div>
+    <div id="in">
+        <svg class="icon icon-tabler icon-tabler-aperture" width="120" height="120"
+             viewBox="-13 -13 50 50" stroke-width="1" stroke="currentColor" fill="none" stroke-linecap="round"
+             stroke-linejoin="round">
+            <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+            <circle cx="12" cy="12" r="9"></circle>
+            <line x1="3.6" y1="15" x2="14.15" y2="15"></line>
+            <line x1="3.6" y1="15" x2="14.15" y2="15" transform="rotate(72 12 12)"></line>
+            <line x1="3.6" y1="15" x2="14.15" y2="15" transform="rotate(144 12 12)"></line>
+            <line x1="3.6" y1="15" x2="14.15" y2="15" transform="rotate(216 12 12)"></line>
+            <line x1="3.6" y1="15" x2="14.15" y2="15" transform="rotate(288 12 12)"></line>
+        </svg>
     </div>
     <div id="d_title_bg">
         <div id="title_wrapper">
@@ -30,25 +46,193 @@
         <div style="font-size: 1.38em; font-weight: bold" id="logo_words4">&nbsp;&nbsp;SYS</div>
     </div>
     <div id="right_down">
-        <div id="powered_words"><div id="words_box">POWERED BY <span style="font-weight: bold">WHU I2RSI TEAM</span></div></div>
+        <div id="powered_words">
+            <div id="words_box">POWERED BY <span style="font-weight: bold">WHU I2RSI TEAM</span></div>
+        </div>
         <div id="small_bar"></div>
     </div>
 
-    <div style="display: none">
-        <!--    <div>-->
-        <div class='pro'>目标提取</div>
-        <div class="pro">变化检测</div>
-        <div class="pro">目标检测</div>
-        <div class="pro">地物分类</div>
-        <div class="od_type">playground</div>
-        <div class="od_type">aircraft</div>
-        <div class="od_type">oiltank</div>
-        <div class="od_type">overpass</div>
+    <div id="function_box">
+        <div class="function">
+            <div class="intro_img"></div>
+            <div class="intro">OBJECT<br>EXTRACTION</div>
+            <div class='go'>开始处理</div>
+        </div>
+        <div class="function">
+            <div class="intro_img"></div>
+            <div class="intro">CHANGE<br>DETECTION</div>
+            <div class='go'>开始处理</div>
+        </div>
+        <div class="function">
+            <div class="intro_img"></div>
+            <div class="intro">OBJECT<br>DETECTION</div>
+            <div id="od_type_wrapper">
+                <div class="od_type">PLAYGROUND</div>
+                <div class="od_type">AIRCRAFT</div>
+                <div class="od_type">OILTANK</div>
+                <div class="od_type">OVERPASS</div>
+            </div>
+            <div class='go'>开始处理</div>
+        </div>
+        <div class="function">
+            <div class="intro_img"></div>
+            <div class="intro">OBJECT<br>CLASSIFICATION</div>
+            <div class='go'>开始处理</div>
+        </div>
+    </div>
+    <div class="function_bt">
+        <div style="font-size: 50px;font-weight: bold">目标提取</div>
+        <div style="font-size: 15px">OBJECT EXTRACTION</div>
+    </div>
+    <div class="function_bt">
+        <div style="font-size: 50px;font-weight: bold">变化检测</div>
+        <div style="font-size: 15px">CHANGE DETECTION</div>
+    </div>
+    <div class="function_bt">
+        <div style="font-size: 50px;font-weight: bold">目标检测</div>
+        <div style="font-size: 15px">OBJECT DETECTION</div>
+    </div>
+    <div class="function_bt">
+        <div style="font-size: 50px;font-weight: bold">地物分类</div>
+        <div style="font-size: 15px">OBJECT CLASSIFICATION</div>
+    </div>
+    <div id="bt_alt">
+        <div class="alt_opt">变化检测</div>
+        <div class="alt_opt">目标检测</div>
+        <div class="alt_opt">地物分类</div>
+    </div>
+    <div id="left_down">
+        <svg class="icon icon-tabler icon-tabler-aperture" width="1000" height="1000"
+             viewBox="-0.5 -0.5 25 25" stroke-width="0.3" stroke="currentColor" fill="none" stroke-linecap="round"
+             stroke-linejoin="round">
+            <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+            <circle cx="12" cy="12" r="9"></circle>
+            <line x1="3.6" y1="15" x2="14.15" y2="15"></line>
+            <line x1="3.6" y1="15" x2="14.15" y2="15" transform="rotate(72 12 12)"></line>
+            <line x1="3.6" y1="15" x2="14.15" y2="15" transform="rotate(144 12 12)"></line>
+            <line x1="3.6" y1="15" x2="14.15" y2="15" transform="rotate(216 12 12)"></line>
+            <line x1="3.6" y1="15" x2="14.15" y2="15" transform="rotate(288 12 12)"></line>
+        </svg>
+    </div>
+    <div id="loader_text">加载模型中</div>
+    <div id="loader">
+        <div class="wrapper">
+            <div class="line line1">
+                <span class="circle circle-top"></span>
+                <div class="dotted">
+                    <span class="dot dot-top"></span>
+                    <span class="dot dot-middle-top"></span>
+                    <span class="dot dot-middle-bottom"></span>
+                    <span class="dot dot-bottom"></span>
+                </div>
+                <span class="circle circle-bottom"></span>
+            </div>
+            <div class="line line2">
+                <span class="circle circle-top"></span>
+                <div class="dotted">
+                    <span class="dot dot-top"></span>
+                    <span class="dot dot-middle-top"></span>
+                    <span class="dot dot-middle-bottom"></span>
+                    <span class="dot dot-bottom"></span>
+                </div>
+                <span class="circle circle-bottom"></span>
+            </div>
+            <div class="line line3">
+                <span class="circle circle-top"></span>
+                <div class="dotted">
+                    <span class="dot dot-top"></span>
+                    <span class="dot dot-middle-top"></span>
+                    <span class="dot dot-middle-bottom"></span>
+                    <span class="dot dot-bottom"></span>
+                </div>
+                <span class="circle circle-bottom"></span>
+            </div>
+            <div class="line line4">
+                <span class="circle circle-top"></span>
+                <div class="dotted">
+                    <span class="dot dot-top"></span>
+                    <span class="dot dot-middle-top"></span>
+                    <span class="dot dot-middle-bottom"></span>
+                    <span class="dot dot-bottom"></span>
+                </div>
+                <span class="circle circle-bottom"></span>
+            </div>
+            <div class="line line5">
+                <span class="circle circle-top"></span>
+                <div class="dotted">
+                    <span class="dot dot-top"></span>
+                    <span class="dot dot-middle-top"></span>
+                    <span class="dot dot-middle-bottom"></span>
+                    <span class="dot dot-bottom"></span>
+                </div>
+                <span class="circle circle-bottom"></span>
+            </div>
+            <div class="line line6">
+                <span class="circle circle-top"></span>
+                <div class="dotted">
+                    <span class="dot dot-top"></span>
+                    <span class="dot dot-middle-top"></span>
+                    <span class="dot dot-middle-bottom"></span>
+                    <span class="dot dot-bottom"></span>
+                </div>
+                <span class="circle circle-bottom"></span>
+            </div>
+            <div class="line line7">
+                <span class="circle circle-top"></span>
+                <div class="dotted">
+                    <span class="dot dot-top"></span>
+                    <span class="dot dot-middle-top"></span>
+                    <span class="dot dot-middle-bottom"></span>
+                    <span class="dot dot-bottom"></span>
+                </div>
+                <span class="circle circle-bottom"></span>
+            </div>
+            <div class="line line8">
+                <span class="circle circle-top"></span>
+                <div class="dotted">
+                    <span class="dot dot-top"></span>
+                    <span class="dot dot-middle-top"></span>
+                    <span class="dot dot-middle-bottom"></span>
+                    <span class="dot dot-bottom"></span>
+                </div>
+                <span class="circle circle-bottom"></span>
+            </div>
+            <div class="line line9">
+                <span class="circle circle-top"></span>
+                <div class="dotted">
+                    <span class="dot dot-top"></span>
+                    <span class="dot dot-middle-top"></span>
+                    <span class="dot dot-middle-bottom"></span>
+                    <span class="dot dot-bottom"></span>
+                </div>
+                <span class="circle circle-bottom"></span>
+            </div>
+            <div class="line line10">
+                <span class="circle circle-top"></span>
+                <div class="dotted">
+                    <span class="dot dot-top"></span>
+                    <span class="dot dot-middle-top"></span>
+                    <span class="dot dot-middle-bottom"></span>
+                    <span class="dot dot-bottom"></span>
+                </div>
+                <span class="circle circle-bottom"></span>
+            </div>
+            <div class="line line11">
+                <span class="circle circle-top"></span>
+                <div class="dotted">
+                    <span class="dot dot-top"></span>
+                    <span class="dot dot-middle-top"></span>
+                    <span class="dot dot-middle-bottom"></span>
+                    <span class="dot dot-bottom"></span>
+                </div>
+                <span class="circle circle-bottom"></span>
+            </div>
+        </div>
     </div>
 </div>
 
 <script>
-    const wrapper = document.getElementsByClassName('wrapper')[0];
+    const wrapper = document.getElementsByClassName('pre_wrapper')[0];
     const d_title = document.getElementById('d_title');
     const d_subtitle = document.getElementById('d_subtitle');
     const logo_words1 = document.getElementById('logo_words1');
@@ -57,6 +241,10 @@
     const logo_words4 = document.getElementById('logo_words4');
     const powered_words = document.getElementById('powered_words');
     const small_bar = document.getElementById('small_bar');
+    const d_circle = document.getElementById('d_circle');
+    const no_touch = document.getElementById('no_touch');
+    const in_icon = document.getElementById('in');
+    const ring_t = document.getElementById('ring_t');
     wrapper.classList.add('fade');
     d_title.classList.add('show');
     d_subtitle.classList.add('show');
@@ -66,24 +254,168 @@
     logo_words4.classList.add('show');
     powered_words.classList.add('show');
     small_bar.classList.add('show');
+    no_touch.classList.add('fade');
+    in_icon.onmouseover = function () {
+        if (d_circle.classList.contains('q_hover')) {
+            d_circle.classList.remove('q_hover');
+        }
+        d_circle.classList.add('hover');
+        ring_t.classList.add('show');
+        in_icon.classList.add('hover');
+    }
+    in_icon.onmouseout = function () {
+        d_circle.classList.remove('hover');
+        d_circle.classList.add('q_hover');
+        ring_t.classList.remove('show');
+        in_icon.classList.remove('hover');
+    }
+    d_circle.onmouseover = function () {
+        if (d_circle.classList.contains('q_hover')) {
+            d_circle.classList.remove('q_hover');
+        }
+        d_circle.classList.add('hover');
+        ring_t.classList.add('show');
+        in_icon.classList.add('hover');
+    }
+    d_circle.onmouseout = function () {
+        d_circle.classList.remove('hover');
+        d_circle.classList.add('q_hover');
+        ring_t.classList.remove('show');
+        in_icon.classList.remove('hover');
+    }
 
-    const pros = document.getElementsByClassName('pro');
-    const od_types = document.getElementsByClassName('od_type');
-
-    let type = 0
-    for (let i = 0; i < od_types.length; i++) {
-        od_types[i].onclick = function () {
-            type = i;
+    in_icon.onclick = function () {
+        ring_t.classList.remove('show');
+        in_icon.classList.add('fade');
+        d_circle.classList.add('fade');
+        no_touch.classList.add('show');
+        d_title.classList.add('fade');
+        d_subtitle.classList.add('fade');
+        function_box.classList.add('show');
+        function_bt[0].classList.add('show0');
+        functions[0].classList.add('show0');
+        intro[0].classList.add('show0');
+        intro_img[0].classList.add('show0');
+        go[0].classList.add('show0');
+        left_down.classList.add('show');
+        bt_alt.classList.add('show');
+        for (let i = 0; i < alt_opt.length; i++) {
+            alt_opt[i].classList.add('show' + i.toString())
         }
     }
 
-    for (let i = 0; i < pros.length; i++) {
-        pros[i].onclick = function () {
+    const function_box = document.getElementById('function_box');
+    const functions = document.getElementsByClassName('function');
+    const function_bt = document.getElementsByClassName('function_bt');
+    const bt_alt = document.getElementById('bt_alt');
+    const alt_opt = document.getElementsByClassName('alt_opt');
+    const left_down = document.getElementById('left_down');
+    const intro = document.getElementsByClassName('intro');
+    const intro_img = document.getElementsByClassName('intro_img');
+    const od_types = document.getElementsByClassName('od_type');
+    const go = document.getElementsByClassName('go');
+    const loader = document.getElementById('loader');
+    const loader_text = document.getElementById('loader_text');
+
+    let func_flag = [1, 0, 0, 0]
+    let alt_flag = [1, 2, 3]
+    let type = 0;
+    let func_name = ['目标提取', '变化检测', '目标检测', '地物分类'];
+    for (let i = 0; i < alt_opt.length; i++) {
+        alt_opt[i].onclick = function () {
+            let t = alt_flag[i]
+            if (func_flag[t] === 0) {
+                let prev = func_flag.indexOf(1)
+                if (prev > -1) {
+                    func_flag[prev] = 0;
+                    if (function_bt[prev].classList.contains('show0')) {
+                        function_bt[prev].classList.remove('show0');
+                    }
+                    function_bt[prev].classList.remove('show');
+                    function_bt[prev].classList.add('fade');
+
+                    if (functions[prev].classList.contains('show0')) {
+                        functions[prev].classList.remove('show0');
+                    }
+                    functions[prev].classList.remove('show');
+
+                    if (intro[prev].classList.contains('show0')) {
+                        intro[prev].classList.remove('show0');
+                    }
+                    intro[prev].classList.remove('show');
+
+                    if (intro_img[prev].classList.contains('show0')) {
+                        intro_img[prev].classList.remove('show0');
+                    }
+                    intro_img[prev].classList.remove('show');
+
+                    if (go[prev].classList.contains('show0')) {
+                        go[prev].classList.remove('show0');
+                    }
+                    go[prev].classList.remove('show');
+
+                    if (prev === 2) {
+                        for (let i = 0; i < od_types.length; i++) {
+                            od_types[i].classList.remove('show' + i.toString())
+                        }
+                    }
+                }
+                func_flag[t] = 1;
+                alt_flag[i] = prev;
+                alt_opt[i].innerHTML = func_name[prev];
+                function_bt[t].classList.add('show');
+                function_bt[t].classList.remove('fade');
+
+                functions[t].classList.add('show');
+                intro[t].classList.add('show');
+                intro_img[t].classList.add('show');
+                go[t].classList.add('show');
+
+                if (t === 2) {
+                    for (let i = 0; i < od_types.length; i++) {
+                        od_types[i].classList.add('show' + i.toString())
+                    }
+
+                    let flag = [1, 0, 0, 0];
+                    od_types[0].classList.add('clicked');
+                    for (let i = 0; i < od_types.length; i++) {
+                        od_types[i].onclick = function () {
+                            if (flag[i] === 0) {
+                                let prev = flag.indexOf(1)
+                                if (prev > -1) {
+                                    flag[prev] = 0;
+                                    od_types[prev].classList.remove('clicked');
+                                }
+                                flag[i] = 1;
+                                type = i;
+                                od_types[i].classList.add('clicked');
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    for (let i = 0; i < go.length; i++) {
+        go[i].onmousedown = function () {
+            go[i].classList.add('down');
+        }
+        go[i].onmouseup = function () {
+            go[i].classList.remove('down');
+        }
+
+        go[i].onclick = function () {
+            functions[i].classList.remove('show');
+            loader.classList.add('show');
+            loader_text.classList.add('show');
+            let pro_m = func_flag.indexOf(1);
+
             let url = 'http://127.0.0.1:8080/welcome'
             let xhr = new XMLHttpRequest();
             xhr.open('POST', url, true);
             let formData = new FormData();
-            formData.append('pro', i)
+            formData.append('pro', pro_m)
             formData.append('type', type)
             xhr.send(formData)
             xhr.onreadystatechange = function () {
