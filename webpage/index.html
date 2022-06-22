@@ -183,6 +183,10 @@
             }
 
             start_bt.onclick = function () {
+                load_bg.classList.add('show');
+                container.classList.add('show');
+                loading_text.classList.add('show');
+
                 let url = 'http://127.0.0.1:8080/upload'
                 let xhr = new XMLHttpRequest();
                 xhr.open('POST', url, true);

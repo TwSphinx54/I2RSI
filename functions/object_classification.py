@@ -92,16 +92,3 @@ def object_classification(img_path, predictor):
         types[num] = cv.resize(types[num], (1024, 1024), interpolation=cv.INTER_LINEAR)
 
     return res_img, types, scores, period
-
-# model = load_object_classification('../weights/object_classification')
-# res, types, scores, period = object_classification('E:/IDM/Compressed/road_segmentation_ideal/testing/input/img-3.png',
-#                                                    model)
-# # path = "./data/dataset/img_train/"  # 文件夹目录
-# # files = os.listdir(path)  # 得到文件夹下的所有文件名称
-# '''
-# for file in files:  # 遍历文件夹
-#     filepath = path + file
-#     res, types, scores, period = object_classification(filepath, model)
-#     output_path = './result/' + file
-#     cv.imwrite(output_path, res)
-# '''

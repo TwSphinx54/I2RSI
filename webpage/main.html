@@ -65,6 +65,38 @@
     if (type === 0) {
         const oacc = 0.973445;
         const miou = 0.7738609047700991;
+    } else if (type === 1) {
+        [score, period, shape] = elements;
+        const miou = 0.114514;
+        const f1 = 0.1919810;
+        content[2].innerHTML = '模型mIoU';
+        content[3].innerHTML = '模型F1';
+
+        NumAutoPlusAnimation('content', {
+            time: 3500,
+            num: period.toFixed(2),
+            regulator: 50
+        }, 0)
+        if (score.length > 0) {
+            NumAutoPlusAnimation('content', {
+                time: 3500,
+                num: score.toFixed(3),
+                regulator: 50
+            }, 1)
+        } else {
+            document.getElementsByClassName('content')[1].innerHTML = 'Null';
+        }
+        NumAutoPlusAnimation('content', {
+            time: 3500,
+            num: miou.toFixed(2),
+            regulator: 50
+        }, 2)
+        NumAutoPlusAnimation('content', {
+            time: 3500,
+            num: f1.toFixed(2),
+            regulator: 50
+        }, 3)
+
     } else if (type === 2) {
         [loc, score, period, shape] = elements;
         const map = 68.30;
@@ -248,7 +280,149 @@
         ori_img.classList.add('show');
     }
 
-    if (type === 2) {
+    if (type === 1) {
+        ori_img.src = './res/A.png';
+        ori_img.style.opacity = '50%';
+
+        const B_img = document.createElement('img');
+        B_img.className = 'types_img';
+        full_interact.appendChild(B_img);
+        B_img.src = './res/B.png';
+
+        const change = document.createElement('img');
+        change.className = 'types_img';
+        full_interact.appendChild(change);
+        change.src = './res/change.png';
+        change.draggable = false;
+
+        let r = window.innerHeight * 0.95 / shape[0]
+        full_interact.style.width = (r * shape[1]).toString() + 'px'
+        let d_width = window.innerWidth * 0.95 - r * shape[1] - 70;
+        detail.style.width = (d_width).toString() + 'px'
+        let d_height = window.innerHeight * 0.95;
+        detail_img.style.display = 'none';
+
+        const detail_A = document.createElement('div');
+        detail_A.className = 'AB_detail';
+        detail.appendChild(detail_A);
+        detail_A.style.top = '1%';
+
+        const detail_B = document.createElement('div');
+        detail_B.className = 'AB_detail';
+        detail.appendChild(detail_B);
+        detail_B.style.bottom = '1%';
+
+        const detail_A_img = document.createElement('img');
+        detail_A_img.className = 'AB_detail_img';
+        detail_A.appendChild(detail_A_img);
+        detail_A_img.src = './res/A.png';
+
+        const detail_B_img = document.createElement('img');
+        detail_B_img.className = 'AB_detail_img';
+        detail_B.appendChild(detail_B_img);
+        detail_B_img.src = './res/B.png';
+
+        function fit_AB_img(img, w, h) {
+            let ow = d_width;
+            let oh = d_height * 0.485;
+            let rrw = ow / w;
+            let rrh = oh / h;
+            if (rrh >= rrw) {
+                img.style.width = ow.toString() + 'px';
+                img.style.height = (h * rrw).toString() + 'px';
+            } else {
+                img.style.height = oh.toString() + 'px';
+                img.style.width = (w * rrh).toString() + 'px';
+            }
+        }
+
+        fit_AB_img(detail_A_img, shape[0], shape[1]);
+        fit_AB_img(detail_B_img, shape[0], shape[1]);
+
+        let x_s, y_s;
+        let cf = false;
+        full_interact.onmousedown = function (e) {
+            const select_box = document.createElement('div');
+            select_box.id = 'select_box';
+            full_interact.appendChild(select_box);
+
+            x_s = e.clientX;
+            y_s = e.clientY;
+            select_box.style.left = x_s.toString() + 'px';
+            select_box.style.top = y_s.toString() + 'px';
+            cf = true;
+        }
+        full_interact.onmousemove = function (e) {
+            if (cf){
+                const select_box = document.getElementById('select_box');
+                let x_t = e.clientX;
+                let y_t = e.clientY;
+                select_box.style.width = Math.abs(x_t - x_s).toString() + 'px';
+                select_box.style.height = Math.abs(y_t - y_s).toString() + 'px';
+
+                if ((x_t >= x_s) && (y_t < y_s)){
+                    select_box.style.top = y_t.toString() + 'px';
+                }else if (x_t < x_s){
+                    select_box.style.left = x_t.toString() + 'px';
+                    if (y_t < y_s){
+                        select_box.style.top = y_t.toString() + 'px';
+                    }
+                }
+            }
+        }
+        full_interact.onmouseup = function (e) {
+            if (cf) {
+                document.getElementById('select_box').remove();
+                let x_e = e.clientX - (window.innerWidth * 0.975 - r * shape[1]);
+                let y_e = e.clientY - (window.innerHeight * 0.025);
+                let x_ss = x_s - (window.innerWidth * 0.975 - r * shape[1]);
+                let y_ss = y_s - (window.innerHeight * 0.025);
+
+                if ((Math.abs(x_e - x_ss) > 10) && (Math.abs(y_e - y_ss) > 10)) {
+                    let url = 'http://127.0.0.1:8080/result'
+                    let xhr = new XMLHttpRequest();
+                    xhr.open('POST', url, true);
+                    let formData = new FormData();
+                    formData.append('status', 'select')
+                    formData.append('x0', x_ss / r)
+                    formData.append('y0', y_ss / r)
+                    formData.append('x1', x_e / r)
+                    formData.append('y1', y_e / r)
+                    xhr.send(formData)
+                    xhr.onreadystatechange = function () {
+                        if (xhr.readyState === XMLHttpRequest.DONE && xhr.status === 200) {
+                            let size = JSON.parse(xhr.response)
+                            detail_A_img.src = './res/clipA.png?' + Math.random();
+                            detail_B_img.src = './res/clipB.png?' + Math.random();
+                            fit_AB_img(detail_A_img, size.w, size.h);
+                            fit_AB_img(detail_B_img, size.w, size.h);
+                        }
+                    }
+                } else {
+                    if (document.getElementById('select_box')) {
+                        document.getElementById('select_box').remove();
+                    }
+                    detail_A_img.src = './res/A.png';
+                    detail_B_img.src = './res/B.png';
+                    fit_AB_img(detail_A_img, shape[0], shape[1]);
+                    fit_AB_img(detail_B_img, shape[0], shape[1]);
+                }
+            }
+            cf = false;
+        }
+        full_interact.onclick = function () {
+            if (cf) {
+                if (document.getElementById('select_box')) {
+                    document.getElementById('select_box').remove();
+                }
+                cf = false;
+                detail_A_img.src = './res/A.png';
+                detail_B_img.src = './res/B.png';
+                fit_AB_img(detail_A_img, shape[0], shape[1]);
+                fit_AB_img(detail_B_img, shape[0], shape[1]);
+            }
+        }
+    } else if (type === 2) {
         function fit_img(w, h) {
             let rrw = d_width / w;
             let rrh = d_height / h;
@@ -352,7 +526,6 @@
         detail_img.style.display = 'none';
 
 
-
         for (let k = 0; k < 4; k++) {
             const oc_types = document.createElement('div');
             oc_types.className = 'oc_types';
@@ -406,8 +579,7 @@
                         }
                     }
                     flag[k] = 1;
-                }
-                else if (flag[k] === 1) {
+                } else if (flag[k] === 1) {
                     oc_types_score[k].classList.remove('show');
                     oc_types_img[k].classList.remove('focus');
                     type_img[k].classList.remove('focus');
