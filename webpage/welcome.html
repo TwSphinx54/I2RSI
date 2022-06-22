@@ -411,7 +411,11 @@
         }
 
         go[i].onclick = function () {
-            functions[i].classList.remove('show');
+            if (functions[i].classList.contains('show0')) {
+                functions[i].classList.remove('show0')
+            } else {
+                functions[i].classList.remove('show');
+            }
             loader.classList.add('show');
             loader_text.classList.add('show');
             let pro_m = func_flag.indexOf(1);

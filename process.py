@@ -83,8 +83,10 @@ def upload_file():
                 save_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
                 file.save(save_path)
                 if pro == '0':
-                    res, period = object_extraction(save_path, model)
+                    res, roads, score, period = object_extraction(save_path, model)
+                    shape = list(res.shape)
                     cv.imwrite(UPLOAD_FOLDER + '/result.png', res)
+                    cv.imwrite(UPLOAD_FOLDER + '/roads.png', roads)
                 elif pro == '2':
                     res, loc, score, period = object_detection(save_path, model)
                     shape = list(res.shape)
@@ -108,7 +110,7 @@ def main_process():
         elif pro == '3':
             return render_template('main.html', pro=pro, ele=[score, period, shape])
         else:
-            return render_template('main.html', pro=pro)
+            return render_template('main.html', pro=pro, ele=[score, period, shape])
     elif request.method == 'POST':
         status = request.values['status']
         if status == 'clip':

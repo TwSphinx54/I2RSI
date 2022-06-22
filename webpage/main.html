@@ -37,12 +37,12 @@
                 <path d="M14 14l6 6"></path>
             </svg>
         </div>
-        <img src="./res/result.png" id='prev_img' alt="process result">
+        <img src="./res/result.png" id='prev_img' alt="process result" draggable="false">
         <div id="full_interact">
-            <img src="./res/origin.png" id='ori_img' alt="process result">
+            <img src="./res/origin.png" id='ori_img' alt="process result" draggable="false">
         </div>
         <div id="detail">
-            <img src="./res/origin.png" id='detail_img' alt="process result">
+            <img src="./res/origin.png" id='detail_img' alt="process result" draggable="false">
         </div>
     </div>
     <div id='ring'></div>
@@ -63,8 +63,32 @@
     const content = document.getElementsByClassName('content');
     let loc, score, period, shape;
     if (type === 0) {
+        [score, period, shape] = elements;
         const oacc = 0.973445;
         const miou = 0.7738609047700991;
+        content[2].innerHTML = '模型OAcc';
+        content[3].innerHTML = '模型mIoU';
+
+        NumAutoPlusAnimation('content', {
+            time: 3500,
+            num: period.toFixed(2),
+            regulator: 50
+        }, 0)
+        NumAutoPlusAnimation('content', {
+            time: 3500,
+            num: score.toFixed(3),
+            regulator: 50
+        }, 1)
+        NumAutoPlusAnimation('content', {
+            time: 3500,
+            num: oacc.toFixed(2),
+            regulator: 50
+        }, 2)
+        NumAutoPlusAnimation('content', {
+            time: 3500,
+            num: miou.toFixed(2),
+            regulator: 50
+        }, 3)
     } else if (type === 1) {
         [score, period, shape] = elements;
         const miou = 0.114514;
@@ -77,15 +101,11 @@
             num: period.toFixed(2),
             regulator: 50
         }, 0)
-        if (score.length > 0) {
-            NumAutoPlusAnimation('content', {
-                time: 3500,
-                num: score.toFixed(3),
-                regulator: 50
-            }, 1)
-        } else {
-            document.getElementsByClassName('content')[1].innerHTML = 'Null';
-        }
+        NumAutoPlusAnimation('content', {
+            time: 3500,
+            num: score.toFixed(3),
+            regulator: 50
+        }, 1)
         NumAutoPlusAnimation('content', {
             time: 3500,
             num: miou.toFixed(2),
@@ -96,7 +116,6 @@
             num: f1.toFixed(2),
             regulator: 50
         }, 3)
-
     } else if (type === 2) {
         [loc, score, period, shape] = elements;
         const map = 68.30;
@@ -136,7 +155,6 @@
                 n_score.push(score[k]);
             }
         }
-        console.log(n_score)
         const oacc = 0.85;
         const f1 = 0.47;
         content[2].innerHTML = '模型OAcc';
@@ -279,8 +297,44 @@
         detail.classList.add('show');
         ori_img.classList.add('show');
     }
+    if (type === 0) {
+        const obj = document.createElement('img');
+        obj.className = 'types_img';
+        full_interact.appendChild(obj);
+        obj.src = './res/roads.png';
+        obj.draggable = false;
 
-    if (type === 1) {
+        let r = window.innerHeight * 0.95 / shape[0]
+        full_interact.style.width = (r * shape[1]).toString() + 'px'
+        let d_width = window.innerWidth * 0.95 - r * shape[1] - 70;
+        detail.style.width = (d_width).toString() + 'px'
+        let d_height = window.innerHeight * 0.95;
+
+        detail_img.src = './res/roads.png';
+
+        function fit_img(w, h) {
+            let rrw = d_width / w;
+            let rrh = d_height / h;
+            if (rrh >= rrw) {
+                detail_img.style.width = d_width.toString() + 'px';
+                detail_img.style.height = (h * rrw).toString() + 'px';
+                detail_img.style.left = '0';
+                detail_img.style.top = '50%';
+                detail_img.style.marginLeft = '0';
+                detail_img.style.marginTop = '-' + (h * rrw / 2) + 'px';
+            } else {
+                detail_img.style.height = d_height.toString() + 'px';
+                detail_img.style.width = (w * rrh).toString() + 'px';
+                detail_img.style.top = '0';
+                detail_img.style.left = '50%';
+                detail_img.style.marginTop = '0';
+                detail_img.style.marginLeft = '-' + (w * rrh / 2) + 'px';
+            }
+        }
+
+        fit_img(shape[1], shape[0]);
+
+    } else if (type === 1) {
         ori_img.src = './res/A.png';
         ori_img.style.opacity = '50%';
 
@@ -353,18 +407,18 @@
             cf = true;
         }
         full_interact.onmousemove = function (e) {
-            if (cf){
+            if (cf) {
                 const select_box = document.getElementById('select_box');
                 let x_t = e.clientX;
                 let y_t = e.clientY;
                 select_box.style.width = Math.abs(x_t - x_s).toString() + 'px';
                 select_box.style.height = Math.abs(y_t - y_s).toString() + 'px';
 
-                if ((x_t >= x_s) && (y_t < y_s)){
+                if ((x_t >= x_s) && (y_t < y_s)) {
                     select_box.style.top = y_t.toString() + 'px';
-                }else if (x_t < x_s){
+                } else if (x_t < x_s) {
                     select_box.style.left = x_t.toString() + 'px';
-                    if (y_t < y_s){
+                    if (y_t < y_s) {
                         select_box.style.top = y_t.toString() + 'px';
                     }
                 }
@@ -588,6 +642,7 @@
                             type_img[i].classList.remove('blur');
                         }
                     }
+                    flag[k] = 0;
                 }
             }
         }
