@@ -4,6 +4,7 @@ from flask import Flask, flash, request, redirect, url_for, render_template
 from werkzeug.utils import secure_filename
 from functions.object_detection import load_object_detection, object_detection
 from functions.object_classification import load_object_classification, object_classification
+from functions.object_extraction import load_object_extraction, object_extraction
 import cv2 as cv
 
 UPLOAD_FOLDER = './webpage/res'
@@ -31,7 +32,9 @@ def welcome():
     elif request.method == 'POST':
         global pro, model
         pro = request.values['pro']
-        if pro == '2':
+        if pro == '0':
+            model = load_object_detection(WEIGHT_FOLDER + '/object_extraction/')
+        elif pro == '2':
             pro_type = int(request.values['type'])
             model = load_object_detection(WEIGHT_FOLDER + '/object_detection/' + MODELS[pro_type])
         elif pro == '3':
@@ -69,13 +72,19 @@ def upload_file():
                 save_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
                 file.save(save_path)
                 global loc, score, period, shape
-                if pro == '2':
+                if pro == '0':
+                    res, period = object_extraction(save_path, model)
+                    cv.imwrite(UPLOAD_FOLDER + '/result.png', res)
+                elif pro == '2':
                     res, loc, score, period = object_detection(save_path, model)
                     shape = list(res.shape)
                     cv.imwrite(UPLOAD_FOLDER + '/result.png', res)
-                if pro == '3':
-                    res, period = object_classification(save_path, model)
+                elif pro == '3':
+                    res, types, score, period = object_classification(save_path, model)
                     cv.imwrite(UPLOAD_FOLDER + '/result.png', res)
+                    shape = list(res.shape)
+                    for k in range(4):
+                        cv.imwrite(UPLOAD_FOLDER + '/class' + str(k) + '.png', types[k])
                 return redirect(url_for('main_process'))
 
 
@@ -85,7 +94,7 @@ def main_process():
         if pro == '2':
             return render_template('main.html', pro=pro, ele=[loc, score, period, shape])
         elif pro == '3':
-            return render_template('main.html', pro=pro, ele=[period])
+            return render_template('main.html', pro=pro, ele=[score, period, shape])
         else:
             return render_template('main.html', pro=pro)
     elif request.method == 'POST':

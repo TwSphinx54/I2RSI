@@ -15,32 +15,16 @@
         Object Detection
     </div>
     <div class="index">
-        <div class="card">
-            预测耗时
-        </div>
-        <div class="card">
-            平均得分
-        </div>
-        <div class="card">
-            模型mAP
-        </div>
-        <div class="card">
-            模型loss
-        </div>
+        <div class="card">预测耗时</div>
+        <div class="card">平均得分</div>
+        <div class="card">模型mAP</div>
+        <div class="card">模型loss</div>
     </div>
     <div class="index">
-        <div class="content">
-            00
-        </div>
-        <div class="content">
-            00
-        </div>
-        <div class="content">
-            00
-        </div>
-        <div class="content">
-            00
-        </div>
+        <div class="content">00</div>
+        <div class="content">00</div>
+        <div class="content">00</div>
+        <div class="content">00</div>
     </div>
     <div id='res_prev'>
         <div id="back">
@@ -72,15 +56,21 @@
 </div>
 
 <script>
-    const type = {{pro}};
-    const elements = {{ele}};
+    const type = {{ pro }};
+    const elements = {{ ele }};
     // const type = {{pro}};
 
+    const content = document.getElementsByClassName('content');
     let loc, score, period, shape;
-    if (type === 2) {
+    if (type === 0) {
+        const oacc = 0.973445;
+        const miou = 0.7738609047700991;
+    } else if (type === 2) {
         [loc, score, period, shape] = elements;
-        const map = 68.30
-        const loss = 6.3706465
+        const map = 68.30;
+        const loss = 6.3706465;
+        content[2].innerHTML = '模型mAP';
+        content[3].innerHTML = '模型loss';
 
         NumAutoPlusAnimation('content', {
             time: 3500,
@@ -90,7 +80,7 @@
         if (score.length > 0) {
             NumAutoPlusAnimation('content', {
                 time: 3500,
-                num: (score.reduce((a, b) => a + b) / score.length).toFixed(2),
+                num: (score.reduce((a, b) => a + b) / score.length).toFixed(3),
                 regulator: 50
             }, 1)
         } else {
@@ -106,10 +96,44 @@
             num: loss.toFixed(2),
             regulator: 50
         }, 3)
-
     } else if (type === 3) {
-        const [period] = elements;
-        console.log(period);
+        [score, period, shape] = elements;
+        const n_score = [];
+        for (let k = 0; k < score.length; k++) {
+            if (score[k] > 0.01) {
+                n_score.push(score[k]);
+            }
+        }
+        console.log(n_score)
+        const oacc = 0.85;
+        const f1 = 0.47;
+        content[2].innerHTML = '模型OAcc';
+        content[3].innerHTML = '模型F1';
+
+        NumAutoPlusAnimation('content', {
+            time: 3500,
+            num: period.toFixed(2),
+            regulator: 50
+        }, 0)
+        if (n_score.length > 0) {
+            NumAutoPlusAnimation('content', {
+                time: 3500,
+                num: (n_score.reduce((a, b) => a + b) / n_score.length).toFixed(3),
+                regulator: 50
+            }, 1)
+        } else {
+            document.getElementsByClassName('content')[1].innerHTML = 'Null';
+        }
+        NumAutoPlusAnimation('content', {
+            time: 3500,
+            num: oacc.toFixed(2),
+            regulator: 50
+        }, 2)
+        NumAutoPlusAnimation('content', {
+            time: 3500,
+            num: f1.toFixed(2),
+            regulator: 50
+        }, 3)
     }
 
     function NumAutoPlusAnimation(targetEle, options, i) {
@@ -147,7 +171,6 @@
     const f_main_subtitle = document.getElementById('f_main_subtitle');
     const f_title_bg = document.getElementById('f_title_bg');
     const card = document.getElementsByClassName('card');
-    const content = document.getElementsByClassName('content');
     const res_prev = document.getElementById('res_prev');
     const ring = document.getElementById('ring');
     const fullscreen = document.getElementById('fullscreen');
@@ -246,11 +269,11 @@
             }
         }
 
-        let r = window.innerHeight * 0.95 / shape[0]
-        full_interact.style.width = (r * shape[1]).toString() + 'px'
+        let r = window.innerHeight * 0.95 / shape[0];
+        full_interact.style.width = (r * shape[1]).toString() + 'px';
         let d_width = window.innerWidth * 0.95 - r * shape[1] - 70;
-        detail.style.width = (d_width).toString() + 'px'
-        let d_height = window.innerHeight * 0.95
+        detail.style.width = (d_width).toString() + 'px';
+        let d_height = window.innerHeight * 0.95;
         fit_img(shape[1], shape[0]);
 
         let flag = new Uint8Array(loc.length);
@@ -310,6 +333,89 @@
                     bbox[i].innerHTML = '';
                     detail_img.src = './res/origin.png';
                     fit_img(shape[1], shape[0]);
+                }
+            }
+        }
+    } else if (type === 3) {
+        for (let k = 0; k < 4; k++) {
+            const type_img = document.createElement('img');
+            type_img.className = 'types_img';
+            full_interact.appendChild(type_img);
+            type_img.src = './res/class' + k.toString() + '.png';
+        }
+
+        let r = window.innerHeight * 0.95 / shape[0]
+        full_interact.style.width = (r * shape[1]).toString() + 'px'
+        let d_width = window.innerWidth * 0.95 - r * shape[1] - 70;
+        detail.style.width = (d_width).toString() + 'px'
+        let d_height = window.innerHeight * 0.95;
+        detail_img.style.display = 'none';
+
+
+
+        for (let k = 0; k < 4; k++) {
+            const oc_types = document.createElement('div');
+            oc_types.className = 'oc_types';
+            detail.appendChild(oc_types);
+            oc_types.style.width = (d_width / 2.2).toString() + 'px';
+            oc_types.style.height = (d_height / 2.2).toString() + 'px';
+
+            const oc_types_img = document.createElement('img');
+            oc_types_img.className = 'oc_types_img';
+            oc_types.appendChild(oc_types_img);
+            oc_types_img.src = './res/class' + k.toString() + '.png';
+
+            const oc_types_score = document.createElement('div');
+            oc_types_score.className = 'oc_types_score';
+            oc_types.appendChild(oc_types_score);
+            oc_types_score.innerHTML = score[k].toFixed(4);
+            oc_types_score.style.width = (d_width / 2.2).toString() + 'px';
+            oc_types_score.style.height = (d_height / 2.2).toString() + 'px';
+            oc_types_score.style.lineHeight = (d_height / 2.2).toString() + 'px';
+            oc_types_score.style.fontSize = (d_height / 8.8).toString() + 'px';
+            oc_types_score.style.left = ((k % 2) * (d_width / 2.2 + d_width * 0.04)).toString() + 'px';
+            oc_types_score.style.top = (d_height * 0.02 + (k > 1.5) * (d_height / 2.2 + d_height * 0.02)).toString() + 'px';
+        }
+
+        const type_img = document.getElementsByClassName('types_img');
+        const oc_types = document.getElementsByClassName('oc_types');
+        const oc_types_img = document.getElementsByClassName('oc_types_img');
+        const oc_types_score = document.getElementsByClassName('oc_types_score');
+        let flag = [0, 0, 0, 0];
+        for (let k = 0; k < 4; k++) {
+            oc_types[k].onclick = function () {
+                if (flag[k] === 0) {
+                    let prev = flag.indexOf(1);
+                    if (prev > -1) {
+                        oc_types_score[prev].classList.remove('show');
+                        oc_types_img[prev].classList.remove('focus');
+                        type_img[prev].classList.remove('focus');
+                        for (let i = 0; i < 4; i++) {
+                            if (i !== prev) {
+                                type_img[i].classList.remove('blur');
+                            }
+                        }
+                        flag[prev] = 0;
+                    }
+                    oc_types_score[k].classList.add('show');
+                    oc_types_img[k].classList.add('focus');
+                    type_img[k].classList.add('focus');
+                    for (let i = 0; i < 4; i++) {
+                        if (i !== k) {
+                            type_img[i].classList.add('blur');
+                        }
+                    }
+                    flag[k] = 1;
+                }
+                else if (flag[k] === 1) {
+                    oc_types_score[k].classList.remove('show');
+                    oc_types_img[k].classList.remove('focus');
+                    type_img[k].classList.remove('focus');
+                    for (let i = 0; i < 4; i++) {
+                        if (i !== k) {
+                            type_img[i].classList.remove('blur');
+                        }
+                    }
                 }
             }
         }
