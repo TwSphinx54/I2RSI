@@ -15,7 +15,7 @@ MODELS = ['playground', 'aircraft', 'oiltank', 'overpass']
 
 app = Flask(__name__, template_folder="./webpage", static_folder='./webpage', static_url_path="")
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
-pro, model, loc, score, period, shape = [0] * 6
+pro, model, loc, score, period, shape, areas = [0] * 7
 
 
 def allowed_file(filename):
@@ -47,7 +47,7 @@ def welcome():
 
 @app.route('/upload', methods=['GET', 'POST'])
 def upload_file():
-    global loc, score, period, shape
+    global loc, score, period, shape, areas
     if request.method == 'GET':
         return render_template('index.html', pro=pro)
     elif request.method == 'POST':
@@ -83,16 +83,17 @@ def upload_file():
                 save_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
                 file.save(save_path)
                 if pro == '0':
-                    res, roads, score, period = object_extraction(save_path, model)
+                    res, roads, score, period, mixed = object_extraction(save_path, model)
                     shape = list(res.shape)
                     cv.imwrite(UPLOAD_FOLDER + '/result.png', res)
                     cv.imwrite(UPLOAD_FOLDER + '/roads.png', roads)
+                    cv.imwrite(UPLOAD_FOLDER + '/mixed.png', mixed)
                 elif pro == '2':
                     res, loc, score, period = object_detection(save_path, model)
                     shape = list(res.shape)
                     cv.imwrite(UPLOAD_FOLDER + '/result.png', res)
                 elif pro == '3':
-                    res, types, score, period = object_classification(save_path, model)
+                    res, types, score, period, areas = object_classification(save_path, model)
                     cv.imwrite(UPLOAD_FOLDER + '/result.png', res)
                     shape = list(res.shape)
                     for k in range(4):
@@ -108,7 +109,7 @@ def main_process():
         elif pro == '2':
             return render_template('main.html', pro=pro, ele=[loc, score, period, shape])
         elif pro == '3':
-            return render_template('main.html', pro=pro, ele=[score, period, shape])
+            return render_template('main.html', pro=pro, ele=[score, period, shape, areas])
         else:
             return render_template('main.html', pro=pro, ele=[score, period, shape])
     elif request.method == 'POST':
@@ -134,6 +135,17 @@ def main_process():
             cv.imwrite(UPLOAD_FOLDER + '/clipA.png', img_a)
             cv.imwrite(UPLOAD_FOLDER + '/clipB.png', img_b)
             return {'h': img_a.shape[0], 'w': img_a.shape[1]}
+        elif status == 'preview':
+            coord = [request.values['x0'], request.values['y0'], request.values['x1'], request.values['y1']]
+            coord = [math.floor(float(k)) for k in coord]
+            if coord[2] < coord[0]:
+                coord[0], coord[2] = coord[2], coord[0]
+            if coord[3] < coord[1]:
+                coord[1], coord[3] = coord[3], coord[1]
+            img = cv.imread(UPLOAD_FOLDER + '/mixed.png')
+            img = clip_img(img, coord)
+            cv.imwrite(UPLOAD_FOLDER + '/clipP.png', img)
+            return {'h': img.shape[0], 'w': img.shape[1]}
 
 
 if __name__ == '__main__':

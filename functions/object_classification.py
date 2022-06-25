@@ -27,7 +27,7 @@ def split_type(label_map, num):  # 分类别
 
 
 def morphology_open(img):  # 形态学开运算
-    kernel = cv.getStructuringElement(cv.MORPH_RECT, (5, 5))  # OpenCV定义的结构矩形元素
+    kernel = cv.getStructuringElement(cv.MORPH_RECT, (3, 3))  # OpenCV定义的结构矩形元素
     res_img = cv.morphologyEx(img, cv.MORPH_OPEN, kernel)  # 形态学开运算
     return res_img
 
@@ -85,10 +85,12 @@ def object_classification(img_path, predictor):
     Kappa = 0.41
     '''
     scores = [0, 0, 0, 0]
+    areas=[0,0,0,0]
     for num in range(4):
         types[num] = add_alpha(types[num])
         scores[num] = sum(map(sum, score_map[types[num][:, :, 3] == 255])) / (
                 len(score_map[types[num][:, :, 3] == 255]) + 1)
+        areas[num] = len(types[num][types[num][:, :, 3] == 255])
         types[num] = cv.resize(types[num], (1024, 1024), interpolation=cv.INTER_LINEAR)
 
-    return res_img, types, scores, period
+    return res_img, types, scores, period, areas

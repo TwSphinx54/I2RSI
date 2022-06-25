@@ -644,10 +644,6 @@ body {
     position: absolute;
     left: 0;
     top: 0;
-    font-family: Ubuntu, "Microsoft YaHei", serif;
-    font-weight: bold;
-    text-align: center;
-    color: midnightblue;
     opacity: 0;
 
     cursor: default;
@@ -704,4 +700,144 @@ body {
     border: 1px deepskyblue solid;
     background: rgba(0, 191, 255, 0.3);
     position: fixed;
+}
+
+#OE_opts {
+    display: flex;
+    justify-items: left;
+    align-content: baseline;
+
+    position: absolute;
+    bottom: 5px;
+    left: 5px;
+    height: 30px;
+    width: 100%;
+}
+
+.opts {
+    background-color: rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    box-shadow: rgba(142, 142, 142, 0.19) 0px 6px 15px 0px;
+    -webkit-box-shadow: rgba(142, 142, 142, 0.19) 0px 6px 15px 0px;
+    color: rgba(0, 0, 0, 0.6);
+    border-radius: 5px;
+
+    text-align: center;
+    width: 20%;
+    font-family: Ubuntu, "Microsoft YaHei", serif;
+    font-weight: bold;
+    font-size: 20px;
+    line-height: 30px;
+    margin-right: 5px;
+
+    cursor: pointer;
+    animation: ease;
+    transition: all 0.3s;
+    -webkit-transition: all 0.3s;
+}
+
+.opts:hover {
+    background-color: rgba(0, 0, 0, 0.2);
+    border: 1px solid rgba(0, 0, 0, 0.18);
+    color: rgba(255, 255, 255, 0.6);
+}
+
+#OE_infos {
+    display: flex;
+    justify-items: left;
+    align-content: baseline;
+
+    position: absolute;
+    top: 5px;
+    left: 5px;
+    height: 30px;
+    width: 100%;
+}
+
+.infos {
+    background-color: rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    box-shadow: rgba(142, 142, 142, 0.19) 0px 6px 15px 0px;
+    -webkit-box-shadow: rgba(142, 142, 142, 0.19) 0px 6px 15px 0px;
+    color: rgba(0, 0, 0, 0.6);
+    border-radius: 5px;
+
+    text-align: center;
+    width: 20%;
+    font-family: Ubuntu, "Microsoft YaHei", serif;
+    font-weight: bold;
+    font-size: 20px;
+    line-height: 30px;
+    margin-right: 5px;
+}
+
+#OC_infos {
+    display: flex;
+    flex-direction: column;
+    justify-items: left;
+    align-content: baseline;
+
+    position: absolute;
+    top: 5px;
+    left: 5px;
+    height: 50px;
+    width: 100%;
+}
+
+.oc_info {
+    background-color: rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    box-shadow: rgba(142, 142, 142, 0.19) 0px 6px 15px 0px;
+    -webkit-box-shadow: rgba(142, 142, 142, 0.19) 0px 6px 15px 0px;
+    color: rgba(0, 0, 0, 0.6);
+    border-radius: 5px;
+
+    text-align: left;
+    width: 70%;
+    height: 25px;
+    font-family: Ubuntu, "Microsoft YaHei", serif;
+    font-weight: bold;
+    font-size: 20px;
+    line-height: 25px;
+    margin-left: 3px;
+    margin-bottom: 3px;
+    padding-left: 3px;
+
+    cursor: pointer;
+    animation: ease;
+    transition: all 0.3s;
+    -webkit-transition: all 0.3s;
+
+    transform: translateX(60px);
+    opacity: 0;
+}
+
+.oc_info.show0 {
+    transform: none;
+    opacity: 100%;
+    transition-delay: 0s;
+}
+
+.oc_info.show1 {
+    transform: none;
+    opacity: 100%;
+    transition-delay: 0.1s;
+}
+
+.oc_info.show2 {
+    transform: none;
+    opacity: 100%;
+    transition-delay: 0.2s;
+}
+
+.oc_info.show3 {
+    transform: none;
+    opacity: 100%;
+    transition-delay: 0.3s;
 }

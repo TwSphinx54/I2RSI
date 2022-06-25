@@ -56,18 +56,19 @@
 </div>
 
 <script>
+    const url = 'http://127.0.0.1:8080/result'
     const type = {{ pro }};
     const elements = {{ ele }};
     // const type = {{pro}};
 
-    const content = document.getElementsByClassName('content');
-    let loc, score, period, shape;
+    const card = document.getElementsByClassName('card');
+    let loc, score, period, shape, area;
     if (type === 0) {
         [score, period, shape] = elements;
         const oacc = 0.973445;
         const miou = 0.7738609047700991;
-        content[2].innerHTML = '模型OAcc';
-        content[3].innerHTML = '模型mIoU';
+        card[2].innerHTML = '模型OAcc';
+        card[3].innerHTML = '模型mIoU';
 
         NumAutoPlusAnimation('content', {
             time: 3500,
@@ -93,8 +94,8 @@
         [score, period, shape] = elements;
         const miou = 0.114514;
         const f1 = 0.1919810;
-        content[2].innerHTML = '模型mIoU';
-        content[3].innerHTML = '模型F1';
+        card[2].innerHTML = '模型mIoU';
+        card[3].innerHTML = '模型F1';
 
         NumAutoPlusAnimation('content', {
             time: 3500,
@@ -120,8 +121,8 @@
         [loc, score, period, shape] = elements;
         const map = 68.30;
         const loss = 6.3706465;
-        content[2].innerHTML = '模型mAP';
-        content[3].innerHTML = '模型loss';
+        card[2].innerHTML = '模型mAP';
+        card[3].innerHTML = '模型loss';
 
         NumAutoPlusAnimation('content', {
             time: 3500,
@@ -148,7 +149,7 @@
             regulator: 50
         }, 3)
     } else if (type === 3) {
-        [score, period, shape] = elements;
+        [score, period, shape, area] = elements;
         const n_score = [];
         for (let k = 0; k < score.length; k++) {
             if (score[k] > 0.01) {
@@ -157,8 +158,8 @@
         }
         const oacc = 0.85;
         const f1 = 0.47;
-        content[2].innerHTML = '模型OAcc';
-        content[3].innerHTML = '模型F1';
+        card[2].innerHTML = '模型OAcc';
+        card[3].innerHTML = '模型F1';
 
         NumAutoPlusAnimation('content', {
             time: 3500,
@@ -217,10 +218,10 @@
         }, 30);
     }
 
+    const content = document.getElementsByClassName('content');
     const f_main_title = document.getElementById('f_main_title');
     const f_main_subtitle = document.getElementById('f_main_subtitle');
     const f_title_bg = document.getElementById('f_title_bg');
-    const card = document.getElementsByClassName('card');
     const res_prev = document.getElementById('res_prev');
     const ring = document.getElementById('ring');
     const fullscreen = document.getElementById('fullscreen');
@@ -334,6 +335,132 @@
 
         fit_img(shape[1], shape[0]);
 
+        const opts = document.createElement('div');
+        opts.id = 'OE_opts';
+        detail.appendChild(opts);
+        const opt1 = document.createElement('div');
+        opt1.className = 'opts';
+        opts.appendChild(opt1);
+        opt1.innerHTML = '补全';
+        const opt2 = document.createElement('div');
+        opt2.className = 'opts';
+        opts.appendChild(opt2);
+        opt2.innerHTML = '重选';
+
+        opt2.onclick = function () {
+            cf = false;
+            detail_img.src = './res/roads.png';
+            fit_img(shape[1], shape[0]);
+            info1.innerHTML = '分辨率';
+            info2.innerHTML = '缩放倍率';
+            info3.innerHTML = '面积比例';
+        }
+
+        opt1.onclick = function () {
+
+        }
+
+        const infos = document.createElement('div');
+        infos.id = 'OE_infos';
+        detail.appendChild(infos);
+        const info1 = document.createElement('div');
+        info1.className = 'infos';
+        infos.appendChild(info1);
+        info1.innerHTML = '分辨率';
+        const info2 = document.createElement('div');
+        info2.className = 'infos';
+        infos.appendChild(info2);
+        info2.innerHTML = '缩放倍率';
+        const info3 = document.createElement('div');
+        info3.className = 'infos';
+        infos.appendChild(info3);
+        info3.innerHTML = '面积比例';
+
+        let x_s, y_s;
+        let cf = false;
+        full_interact.onmousedown = function (e) {
+            const select_box = document.createElement('div');
+            select_box.id = 'select_box';
+            full_interact.appendChild(select_box);
+
+            x_s = e.clientX;
+            y_s = e.clientY;
+            select_box.style.left = x_s.toString() + 'px';
+            select_box.style.top = y_s.toString() + 'px';
+            cf = true;
+        }
+        full_interact.onmousemove = function (e) {
+            if (cf) {
+                const select_box = document.getElementById('select_box');
+                let x_t = e.clientX;
+                let y_t = e.clientY;
+                select_box.style.width = Math.abs(x_t - x_s).toString() + 'px';
+                select_box.style.height = Math.abs(y_t - y_s).toString() + 'px';
+
+                if ((x_t >= x_s) && (y_t < y_s)) {
+                    select_box.style.top = y_t.toString() + 'px';
+                } else if (x_t < x_s) {
+                    select_box.style.left = x_t.toString() + 'px';
+                    if (y_t < y_s) {
+                        select_box.style.top = y_t.toString() + 'px';
+                    }
+                }
+            }
+        }
+        full_interact.onmouseup = function (e) {
+            if (cf) {
+                document.getElementById('select_box').remove();
+                let x_e = e.clientX - (window.innerWidth * 0.975 - r * shape[1]);
+                let y_e = e.clientY - (window.innerHeight * 0.025);
+                let x_ss = x_s - (window.innerWidth * 0.975 - r * shape[1]);
+                let y_ss = y_s - (window.innerHeight * 0.025);
+
+                if ((Math.abs(x_e - x_ss) > 10) && (Math.abs(y_e - y_ss) > 10)) {
+                    let xhr = new XMLHttpRequest();
+                    xhr.open('POST', url, true);
+                    let formData = new FormData();
+                    formData.append('status', 'preview')
+                    formData.append('x0', x_ss / r)
+                    formData.append('y0', y_ss / r)
+                    formData.append('x1', x_e / r)
+                    formData.append('y1', y_e / r)
+                    xhr.send(formData)
+                    xhr.onreadystatechange = function () {
+                        if (xhr.readyState === XMLHttpRequest.DONE && xhr.status === 200) {
+                            let size = JSON.parse(xhr.response)
+                            detail_img.src = './res/clipP.png?' + Math.random();
+                            fit_img(size.w, size.h);
+                            info1.innerHTML = size.w.toString() + ' × ' + size.h.toString()
+                            info2.innerHTML = Math.min((size.w / shape[0]), (size.h / shape[1])).toFixed(4).toString();
+                            info3.innerHTML = (((size.w * size.h) / (shape[0] * shape[1])) * 100).toFixed(4).toString() + '%';
+                        }
+                    }
+                } else {
+                    if (document.getElementById('select_box')) {
+                        document.getElementById('select_box').remove();
+                    }
+                    detail_img.src = './res/roads.png';
+                    fit_img(shape[1], shape[0]);
+                    info1.innerHTML = '分辨率';
+                    info2.innerHTML = '缩放倍率';
+                    info3.innerHTML = '面积比例';
+                }
+            }
+            cf = false;
+        }
+        full_interact.onclick = function () {
+            if (cf) {
+                if (document.getElementById('select_box')) {
+                    document.getElementById('select_box').remove();
+                }
+                cf = false;
+                detail_img.src = './res/roads.png';
+                fit_img(shape[1], shape[0]);
+                info1.innerHTML = '分辨率';
+                info2.innerHTML = '缩放倍率';
+                info3.innerHTML = '面积比例';
+            }
+        }
     } else if (type === 1) {
         ori_img.src = './res/A.png';
         ori_img.style.opacity = '50%';
@@ -433,7 +560,6 @@
                 let y_ss = y_s - (window.innerHeight * 0.025);
 
                 if ((Math.abs(x_e - x_ss) > 10) && (Math.abs(y_e - y_ss) > 10)) {
-                    let url = 'http://127.0.0.1:8080/result'
                     let xhr = new XMLHttpRequest();
                     xhr.open('POST', url, true);
                     let formData = new FormData();
@@ -538,7 +664,6 @@
                     bbox[i].classList.add('clicked');
                     bbox[i].innerHTML = score[i].toFixed(2);
 
-                    let url = 'http://127.0.0.1:8080/result'
                     let xhr = new XMLHttpRequest();
                     xhr.open('POST', url, true);
                     let formData = new FormData();
@@ -580,6 +705,7 @@
         detail_img.style.display = 'none';
 
 
+        let classes = ['人工用地', '道路','林地','空地'];
         for (let k = 0; k < 4; k++) {
             const oc_types = document.createElement('div');
             oc_types.className = 'oc_types';
@@ -595,19 +721,37 @@
             const oc_types_score = document.createElement('div');
             oc_types_score.className = 'oc_types_score';
             oc_types.appendChild(oc_types_score);
-            oc_types_score.innerHTML = score[k].toFixed(4);
+            // oc_types_score.innerHTML = score[k].toFixed(4);
             oc_types_score.style.width = (d_width / 2.2).toString() + 'px';
             oc_types_score.style.height = (d_height / 2.2).toString() + 'px';
             oc_types_score.style.lineHeight = (d_height / 2.2).toString() + 'px';
             oc_types_score.style.fontSize = (d_height / 8.8).toString() + 'px';
-            oc_types_score.style.left = ((k % 2) * (d_width / 2.2 + d_width * 0.04)).toString() + 'px';
-            oc_types_score.style.top = (d_height * 0.02 + (k > 1.5) * (d_height / 2.2 + d_height * 0.02)).toString() + 'px';
+            oc_types_score.style.left = (d_width * 0.005 +(k % 2) * (d_width / 2.2 + d_width * 0.04)).toString() + 'px';
+            oc_types_score.style.top = (d_height * 0.02 + (k > 1.5) * (d_height / 2.2 + d_height * 0.035)).toString() + 'px';
+
+            const oc_info1 = document.createElement('div');
+            oc_info1.className = 'oc_info';
+            oc_types_score.appendChild(oc_info1);
+            oc_info1.innerHTML = '类别：' + classes[k];
+            const oc_info2 = document.createElement('div');
+            oc_info2.className = 'oc_info';
+            oc_types_score.appendChild(oc_info2);
+            oc_info2.innerHTML = '平均得分：' + score[k].toFixed(4);
+            const oc_info3 = document.createElement('div');
+            oc_info3.className = 'oc_info';
+            oc_types_score.appendChild(oc_info3);
+            oc_info3.innerHTML = '类别面积：' + area[k].toString();
+            const oc_info4 = document.createElement('div');
+            oc_info4.className = 'oc_info';
+            oc_types_score.appendChild(oc_info4);
+            oc_info4.innerHTML = '面积比例：' + (area[k] / (shape[0] * shape[1]) * 100).toFixed(4).toString() + '%';
         }
 
         const type_img = document.getElementsByClassName('types_img');
         const oc_types = document.getElementsByClassName('oc_types');
         const oc_types_img = document.getElementsByClassName('oc_types_img');
         const oc_types_score = document.getElementsByClassName('oc_types_score');
+        const oc_info = document.getElementsByClassName('oc_info');
         let flag = [0, 0, 0, 0];
         for (let k = 0; k < 4; k++) {
             oc_types[k].onclick = function () {
@@ -622,6 +766,9 @@
                                 type_img[i].classList.remove('blur');
                             }
                         }
+                        for (let j = 0; j < 4; j++) {
+                            oc_info[prev * 4 + j].classList.remove('show' + j.toString());
+                        }
                         flag[prev] = 0;
                     }
                     oc_types_score[k].classList.add('show');
@@ -632,6 +779,9 @@
                             type_img[i].classList.add('blur');
                         }
                     }
+                    for (let j = 0; j < 4; j++) {
+                        oc_info[k * 4 + j].classList.add('show' + j.toString());
+                    }
                     flag[k] = 1;
                 } else if (flag[k] === 1) {
                     oc_types_score[k].classList.remove('show');
@@ -641,6 +791,9 @@
                         if (i !== k) {
                             type_img[i].classList.remove('blur');
                         }
+                    }
+                    for (let j = 0; j < 4; j++) {
+                        oc_info[k * 4 + j].classList.remove('show' + j.toString());
                     }
                     flag[k] = 0;
                 }
