@@ -841,3 +841,35 @@ body {
     opacity: 100%;
     transition-delay: 0.3s;
 }
+
+#change_pro {
+    width: 50px;
+    height: 50px;
+    border-radius: 15px;
+    background: var(--main-white);
+    box-shadow: 5px 5px 10px var(--main-white-shadow),
+    -5px -5px 10px var(--main-white-light);
+    position: fixed;
+    z-index: 2;
+    left: 22%;
+    top: 8.8%;
+    color: var(--main-blueGray);
+
+    opacity: 0;
+    transform: translateX(50px);
+
+    cursor: pointer;
+    animation: ease;
+    transition: all 0.3s;
+    -webkit-transition: all 0.3s;
+}
+
+#change_pro:hover{
+    box-shadow: 2px 2px 5px var(--main-white-shadow),
+    -2px -2px 5px var(--main-white-light);
+}
+
+#change_pro.show{
+    opacity: 100%;
+    transform: none;
+}

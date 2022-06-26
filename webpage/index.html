@@ -2,9 +2,17 @@
 <html lang="zh-cmn-Hans">
 <head>
     <meta charset="UTF-8">
-    <title>遥感图像智能解译</title>
+    <title>上传图片 - 遥感图像智能解译</title>
     <link href="styles/style.css" rel="stylesheet" type="text/css">
     <link href="styles/index.css" rel="stylesheet" type="text/css">
+
+    <!-- Mapbox API -->
+    <link rel='stylesheet'
+          href='https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v4.3.0/mapbox-gl-geocoder.css'
+          type='text/css'/>
+    <script src='https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v4.3.0/mapbox-gl-geocoder.min.js'></script>
+    <link href="https://api.mapbox.com/mapbox-gl-js/v2.6.1/mapbox-gl.css" rel="stylesheet">
+    <script src="https://api.mapbox.com/mapbox-gl-js/v2.6.1/mapbox-gl.js"></script>
 </head>
 <body>
 <div id="background">
@@ -15,6 +23,16 @@
     </div>
     <div class="main_subtitle">
         Intelligent Interpretation of Remote Sensing Images
+    </div>
+    <div id="r_pro" title="更换功能">
+        <svg width="80" height="80" viewBox="-3.5 -3.5 50 50" stroke-width="2" stroke="currentColor" fill="none"
+             stroke-linecap="round" stroke-linejoin="round">
+            <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+            <circle cx="5" cy="18" r="2"></circle>
+            <circle cx="19" cy="6" r="2"></circle>
+            <path d="M19 8v5a5 5 0 0 1 -5 5h-3l3 -3m0 6l-3 -3"></path>
+            <path d="M5 16v-5a5 5 0 0 1 5 -5h3l-3 -3m0 6l3 -3"></path>
+        </svg>
     </div>
 
     <input type="file" id="file1" style="display:none; width: 150px;position: fixed;top: 60%;left: 17%;">
@@ -32,6 +50,13 @@
             <path d="M5 19h14a2 2 0 0 0 1.84 -2.75l-7.1 -12.25a2 2 0 0 0 -3.5 0l-7.1 12.25a2 2 0 0 0 1.75 2.75"></path>
         </svg>
     </div>
+    <div id="rs_input">
+        <img id="rs_input_bg" src="./imgs/button_bg.jpeg" alt="button background image" draggable="false">
+        <div id="rs_input_txt">从在线地图选择</div>
+    </div>
+</div>
+<div id="select">
+    <div id="map"></div>
 </div>
 
 <div id="load_bg">
@@ -41,8 +66,24 @@
     </div>
 </div>
 <script>
+    let url = 'http://127.0.0.1:8080/upload'
     const method = {{pro}};
     // const method = {{pro}};
+
+    const r_pro = document.getElementById('r_pro');
+    r_pro.onclick = function () {
+        let xhr = new XMLHttpRequest();
+        xhr.open('POST', url, true);
+        let formData = new FormData();
+        formData.append('status', 'change');
+        xhr.send(formData);
+        xhr.onreadystatechange = function () {
+            if (xhr.readyState === XMLHttpRequest.DONE && xhr.status === 200) {
+                window.location.href = xhr.responseURL
+            }
+        }
+    }
+
     const type_name = ['目标提取', '变化检测', '目标检测', '地物分类'];
     const type_eng = ['Object extraction', 'Change detection', 'Object detection', 'Feature classification'];
 
@@ -58,12 +99,16 @@
     const load_bg = document.getElementById('load_bg');
     const container = document.getElementsByClassName('container')[0];
     const loading_text = document.getElementsByClassName('loading_text')[0];
+    const rs_input = document.getElementById('rs_input');
+    const rs_input_bg = document.getElementById('rs_input_bg');
+    const rs_input_txt = document.getElementById('rs_input_txt');
 
     main_title.innerHTML = type_name[method];
     main_subtitle.innerHTML = type_eng[method];
     main_title.classList.add('show');
     main_subtitle.classList.add('show');
     input1.classList.add('show');
+    rs_input.classList.add('show');
 
 
     let img_ready = [0, 0];
@@ -82,7 +127,198 @@
         input_bt1.click();
     }
 
-    if (method===1) {
+    rs_input.onmouseover = function () {
+        rs_input_bg.classList.add('hover');
+        rs_input_txt.classList.add('hover');
+    }
+    rs_input.onmouseout = function () {
+        rs_input_bg.classList.remove('hover');
+        rs_input_txt.classList.remove('hover');
+    }
+    rs_input.onclick = function () {
+        const select = document.getElementById('select');
+        select.classList.add('show');
+
+        mapboxgl.accessToken = 'pk.eyJ1Ijoic3Nzc3BoaW54IiwiYSI6ImNrbnZnbDR1NzAzNzMyb3Bwbng3amtnMzQifQ.E1nAH_fti0KvB2heCd-cEg';
+        const map = new mapboxgl.Map({
+            container: 'map', // container ID
+            style: 'mapbox://styles/mapbox/satellite-v9', // style URL
+            center: [105, 36], // starting position [lng, lat]
+            zoom: 3.4, // starting zoom
+        });
+        map.addControl(new MapboxGeocoder({
+            accessToken: mapboxgl.accessToken,
+            mapboxgl: mapboxgl
+        }));
+        map.addControl(new mapboxgl.NavigationControl());
+        map.addControl(new mapboxgl.GeolocateControl({
+            positionOptions: {
+                enableHighAccuracy: true
+            },
+            trackUserLocation: true
+        }));
+
+        const select_info = document.createElement('div');
+        select_info.id = 'select_info';
+        select.appendChild(select_info);
+        const select_bt = document.createElement('div');
+        select_bt.id = 'select_bt';
+        select.appendChild(select_bt);
+        select_bt.innerHTML = '开始选择';
+
+        const info1 = document.createElement('div');
+        info1.className = 'info';
+        select_info.appendChild(info1);
+        info1.innerHTML = '经度范围';
+        const info1c = document.createElement('div');
+        info1c.className = 'info_c';
+        select_info.appendChild(info1c);
+        info1c.innerHTML = '';
+        const info2 = document.createElement('div');
+        info2.className = 'info';
+        select_info.appendChild(info2);
+        info2.innerHTML = '纬度范围';
+        const info2c = document.createElement('div');
+        info2c.className = 'info_c';
+        select_info.appendChild(info2c);
+        info2c.innerHTML = '';
+        const info3 = document.createElement('div');
+        info3.className = 'info';
+        select_info.appendChild(info3);
+        info3.innerHTML = '缩放系数';
+        const info3c = document.createElement('div');
+        info3c.className = 'info_c';
+        select_info.appendChild(info3c);
+        info3c.innerHTML = '';
+        const info4 = document.createElement('div');
+        info4.className = 'info';
+        select_info.appendChild(info4);
+        info4.innerHTML = '中心坐标';
+        const info4c = document.createElement('div');
+        info4c.className = 'info_c';
+        select_info.appendChild(info4c);
+        info4c.innerHTML = '';
+        const info5 = document.createElement('div');
+        info5.className = 'info';
+        select_info.appendChild(info5);
+        info5.innerHTML = '图像大小';
+        const info5c = document.createElement('div');
+        info5c.className = 'info_c';
+        select_info.appendChild(info5c);
+        info5c.innerHTML = '';
+
+
+        let flag = false;
+        select_bt.onclick = function () {
+            if (!flag) {
+                select_bt.innerHTML = '取消';
+                select_bt.classList.add('clicked');
+
+                const mask = document.createElement('div');
+                mask.id = 'mask';
+                select.appendChild(mask);
+                flag = true;
+
+                let x_s, y_s, x_t, y_t, left, top;
+                let cf = false;
+                mask.onmousedown = function (e) {
+                    if (document.getElementById('upload_bt')) {
+                        document.getElementById('upload_bt').remove();
+                    }
+                    cf = true;
+                    if (document.getElementById('select_box')) {
+                        document.getElementById('select_box').remove();
+                    }
+
+                    const select_box = document.createElement('div');
+                    select_box.id = 'select_box';
+                    mask.appendChild(select_box);
+
+                    x_s = e.clientX;
+                    y_s = e.clientY;
+                    select_box.style.left = x_s.toString() + 'px';
+                    select_box.style.top = y_s.toString() + 'px';
+                    left = x_s;
+                    top = y_s;
+                }
+                mask.onmousemove = function (e) {
+                    if (cf) {
+                        const select_box = document.getElementById('select_box');
+                        x_t = e.clientX;
+                        y_t = e.clientY;
+                        select_box.style.width = Math.abs(x_t - x_s).toString() + 'px';
+                        select_box.style.height = Math.abs(y_t - y_s).toString() + 'px';
+
+                        if ((x_t >= x_s) && (y_t < y_s)) {
+                            select_box.style.top = y_t.toString() + 'px';
+                            top = y_t;
+                        } else if (x_t < x_s) {
+                            select_box.style.left = x_t.toString() + 'px';
+                            left = x_t;
+                            if (y_t < y_s) {
+                                select_box.style.top = y_t.toString() + 'px';
+                                top = y_t;
+                            }
+                        }
+                    }
+                }
+                mask.onmouseup = function () {
+                    cf = false;
+                    const upload_bt = document.createElement('div');
+                    upload_bt.id = 'upload_bt';
+                    select.appendChild(upload_bt);
+                    upload_bt.innerHTML = '上传';
+
+                    let zoom = map.getZoom();
+                    let bounds = map.getBounds();
+                    let lng = bounds._sw.lng + (bounds._ne.lng - bounds._sw.lng) * ((left + Math.abs(x_t - x_s) / 2) / window.innerWidth);
+                    let lat = bounds._sw.lat + (bounds._ne.lat - bounds._sw.lat) * (1 - ((top + Math.abs(y_t - y_s) / 2) / window.innerHeight));
+
+                    info1c.innerHTML = '<center>' + bounds._sw.lng.toFixed(5).toString() + ' ~ ' + bounds._ne.lng.toFixed(5).toString() + '</center>';
+                    info2c.innerHTML = '<center>' + bounds._sw.lat.toFixed(5).toString() + ' ~ ' + bounds._ne.lat.toFixed(5).toString() + '</center>';
+                    info3c.innerHTML = '<center>' + zoom.toFixed(5).toString() + '</center>';
+                    info4c.innerHTML = '<center>' + lng.toFixed(5).toString() + ' , ' + lat.toFixed(5).toString() + '</center>';
+                    info5c.innerHTML = '<center>' + (Math.abs(x_t - x_s) * 2).toString() + ' × ' + (Math.abs(y_t - y_s) * 2).toString() + '</center>';
+
+                    upload_bt.onclick = function () {
+                        load_bg.classList.add('show');
+                        container.classList.add('show');
+                        loading_text.classList.add('show');
+
+                        let img_url = 'https://api.mapbox.com/styles/v1/mapbox/satellite-v9/static/' +
+                            lng.toString() + ',' + lat.toString() + ',' + zoom +
+                            '/' + Math.abs(x_t - x_s).toString() + 'x' + Math.abs(y_t - y_s).toString() +
+                            '@2x?access_token=' + mapboxgl.accessToken;
+
+                        let xhr = new XMLHttpRequest();
+                        xhr.open('POST', url, true);
+                        let formData = new FormData();
+                        formData.append('status', 'select');
+                        formData.append('img_url', img_url);
+                        xhr.send(formData);
+                        xhr.onreadystatechange = function () {
+                            if (xhr.readyState === XMLHttpRequest.DONE && xhr.status === 200) {
+                                window.location.href = xhr.responseURL
+                            }
+                        }
+                    }
+                }
+            } else {
+                select_bt.innerHTML = '开始选择';
+                select_bt.classList.remove('clicked');
+                if (document.getElementById('upload_bt')) {
+                    document.getElementById('upload_bt').remove();
+                }
+
+                const mask = document.getElementById('mask');
+                mask.remove();
+                flag = false;
+            }
+        }
+    }
+
+    if (method === 1) {
+        rs_input.style.display = 'none';
         input_bt1.addEventListener('change', function () {
             img_prev.classList.add('show');
 
@@ -187,10 +423,10 @@
                 container.classList.add('show');
                 loading_text.classList.add('show');
 
-                let url = 'http://127.0.0.1:8080/upload'
                 let xhr = new XMLHttpRequest();
                 xhr.open('POST', url, true);
                 let formData = new FormData();
+                formData.append('status', 'upload')
                 formData.append('image1', input_bt1.files[0])
                 formData.append('image2', input_bt2.files[0])
                 xhr.send(formData)
@@ -201,8 +437,7 @@
                 }
             }
         })
-    }
-    else{
+    } else {
         input_bt1.addEventListener('change', function () {
             img_prev.classList.add('show');
 
@@ -249,16 +484,16 @@
                 container.classList.add('show');
                 loading_text.classList.add('show');
 
-                let url = 'http://127.0.0.1:8080/upload'
                 let xhr = new XMLHttpRequest();
                 xhr.open('POST', url, true);
                 let formData = new FormData();
-                formData.append('image', input_bt1.files[0])
-                xhr.send(formData)
+                formData.append('status', 'upload');
+                formData.append('image', input_bt1.files[0]);
+                xhr.send(formData);
                 xhr.onreadystatechange = function () {
                     if (xhr.readyState === XMLHttpRequest.DONE && xhr.status === 200) {
                         loading_text.innerHTML = '解译完毕';
-                        window.location.href = xhr.responseURL
+                        window.location.href = xhr.responseURL;
                     }
                 }
             }

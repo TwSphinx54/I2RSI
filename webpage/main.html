@@ -2,7 +2,7 @@
 <html lang="zh-cmn-Hans">
 <head>
     <meta charset="UTF-8">
-    <title>解译结果</title>
+    <title>解译结果 - 遥感图像智能解译</title>
     <link href="styles/style.css" rel="stylesheet" type="text/css">
 </head>
 <body>
@@ -13,6 +13,16 @@
     </div>
     <div id="f_main_subtitle">
         Object Detection
+    </div>
+    <div id="change_pro" title="更换功能">
+        <svg width="80" height="80" viewBox="-3.5 -3.5 50 50" stroke-width="2" stroke="currentColor" fill="none"
+             stroke-linecap="round" stroke-linejoin="round">
+            <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+            <circle cx="5" cy="18" r="2"></circle>
+            <circle cx="19" cy="6" r="2"></circle>
+            <path d="M19 8v5a5 5 0 0 1 -5 5h-3l3 -3m0 6l-3 -3"></path>
+            <path d="M5 16v-5a5 5 0 0 1 5 -5h3l-3 -3m0 6l3 -3"></path>
+        </svg>
     </div>
     <div class="index">
         <div class="card">预测耗时</div>
@@ -46,7 +56,7 @@
         </div>
     </div>
     <div id='ring'></div>
-    <div id='fullscreen'>
+    <div id='fullscreen' title="展开详情">
         <svg width="80" height="80" viewBox="-3 -3 50 50" stroke-width="2" stroke="currentColor" fill="none"
              stroke-linecap="round" stroke-linejoin="round">
             <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
@@ -67,29 +77,30 @@
         [score, period, shape] = elements;
         const oacc = 0.973445;
         const miou = 0.7738609047700991;
+        // card[1].innerHTML = '目标占比';
         card[2].innerHTML = '模型OAcc';
         card[3].innerHTML = '模型mIoU';
 
         NumAutoPlusAnimation('content', {
             time: 3500,
-            num: period.toFixed(2),
+            num: period,
             regulator: 50
-        }, 0)
+        }, 0, 1)
         NumAutoPlusAnimation('content', {
             time: 3500,
-            num: score.toFixed(3),
+            num: score,
             regulator: 50
-        }, 1)
+        }, 1, 3)
         NumAutoPlusAnimation('content', {
             time: 3500,
-            num: oacc.toFixed(2),
+            num: oacc,
             regulator: 50
-        }, 2)
+        }, 2, 2)
         NumAutoPlusAnimation('content', {
             time: 3500,
-            num: miou.toFixed(2),
+            num: miou,
             regulator: 50
-        }, 3)
+        }, 3, 2)
     } else if (type === 1) {
         [score, period, shape] = elements;
         const miou = 0.114514;
@@ -99,24 +110,24 @@
 
         NumAutoPlusAnimation('content', {
             time: 3500,
-            num: period.toFixed(2),
+            num: period,
             regulator: 50
-        }, 0)
+        }, 0, 1)
         NumAutoPlusAnimation('content', {
             time: 3500,
-            num: score.toFixed(3),
+            num: score,
             regulator: 50
-        }, 1)
+        }, 1, 3)
         NumAutoPlusAnimation('content', {
             time: 3500,
-            num: miou.toFixed(2),
+            num: miou,
             regulator: 50
-        }, 2)
+        }, 2, 2)
         NumAutoPlusAnimation('content', {
             time: 3500,
-            num: f1.toFixed(2),
+            num: f1,
             regulator: 50
-        }, 3)
+        }, 3, 2)
     } else if (type === 2) {
         [loc, score, period, shape] = elements;
         const map = 68.30;
@@ -126,28 +137,28 @@
 
         NumAutoPlusAnimation('content', {
             time: 3500,
-            num: period.toFixed(2),
+            num: period,
             regulator: 50
-        }, 0)
+        }, 0, 1)
         if (score.length > 0) {
             NumAutoPlusAnimation('content', {
                 time: 3500,
-                num: (score.reduce((a, b) => a + b) / score.length).toFixed(3),
+                num: (score.reduce((a, b) => a + b) / score.length),
                 regulator: 50
-            }, 1)
+            }, 1, 3)
         } else {
             document.getElementsByClassName('content')[1].innerHTML = 'Null';
         }
         NumAutoPlusAnimation('content', {
             time: 3500,
-            num: map.toFixed(2),
+            num: map,
             regulator: 50
-        }, 2)
+        }, 2, 2)
         NumAutoPlusAnimation('content', {
             time: 3500,
-            num: loss.toFixed(2),
+            num: loss,
             regulator: 50
-        }, 3)
+        }, 3, 2)
     } else if (type === 3) {
         [score, period, shape, area] = elements;
         const n_score = [];
@@ -163,31 +174,31 @@
 
         NumAutoPlusAnimation('content', {
             time: 3500,
-            num: period.toFixed(2),
+            num: period,
             regulator: 50
-        }, 0)
+        }, 0, 1)
         if (n_score.length > 0) {
             NumAutoPlusAnimation('content', {
                 time: 3500,
-                num: (n_score.reduce((a, b) => a + b) / n_score.length).toFixed(3),
+                num: (n_score.reduce((a, b) => a + b) / n_score.length),
                 regulator: 50
-            }, 1)
+            }, 1, 3)
         } else {
             document.getElementsByClassName('content')[1].innerHTML = 'Null';
         }
         NumAutoPlusAnimation('content', {
             time: 3500,
-            num: oacc.toFixed(2),
+            num: oacc,
             regulator: 50
-        }, 2)
+        }, 2, 2)
         NumAutoPlusAnimation('content', {
             time: 3500,
-            num: f1.toFixed(2),
+            num: f1,
             regulator: 50
-        }, 3)
+        }, 3, 2)
     }
 
-    function NumAutoPlusAnimation(targetEle, options, i) {
+    function NumAutoPlusAnimation(targetEle, options, i, fix) {
         options = options || {};
 
         let $this = document.getElementsByClassName(targetEle)[i],
@@ -209,13 +220,27 @@
             }
             //t未发生改变的话就直接返回
             //避免调用text函数，提高DOM性能
-            let t = count.toFixed(2);
+            let t = count.toFixed(fix);
             if (t === initial) return;
 
             initial = t;
 
             $this.innerHTML = initial;
         }, 30);
+    }
+
+    const r_pro = document.getElementById('change_pro');
+        r_pro.onclick = function () {
+        let xhr = new XMLHttpRequest();
+        xhr.open('POST', url, true);
+        let formData = new FormData();
+        formData.append('status', 'change');
+        xhr.send(formData);
+        xhr.onreadystatechange = function () {
+            if (xhr.readyState === XMLHttpRequest.DONE && xhr.status === 200) {
+                window.location.href = xhr.responseURL
+            }
+        }
     }
 
     const content = document.getElementsByClassName('content');
@@ -243,6 +268,7 @@
         f_main_subtitle.classList.add('show');
         f_title_bg.classList.add('show');
         res_prev.classList.add('show');
+        r_pro.classList.add('show');
 
         for (let i = 0; i < card.length; i++) {
             card[i].classList.add('show');
@@ -522,6 +548,7 @@
 
         let x_s, y_s;
         let cf = false;
+        full_interact.style.cursor = 'crosshair';
         full_interact.onmousedown = function (e) {
             const select_box = document.createElement('div');
             select_box.id = 'select_box';

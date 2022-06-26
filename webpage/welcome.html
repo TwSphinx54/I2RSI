@@ -232,6 +232,10 @@
 </div>
 
 <script>
+    let url = 'http://127.0.0.1:8080/welcome'
+    const r_flag = '{{animation}}';
+    // const r_flag = {{flag}};
+
     const wrapper = document.getElementsByClassName('pre_wrapper')[0];
     const d_title = document.getElementById('d_title');
     const d_subtitle = document.getElementById('d_subtitle');
@@ -245,65 +249,6 @@
     const no_touch = document.getElementById('no_touch');
     const in_icon = document.getElementById('in');
     const ring_t = document.getElementById('ring_t');
-    wrapper.classList.add('fade');
-    d_title.classList.add('show');
-    d_subtitle.classList.add('show');
-    logo_words1.classList.add('show');
-    logo_words2.classList.add('show');
-    logo_words3.classList.add('show');
-    logo_words4.classList.add('show');
-    powered_words.classList.add('show');
-    small_bar.classList.add('show');
-    no_touch.classList.add('fade');
-    in_icon.onmouseover = function () {
-        if (d_circle.classList.contains('q_hover')) {
-            d_circle.classList.remove('q_hover');
-        }
-        d_circle.classList.add('hover');
-        ring_t.classList.add('show');
-        in_icon.classList.add('hover');
-    }
-    in_icon.onmouseout = function () {
-        d_circle.classList.remove('hover');
-        d_circle.classList.add('q_hover');
-        ring_t.classList.remove('show');
-        in_icon.classList.remove('hover');
-    }
-    d_circle.onmouseover = function () {
-        if (d_circle.classList.contains('q_hover')) {
-            d_circle.classList.remove('q_hover');
-        }
-        d_circle.classList.add('hover');
-        ring_t.classList.add('show');
-        in_icon.classList.add('hover');
-    }
-    d_circle.onmouseout = function () {
-        d_circle.classList.remove('hover');
-        d_circle.classList.add('q_hover');
-        ring_t.classList.remove('show');
-        in_icon.classList.remove('hover');
-    }
-
-    in_icon.onclick = function () {
-        ring_t.classList.remove('show');
-        in_icon.classList.add('fade');
-        d_circle.classList.add('fade');
-        no_touch.classList.add('show');
-        d_title.classList.add('fade');
-        d_subtitle.classList.add('fade');
-        function_box.classList.add('show');
-        function_bt[0].classList.add('show0');
-        functions[0].classList.add('show0');
-        intro[0].classList.add('show0');
-        intro_img[0].classList.add('show0');
-        go[0].classList.add('show0');
-        left_down.classList.add('show');
-        bt_alt.classList.add('show');
-        for (let i = 0; i < alt_opt.length; i++) {
-            alt_opt[i].classList.add('show' + i.toString())
-        }
-    }
-
     const function_box = document.getElementById('function_box');
     const functions = document.getElementsByClassName('function');
     const function_bt = document.getElementsByClassName('function_bt');
@@ -316,6 +261,93 @@
     const go = document.getElementsByClassName('go');
     const loader = document.getElementById('loader');
     const loader_text = document.getElementById('loader_text');
+
+    if (r_flag === 'False') {
+        wrapper.style.display = 'none';
+        d_circle.style.display = 'none';
+        ring_t.style.display = 'none';
+        in_icon.style.display = 'none';
+        d_title.style.display = 'none';
+        d_subtitle.style.display = 'none';
+
+        logo_words1.classList.add('showF');
+        logo_words2.classList.add('showF');
+        logo_words3.classList.add('showF');
+        logo_words4.classList.add('showF');
+        powered_words.classList.add('showF');
+        small_bar.classList.add('showF');
+        no_touch.classList.add('show');
+        function_box.classList.add('showF');
+        function_bt[0].classList.add('showF');
+        functions[0].classList.add('showF');
+        intro[0].classList.add('showF');
+        intro_img[0].classList.add('showF');
+        go[0].classList.add('showF');
+        left_down.classList.add('showF');
+        bt_alt.classList.add('show');
+        for (let i = 0; i < alt_opt.length; i++) {
+            alt_opt[i].classList.add('showF' + i.toString())
+        }
+    } else {
+        wrapper.classList.add('fade');
+        d_title.classList.add('show');
+        d_subtitle.classList.add('show');
+        logo_words1.classList.add('show');
+        logo_words2.classList.add('show');
+        logo_words3.classList.add('show');
+        logo_words4.classList.add('show');
+        powered_words.classList.add('show');
+        small_bar.classList.add('show');
+        no_touch.classList.add('fade');
+        in_icon.onmouseover = function () {
+            if (d_circle.classList.contains('q_hover')) {
+                d_circle.classList.remove('q_hover');
+            }
+            d_circle.classList.add('hover');
+            ring_t.classList.add('show');
+            in_icon.classList.add('hover');
+        }
+        in_icon.onmouseout = function () {
+            d_circle.classList.remove('hover');
+            d_circle.classList.add('q_hover');
+            ring_t.classList.remove('show');
+            in_icon.classList.remove('hover');
+        }
+        d_circle.onmouseover = function () {
+            if (d_circle.classList.contains('q_hover')) {
+                d_circle.classList.remove('q_hover');
+            }
+            d_circle.classList.add('hover');
+            ring_t.classList.add('show');
+            in_icon.classList.add('hover');
+        }
+        d_circle.onmouseout = function () {
+            d_circle.classList.remove('hover');
+            d_circle.classList.add('q_hover');
+            ring_t.classList.remove('show');
+            in_icon.classList.remove('hover');
+        }
+
+        in_icon.onclick = function () {
+            ring_t.classList.remove('show');
+            in_icon.classList.add('fade');
+            d_circle.classList.add('fade');
+            no_touch.classList.add('show');
+            d_title.classList.add('fade');
+            d_subtitle.classList.add('fade');
+            function_box.classList.add('show');
+            function_bt[0].classList.add('show0');
+            functions[0].classList.add('show0');
+            intro[0].classList.add('show0');
+            intro_img[0].classList.add('show0');
+            go[0].classList.add('show0');
+            left_down.classList.add('show');
+            bt_alt.classList.add('show');
+            for (let i = 0; i < alt_opt.length; i++) {
+                alt_opt[i].classList.add('show' + i.toString())
+            }
+        }
+    }
 
     intro_img[0].style.backgroundImage = 'url("../imgs/OD.jpg")';
     intro_img[0].style.backgroundImage = 'url("../imgs/OD.jpg")';
@@ -336,26 +368,41 @@
                     if (function_bt[prev].classList.contains('show0')) {
                         function_bt[prev].classList.remove('show0');
                     }
+                    if (function_bt[prev].classList.contains('showF')) {
+                        function_bt[prev].classList.remove('showF');
+                    }
                     function_bt[prev].classList.remove('show');
                     function_bt[prev].classList.add('fade');
 
                     if (functions[prev].classList.contains('show0')) {
                         functions[prev].classList.remove('show0');
                     }
+                    if (functions[prev].classList.contains('showF')) {
+                        functions[prev].classList.remove('showF');
+                    }
                     functions[prev].classList.remove('show');
 
                     if (intro[prev].classList.contains('show0')) {
                         intro[prev].classList.remove('show0');
+                    }
+                    if (intro[prev].classList.contains('showF')) {
+                        intro[prev].classList.remove('showF');
                     }
                     intro[prev].classList.remove('show');
 
                     if (intro_img[prev].classList.contains('show0')) {
                         intro_img[prev].classList.remove('show0');
                     }
+                    if (intro_img[prev].classList.contains('showF')) {
+                        intro_img[prev].classList.remove('showF');
+                    }
                     intro_img[prev].classList.remove('show');
 
                     if (go[prev].classList.contains('show0')) {
                         go[prev].classList.remove('show0');
+                    }
+                    if (go[prev].classList.contains('showF')) {
+                        go[prev].classList.remove('showF');
                     }
                     go[prev].classList.remove('show');
 
@@ -413,6 +460,8 @@
         go[i].onclick = function () {
             if (functions[i].classList.contains('show0')) {
                 functions[i].classList.remove('show0')
+            } else if (functions[i].classList.contains('showF')) {
+                functions[i].classList.remove('showF')
             } else {
                 functions[i].classList.remove('show');
             }
@@ -420,7 +469,6 @@
             loader_text.classList.add('show');
             let pro_m = func_flag.indexOf(1);
 
-            let url = 'http://127.0.0.1:8080/welcome'
             let xhr = new XMLHttpRequest();
             xhr.open('POST', url, true);
             let formData = new FormData();

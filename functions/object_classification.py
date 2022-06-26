@@ -68,7 +68,6 @@ def object_classification(img_path, predictor):
     lut[3] = [0, 222, 255]
     lut[4] = [0, 0, 0]
     res_img = lut[label_map]
-    # res_img = cv.resize(res_img, (1024, 1024), interpolation=cv.INTER_LINEAR)
 
     # 拆分图像
     # type0道路, type1树木, type2人造用地, type3空地
@@ -85,12 +84,11 @@ def object_classification(img_path, predictor):
     Kappa = 0.41
     '''
     scores = [0, 0, 0, 0]
-    areas=[0,0,0,0]
+    areas = [0, 0, 0, 0]
     for num in range(4):
         types[num] = add_alpha(types[num])
         scores[num] = sum(map(sum, score_map[types[num][:, :, 3] == 255])) / (
                 len(score_map[types[num][:, :, 3] == 255]) + 1)
         areas[num] = len(types[num][types[num][:, :, 3] == 255])
-        types[num] = cv.resize(types[num], (1024, 1024), interpolation=cv.INTER_LINEAR)
 
     return res_img, types, scores, period, areas

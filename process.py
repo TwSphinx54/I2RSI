@@ -1,7 +1,7 @@
 import math
 import os
 from flask import Flask, flash, request, redirect, url_for, render_template
-from werkzeug.utils import secure_filename
+from urllib.request import urlretrieve
 from functions.object_detection import load_object_detection, object_detection
 from functions.object_classification import load_object_classification, object_classification
 from functions.object_extraction import load_object_extraction, object_extraction
@@ -18,6 +18,8 @@ app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 pro, model, loc, score, period, shape, areas = [0] * 7
 
 
+# animation = True
+
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
@@ -29,7 +31,8 @@ def clip_img(img, coord):
 @app.route('/welcome', methods=['GET', 'POST'])
 def welcome():
     if request.method == 'GET':
-        return render_template('welcome.html')
+        animation = request.args.get('animation')
+        return render_template('welcome.html', animation=animation)
     elif request.method == 'POST':
         global pro, model
         pro = request.values['pro']
@@ -51,37 +54,38 @@ def upload_file():
     if request.method == 'GET':
         return render_template('index.html', pro=pro)
     elif request.method == 'POST':
-        if pro == '1':
-            file1 = request.files['image1']
-            file2 = request.files['image2']
-            # If the user does not select a file, the browser submits an empty file without a filename.
-            if (file1.filename == '') | (file2.filename == ''):
-                flash('No selected file')
-                return redirect(request.url)
-            if file1 and allowed_file(file1.filename) and file2 and allowed_file(file2.filename):
-                filename1 = 'A.png'
-                filename2 = 'B.png'
-                A = os.path.join(app.config['UPLOAD_FOLDER'], filename1)
-                B = os.path.join(app.config['UPLOAD_FOLDER'], filename2)
-                file1.save(A)
-                file2.save(B)
-                res, alpha, score, period = change_detection(A, B, model)
-                shape = list(res.shape)
-                cv.imwrite(UPLOAD_FOLDER + '/result.png', res)
-                cv.imwrite(UPLOAD_FOLDER + '/change.png', alpha)
-                print(period)
-                return redirect(url_for('main_process'))
+        status = request.values['status']
+        if status == 'change':
+            return redirect(url_for('welcome', animation=False))
         else:
-            file = request.files['image']
-            # If the user does not select a file, the browser submits an empty file without a filename.
-            if file.filename == '':
-                flash('No selected file')
-                return redirect(request.url)
-            if file and allowed_file(file.filename):
-                # filename = secure_filename(file.filename)
+            if pro == '1':
+                file1 = request.files['image1']
+                file2 = request.files['image2']
+                # If the user does not select a file, the browser submits an empty file without a filename.
+                if (file1.filename == '') | (file2.filename == ''):
+                    flash('No selected file')
+                    return redirect(request.url)
+                if file1 and allowed_file(file1.filename) and file2 and allowed_file(file2.filename):
+                    filename1 = 'A.png'
+                    filename2 = 'B.png'
+                    A = os.path.join(app.config['UPLOAD_FOLDER'], filename1)
+                    B = os.path.join(app.config['UPLOAD_FOLDER'], filename2)
+                    file1.save(A)
+                    file2.save(B)
+                    res, alpha, score, period = change_detection(A, B, model)
+                    shape = list(res.shape)
+                    cv.imwrite(UPLOAD_FOLDER + '/result.png', res)
+                    cv.imwrite(UPLOAD_FOLDER + '/change.png', alpha)
+                    print(period)
+                    return redirect(url_for('main_process'))
+            else:
                 filename = 'origin.png'
                 save_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
-                file.save(save_path)
+                if status == 'select':
+                    urlretrieve(request.values['img_url'], save_path)
+                else:
+                    file = request.files['image']
+                    file.save(save_path)
                 if pro == '0':
                     res, roads, score, period, mixed = object_extraction(save_path, model)
                     shape = list(res.shape)
@@ -114,7 +118,9 @@ def main_process():
             return render_template('main.html', pro=pro, ele=[score, period, shape])
     elif request.method == 'POST':
         status = request.values['status']
-        if status == 'clip':
+        if status == 'change':
+            return redirect(url_for('welcome', animation=False))
+        elif status == 'clip':
             coord = [request.values['x0'], request.values['y0'], request.values['x1'], request.values['y1']]
             coord = [math.floor(float(k)) for k in coord]
             img = cv.imread(UPLOAD_FOLDER + '/origin.png')

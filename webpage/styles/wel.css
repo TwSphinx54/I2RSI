@@ -312,6 +312,15 @@
     opacity: 100%;
 }
 
+#logo_words1.showF {
+    transform: translateX(0);
+    opacity: 100%;
+
+    transition: all 0.5s;
+    -webkit-transition: all 0.5s;
+}
+
+
 #logo_words2 {
     transform: translateX(100px);
     opacity: 0;
@@ -325,6 +334,14 @@
 #logo_words2.show {
     transform: translateX(0);
     opacity: 100%;
+}
+
+#logo_words2.showF {
+    transform: translateX(0);
+    opacity: 100%;
+
+    transition: all 0.5s 0.1s;
+    -webkit-transition: all 0.5s 0.1s;
 }
 
 #logo_words3 {
@@ -343,6 +360,14 @@
     opacity: 100%;
 }
 
+#logo_words3.showF {
+    transform: translateX(0);
+    opacity: 100%;
+
+    transition: all 0.5s 0.2s;
+    -webkit-transition: all 0.5s 0.2s;
+}
+
 #logo_words4 {
     transform: translateX(100px);
     opacity: 0;
@@ -357,6 +382,14 @@
 #logo_words4.show {
     transform: translateX(0);
     opacity: 100%;
+}
+
+#logo_words4.showF {
+    transform: translateX(0);
+    opacity: 100%;
+
+    transition: all 0.5s 0.3s;
+    -webkit-transition: all 0.5s 0.3s;
 }
 
 #right_down {
@@ -400,6 +433,13 @@
     width: 240px;
 }
 
+#powered_words.showF {
+    width: 240px;
+
+    transition: all 0.5s;
+    -webkit-transition: all 0.5s;
+}
+
 #small_bar {
     background-color: var(--main-blueGray);
     width: 0;
@@ -416,6 +456,14 @@
 #small_bar.show {
     width: 14px;
     right: 0;
+}
+
+#small_bar.showF {
+    width: 14px;
+    right: 0;
+
+    transition: all 0.5s;
+    -webkit-transition: all 0.5s;
 }
 
 #in {
@@ -557,8 +605,18 @@
 
     cursor: default;
     animation: ease-out;
-    transition: all 0.8s 1.5s, height 0.8s 0.7s;
-    -webkit-transition: all 0.8s 1.5s, height 0.8s 0.7s;
+    transition: all 0.8s 1.5s, height 0.8s 0.7s, z-index 0s;
+    -webkit-transition: all 0.8s 1.5s, height 0.8s 0.7s, z-index 0s;
+}
+
+#function_box.showF {
+    z-index: 4;
+    height: 100%;
+
+    cursor: default;
+    animation: ease-out;
+    transition: all 0.8s 0.8s, height 0.8s, z-index 0s;
+    -webkit-transition: all 0.8s 0.8s, height 0.8s, z-index 0s;
 }
 
 .function {
@@ -592,6 +650,14 @@
     transition-delay: 1.5s;
 }
 
+.function.showF {
+    transform: rotateY(-10deg);
+    opacity: 100%;
+    z-index: 1;
+
+    transition-delay: 0.3s;
+}
+
 .function.show {
     transform: rotateY(-10deg);
     opacity: 100%;
@@ -623,6 +689,13 @@
     width: 80%;
 
     transition-delay: 2s;
+}
+
+.intro_img.showF {
+    right: 1%;
+    width: 80%;
+
+    transition-delay: 0.8s;
 }
 
 .intro_img.show {
@@ -668,6 +741,13 @@
     opacity: 100%;
 
     transition-delay: 1.9s;
+}
+
+.intro.showF {
+    width: 350px;
+    opacity: 100%;
+
+    transition-delay: 0.7s;
 }
 
 .intro.show {
@@ -803,6 +883,14 @@
     -webkit-transition: all 0.5s, opacity 0.5s 2s, width 0.5s 2s;
 }
 
+.go.showF {
+    opacity: 100%;
+    width: 150px;
+
+    transition: all 0.5s, opacity 0.5s 1s, width 0.5s 1s;
+    -webkit-transition: all 0.5s, opacity 0.5s 1s, width 0.5s 1s;
+}
+
 .go.show {
     opacity: 100%;
     width: 150px;
@@ -849,6 +937,19 @@
     animation: ease-out;
     transition: all 0.5s 1.5s, height 0.5s 2s, top 0.5s 2s, color 0.2s 2s;
     -webkit-transition: all 0.5s 1.5s, height 0.5s 2s, top 0.5s 2s, color 0.2s 2s;
+}
+
+.function_bt.showF {
+    z-index: 4;
+    width: 20%;
+    height: 20%;
+    top: 30%;
+    color: var(--main-white);
+
+    cursor: default;
+    animation: ease-out;
+    transition: all 0.5s, height 0.5s 0.5s, top 0.5s 0.5s, color 0.2s 0.5s;
+    -webkit-transition: all 0.5s, height 0.5s 0.5s, top 0.5s 0.5s, color 0.2s 0.5s;
 }
 
 .function_bt.show {
@@ -945,6 +1046,27 @@
     -webkit-transition: all 0.5s, transform ease-out 0.5s 2.4s, opacity 0.5s 2.6s;
 }
 
+.alt_opt.showF0 {
+    opacity: 100%;
+    transform: none;
+    transition: all 0.5s, transform ease-out 0.5s 0.2s, opacity 0.5s 0.4s;
+    -webkit-transition: all 0.5s, transform ease-out 0.5s 0.2s, opacity 0.5s 0.4s;
+}
+
+.alt_opt.showF1 {
+    opacity: 100%;
+    transform: none;
+    transition: all 0.5s, transform ease-out 0.5s 0.3s, opacity 0.5s 0.5s;
+    -webkit-transition: all 0.5s, transform ease-out 0.5s 0.3s, opacity 0.5s 0.5s;
+}
+
+.alt_opt.showF2 {
+    opacity: 100%;
+    transform: none;
+    transition: all 0.5s, transform ease-out 0.5s 0.4s, opacity 0.5s 0.6s;
+    -webkit-transition: all 0.5s, transform ease-out 0.5s 0.4s, opacity 0.5s 0.6s;
+}
+
 #left_down {
     position: fixed;
     width: 1000px;
@@ -966,6 +1088,16 @@
     animation: rotate_2 50s linear infinite;
     transition: all 1s ease-out 1.5s;
     -webkit-transition: all 1s ease-out 1.5s;
+}
+
+#left_down.showF {
+    opacity: 100%;
+    z-index: 3;
+
+    cursor: default;
+    animation: rotate_2 50s linear infinite;
+    transition: all 1s ease-out 0.5s;
+    -webkit-transition: all 1s ease-out 0.5s;
 }
 
 @-webkit-keyframes rotate_2 {
