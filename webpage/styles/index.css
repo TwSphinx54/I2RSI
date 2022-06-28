@@ -505,9 +505,9 @@
     padding: 0;
 }
 
-.mapboxgl-ctrl-bottom-left div {
-    display: none !important;
-}
+/*.mapboxgl-ctrl-bottom-left div {*/
+/*    display: none !important;*/
+/*}*/
 
 #select_info {
     background-color: rgba(255, 255, 255, 0.2);
@@ -655,6 +655,7 @@
     position: fixed;
     left: 43%;
     top: 23%;
+    overflow: hidden;
     color: var(--main-blueGray);
 
     cursor: pointer;
@@ -666,4 +667,9 @@
 #r_pro:hover{
     box-shadow: 2px 2px 5px var(--main-white-shadow),
     -2px -2px 5px var(--main-white-light);
+}
+
+#r_pro.move {
+    transform: translateX(-100px);
+    transition-delay: 0.3s;
 }

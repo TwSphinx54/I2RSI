@@ -54,8 +54,9 @@ def split_img(label_map):  # 把label_map 按照类别拆分成4张二值图像�
 
 def object_classification(img_path, predictor):
     # 类别预测
+    img = cv.imread(img_path)
     t1 = time.time()
-    result = predictor.predict(img_file=img_path)
+    result = predictor.predict(img)
     t2 = time.time()
     score_map = result['score_map']  # 得分结果
     label_map = result['label_map']  # 类别结果
@@ -91,4 +92,9 @@ def object_classification(img_path, predictor):
                 len(score_map[types[num][:, :, 3] == 255]) + 1)
         areas[num] = len(types[num][types[num][:, :, 3] == 255])
 
-    return res_img, types, scores, period, areas
+    alpha_channel = np.ones(img.shape[:2], dtype=img.dtype) * 255
+    img_BGRA = cv.merge((img, alpha_channel))
+    for k in range(4):
+        img_BGRA = cv.add(img_BGRA, types[k])
+
+    return res_img, types, scores, period, areas, img_BGRA

@@ -287,7 +287,7 @@
 
                         let img_url = 'https://api.mapbox.com/styles/v1/mapbox/satellite-v9/static/' +
                             lng.toString() + ',' + lat.toString() + ',' + zoom +
-                            '/' + Math.abs(x_t - x_s).toString() + 'x' + Math.abs(y_t - y_s).toString() +
+                            '/' + Math.abs(x_t - x_s).toString() + 'x' + (Math.abs(y_t - y_s)).toString() +
                             '@2x?access_token=' + mapboxgl.accessToken;
 
                         let xhr = new XMLHttpRequest();
@@ -336,6 +336,7 @@
 
             main_title.classList.add('move');
             main_subtitle.classList.add('move');
+            r_pro.classList.add('move');
 
             img_ready[0] = 1;
             input1.classList.remove('hover');
@@ -455,6 +456,7 @@
 
             main_title.classList.add('move');
             main_subtitle.classList.add('move');
+            r_pro.classList.add('move');
 
             img_ready[0] = 1;
             input1.classList.remove('hover');

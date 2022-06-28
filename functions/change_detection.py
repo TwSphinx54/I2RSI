@@ -28,4 +28,12 @@ def change_detection(A, B, predictor):
     bgr_res = lut[result_map]
     alpha = add_alpha(bgr_res)
 
-    return result, alpha, score, period
+    img_a = cv.imread(A)
+    img_b = cv.imread(B)
+    alpha_channel = np.ones(img_a.shape[:2], dtype=img_a.dtype) * 125
+    img_a_al = cv.merge((img_a, alpha_channel))
+    img_b_al = cv.merge((img_b, alpha_channel))
+    mixed = cv.add(img_a_al, img_b_al)
+    mixed = cv.add(mixed, alpha)
+
+    return result, alpha, score, period, mixed

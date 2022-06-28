@@ -853,6 +853,7 @@ body {
     z-index: 2;
     left: 22%;
     top: 8.8%;
+    overflow: hidden;
     color: var(--main-blueGray);
 
     opacity: 0;
@@ -864,12 +865,80 @@ body {
     -webkit-transition: all 0.3s;
 }
 
-#change_pro:hover{
+#change_pro:hover {
     box-shadow: 2px 2px 5px var(--main-white-shadow),
     -2px -2px 5px var(--main-white-light);
 }
 
-#change_pro.show{
+#change_pro.show {
     opacity: 100%;
     transform: none;
+}
+
+#back_pic {
+    width: 50px;
+    height: 50px;
+    border-radius: 15px;
+    background: var(--main-white);
+    box-shadow: 5px 5px 10px var(--main-white-shadow),
+    -5px -5px 10px var(--main-white-light);
+    position: fixed;
+    z-index: 2;
+    left: 26%;
+    top: 8.8%;
+    overflow: hidden;
+    color: var(--main-blueGray);
+
+    opacity: 0;
+    transform: translateX(50px);
+
+    cursor: pointer;
+    animation: ease;
+    transition: all 0.3s;
+    -webkit-transition: all 0.3s;
+}
+
+#back_pic:hover {
+    box-shadow: 2px 2px 5px var(--main-white-shadow),
+    -2px -2px 5px var(--main-white-light);
+}
+
+#back_pic.show {
+    opacity: 100%;
+    transform: none;
+}
+
+#download {
+    background-color: rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    box-shadow: rgba(142, 142, 142, 0.19) 0px 6px 15px 0px;
+    -webkit-box-shadow: rgba(142, 142, 142, 0.19) 0px 6px 15px 0px;
+    color: rgba(0, 0, 0, 0.6);
+    border-radius: 10px;
+
+    width: 50px;
+    height: 50px;
+    position: absolute;
+    z-index: 10;
+    right: 5px;
+    top: 5px;
+
+    opacity: 0;
+
+    cursor: pointer;
+    animation: ease;
+    transition: all 0.3s;
+    -webkit-transition: all 0.3s;
+}
+
+#download:hover {
+    opacity: 100%;
+    background-color: rgba(0, 0, 0, 0.2);
+    color: rgba(255, 255, 255, 0.6);
+}
+
+#download.show {
+    opacity: 100%;
 }

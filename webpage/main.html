@@ -24,6 +24,13 @@
             <path d="M5 16v-5a5 5 0 0 1 5 -5h3l-3 -3m0 6l3 -3"></path>
         </svg>
     </div>
+    <div id="back_pic" title="重新上传">
+        <svg width="80" height="80" viewBox="-3.5 -3.5 50 50" stroke-width="2" stroke="currentColor" fill="none"
+             stroke-linecap="round" stroke-linejoin="round">
+            <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+            <path d="M9 11l-4 4l4 4m-4 -4h11a4 4 0 0 0 0 -8h-1"></path>
+        </svg>
+    </div>
     <div class="index">
         <div class="card">预测耗时</div>
         <div class="card">平均得分</div>
@@ -49,6 +56,15 @@
         </div>
         <img src="./res/result.png" id='prev_img' alt="process result" draggable="false">
         <div id="full_interact">
+            <a id="download" href="./res/result.png" download="download.png" title="下载结果图">
+                <svg width="80" height="80" viewBox="-4 -4 50 50" stroke-width="2" stroke="currentColor" fill="none"
+                     stroke-linecap="round" stroke-linejoin="round">
+                    <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                    <path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2 -2v-2"></path>
+                    <polyline points="7 11 12 16 17 11"></polyline>
+                    <line x1="12" y1="4" x2="12" y2="16"></line>
+                </svg>
+            </a>
             <img src="./res/origin.png" id='ori_img' alt="process result" draggable="false">
         </div>
         <div id="detail">
@@ -230,11 +246,24 @@
     }
 
     const r_pro = document.getElementById('change_pro');
-        r_pro.onclick = function () {
+    r_pro.onclick = function () {
         let xhr = new XMLHttpRequest();
         xhr.open('POST', url, true);
         let formData = new FormData();
         formData.append('status', 'change');
+        xhr.send(formData);
+        xhr.onreadystatechange = function () {
+            if (xhr.readyState === XMLHttpRequest.DONE && xhr.status === 200) {
+                window.location.href = xhr.responseURL
+            }
+        }
+    }
+    const back_p = document.getElementById('back_pic');
+    back_p.onclick = function () {
+        let xhr = new XMLHttpRequest();
+        xhr.open('POST', url, true);
+        let formData = new FormData();
+        formData.append('status', 'back');
         xhr.send(formData);
         xhr.onreadystatechange = function () {
             if (xhr.readyState === XMLHttpRequest.DONE && xhr.status === 200) {
@@ -256,6 +285,7 @@
     const ori_img = document.getElementById('ori_img');
     const detail = document.getElementById('detail');
     const detail_img = document.getElementById('detail_img');
+    const download = document.getElementById('download');
 
     const type_name = ['目标提取', '变化检测', '目标检测', '地物分类'];
     const type_eng = ['Object extraction', 'Change detection', 'Object detection', 'Feature classification'];
@@ -269,6 +299,7 @@
         f_title_bg.classList.add('show');
         res_prev.classList.add('show');
         r_pro.classList.add('show');
+        back_p.classList.add('show');
 
         for (let i = 0; i < card.length; i++) {
             card[i].classList.add('show');
@@ -306,6 +337,13 @@
         }
     }
 
+    full_interact.onmouseover = function () {
+        download.classList.add('show');
+    }
+    full_interact.onmouseout = function () {
+        download.classList.remove('show');
+    }
+
     fullscreen.onmouseover = function () {
         if (mode === 'prev') {
             ring.classList.add('show');
@@ -325,6 +363,8 @@
         ori_img.classList.add('show');
     }
     if (type === 0) {
+        download.href = './res/mixed.png';
+
         const obj = document.createElement('img');
         obj.className = 'types_img';
         full_interact.appendChild(obj);
@@ -488,6 +528,7 @@
             }
         }
     } else if (type === 1) {
+        download.href = './res/mixed.png';
         ori_img.src = './res/A.png';
         ori_img.style.opacity = '50%';
 
@@ -630,6 +671,8 @@
             }
         }
     } else if (type === 2) {
+        download.href = './res/result.png';
+
         function fit_img(w, h) {
             let rrw = d_width / w;
             let rrh = d_height / h;
@@ -717,6 +760,8 @@
             }
         }
     } else if (type === 3) {
+        download.href = './res/mixed.png';
+
         for (let k = 0; k < 4; k++) {
             const type_img = document.createElement('img');
             type_img.className = 'types_img';
@@ -724,15 +769,15 @@
             type_img.src = './res/class' + k.toString() + '.png';
         }
 
-        let r = window.innerHeight * 0.95 / shape[0]
-        full_interact.style.width = (r * shape[1]).toString() + 'px'
+        let r = window.innerHeight * 0.95 / shape[0];
+        full_interact.style.width = (r * shape[1]).toString() + 'px';
         let d_width = window.innerWidth * 0.95 - r * shape[1] - 70;
         detail.style.width = (d_width).toString() + 'px'
         let d_height = window.innerHeight * 0.95;
         detail_img.style.display = 'none';
 
 
-        let classes = ['人工用地', '道路','林地','空地'];
+        let classes = ['人工用地', '道路', '林地', '空地'];
         for (let k = 0; k < 4; k++) {
             const oc_types = document.createElement('div');
             oc_types.className = 'oc_types';
@@ -753,7 +798,7 @@
             oc_types_score.style.height = (d_height / 2.2).toString() + 'px';
             oc_types_score.style.lineHeight = (d_height / 2.2).toString() + 'px';
             oc_types_score.style.fontSize = (d_height / 8.8).toString() + 'px';
-            oc_types_score.style.left = (d_width * 0.005 +(k % 2) * (d_width / 2.2 + d_width * 0.04)).toString() + 'px';
+            oc_types_score.style.left = (d_width * 0.005 + (k % 2) * (d_width / 2.2 + d_width * 0.04)).toString() + 'px';
             oc_types_score.style.top = (d_height * 0.02 + (k > 1.5) * (d_height / 2.2 + d_height * 0.035)).toString() + 'px';
 
             const oc_info1 = document.createElement('div');

@@ -72,11 +72,11 @@ def upload_file():
                     B = os.path.join(app.config['UPLOAD_FOLDER'], filename2)
                     file1.save(A)
                     file2.save(B)
-                    res, alpha, score, period = change_detection(A, B, model)
+                    res, alpha, score, period, mixed = change_detection(A, B, model)
                     shape = list(res.shape)
                     cv.imwrite(UPLOAD_FOLDER + '/result.png', res)
                     cv.imwrite(UPLOAD_FOLDER + '/change.png', alpha)
-                    print(period)
+                    cv.imwrite(UPLOAD_FOLDER + '/mixed.png', mixed)
                     return redirect(url_for('main_process'))
             else:
                 filename = 'origin.png'
@@ -97,8 +97,9 @@ def upload_file():
                     shape = list(res.shape)
                     cv.imwrite(UPLOAD_FOLDER + '/result.png', res)
                 elif pro == '3':
-                    res, types, score, period, areas = object_classification(save_path, model)
+                    res, types, score, period, areas, mixed = object_classification(save_path, model)
                     cv.imwrite(UPLOAD_FOLDER + '/result.png', res)
+                    cv.imwrite(UPLOAD_FOLDER + '/mixed.png', mixed)
                     shape = list(res.shape)
                     for k in range(4):
                         cv.imwrite(UPLOAD_FOLDER + '/class' + str(k) + '.png', types[k])
@@ -120,6 +121,8 @@ def main_process():
         status = request.values['status']
         if status == 'change':
             return redirect(url_for('welcome', animation=False))
+        elif status == 'back':
+            return redirect(url_for('upload_file'))
         elif status == 'clip':
             coord = [request.values['x0'], request.values['y0'], request.values['x1'], request.values['y1']]
             coord = [math.floor(float(k)) for k in coord]
