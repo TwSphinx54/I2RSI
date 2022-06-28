@@ -92,9 +92,12 @@ def object_classification(img_path, predictor):
                 len(score_map[types[num][:, :, 3] == 255]) + 1)
         areas[num] = len(types[num][types[num][:, :, 3] == 255])
 
-    alpha_channel = np.ones(img.shape[:2], dtype=img.dtype) * 255
-    img_BGRA = cv.merge((img, alpha_channel))
-    for k in range(4):
-        img_BGRA = cv.add(img_BGRA, types[k])
+    img_a = img.copy()
+    img_a[label_map == 0] = [0, 0, 255]
+    img_a[label_map == 1] = [142, 255, 30]
+    img_a[label_map == 2] = [255, 0, 60]
+    img_a[label_map == 3] = [0, 222, 255]
+    mixed = cv.addWeighted(img, 0.3, img_a, 0.7, 1)
+    mixed = cv.addWeighted(img, 0.3, mixed, 0.7, 1)
 
-    return res_img, types, scores, period, areas, img_BGRA
+    return res_img, types, scores, period, areas, mixed

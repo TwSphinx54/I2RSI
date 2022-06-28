@@ -17,7 +17,7 @@ def repair(img, o_threshold, h_threshold):
     return img_t.astype(int) * 255
 
 
-def change_detection(A, B, predictor):
+def change_detection(A, B, predictor, o_thres, h_thres):
     t1 = time.time()
     result = predictor.predict(img_file=(A, B))[0]
     t2 = time.time()
@@ -28,7 +28,7 @@ def change_detection(A, B, predictor):
 
     result = np.array(result_map, dtype=np.uint8)
     result = result * 255
-    result = repair(result, 200, 200)
+    result = repair(result, o_thres, h_thres)
     # result = repair(result, 200, 1000)
     label = (result / 255).astype(int)
     score = sum(map(sum, score_map[label == 1])) / (len(score_map[label == 1]) + 1)
@@ -40,10 +40,9 @@ def change_detection(A, B, predictor):
 
     img_a = cv.imread(A)
     img_b = cv.imread(B)
-    alpha_channel = np.ones(img_a.shape[:2], dtype=img_a.dtype) * 125
-    img_a_al = cv.merge((img_a, alpha_channel))
-    img_b_al = cv.merge((img_b, alpha_channel))
-    mixed = cv.add(img_a_al, img_b_al)
-    mixed = cv.add(mixed, alpha)
+    img_bo = img_b.copy()
+    img_b[label == 1] = [1, 0, 255]
+    mixed = cv.addWeighted(img_bo, 0.5, img_b, 0.5, 1)
+    mixed = cv.addWeighted(img_a, 0.5, mixed, 0.5, 1)
 
     return result, alpha, score, period, mixed

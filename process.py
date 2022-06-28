@@ -16,6 +16,7 @@ MODELS = ['playground', 'aircraft', 'oiltank', 'overpass']
 app = Flask(__name__, template_folder="./webpage", static_folder='./webpage', static_url_path="")
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 pro, model, loc, score, period, shape, areas = [0] * 7
+o_threshold, h_threshold = [200, 200]
 
 
 # animation = True
@@ -34,12 +35,14 @@ def welcome():
         animation = request.args.get('animation')
         return render_template('welcome.html', animation=animation)
     elif request.method == 'POST':
-        global pro, model
+        global pro, model, o_threshold, h_threshold
         pro = request.values['pro']
         if pro == '0':
             model = load_object_extraction(WEIGHT_FOLDER + '/object_extraction/')
         elif pro == '1':
             model = load_change_detection(WEIGHT_FOLDER + '/change_detection/')
+            o_threshold = int(request.values['o_thres'])
+            h_threshold = int(request.values['h_thres'])
         elif pro == '2':
             pro_type = int(request.values['type'])
             model = load_object_detection(WEIGHT_FOLDER + '/object_detection/' + MODELS[pro_type])
@@ -72,7 +75,7 @@ def upload_file():
                     B = os.path.join(app.config['UPLOAD_FOLDER'], filename2)
                     file1.save(A)
                     file2.save(B)
-                    res, alpha, score, period, mixed = change_detection(A, B, model)
+                    res, alpha, score, period, mixed = change_detection(A, B, model, o_threshold, h_threshold)
                     shape = list(res.shape)
                     cv.imwrite(UPLOAD_FOLDER + '/result.png', res)
                     cv.imwrite(UPLOAD_FOLDER + '/change.png', alpha)

@@ -28,9 +28,11 @@ def object_extraction(img_path, predictor):
     res_img = lut[label_map]
     roads = add_alpha(res_img)
     scores = sum(map(sum, score_map[label_map == 1])) / (len(score_map[label_map == 1]) + 1)
-    alpha_channel = np.ones(img.shape[:2], dtype=img.dtype) * 255
-    img_BGRA = cv.merge((img, alpha_channel))
-    mixed = cv.add(img_BGRA, roads)
+
+    img_o = img.copy()
+    img[label_map == 1] = [1, 0, 255]
+    mixed = cv.addWeighted(img_o, 0.3, img, 0.7, 1)
+    mixed = cv.addWeighted(img_o, 0.3, mixed, 0.7, 1)
 
     '''
     IoU为0.59，Acc为0.78，Kappa系数为0.72, F1为0.74

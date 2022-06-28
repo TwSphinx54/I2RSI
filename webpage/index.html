@@ -63,6 +63,7 @@
     <div class="container">
         <div class="loader"></div>
         <div class="loading_text">解译中</div>
+        <div class="loading_time"></div>
     </div>
 </div>
 <script>
@@ -99,6 +100,7 @@
     const load_bg = document.getElementById('load_bg');
     const container = document.getElementsByClassName('container')[0];
     const loading_text = document.getElementsByClassName('loading_text')[0];
+    const loading_time = document.getElementsByClassName('loading_time')[0];
     const rs_input = document.getElementById('rs_input');
     const rs_input_bg = document.getElementById('rs_input_bg');
     const rs_input_txt = document.getElementById('rs_input_txt');
@@ -423,6 +425,8 @@
                 load_bg.classList.add('show');
                 container.classList.add('show');
                 loading_text.classList.add('show');
+                loading_time.innerHTML = '处理将会耗时一到两分钟';
+                loading_time.classList.add('show');
 
                 let xhr = new XMLHttpRequest();
                 xhr.open('POST', url, true);
@@ -485,6 +489,10 @@
                 load_bg.classList.add('show');
                 container.classList.add('show');
                 loading_text.classList.add('show');
+                if (method === 0){
+                    loading_time.innerHTML = '处理将会耗时一到两分钟';
+                    loading_time.classList.add('show');
+                }
 
                 let xhr = new XMLHttpRequest();
                 xhr.open('POST', url, true);
