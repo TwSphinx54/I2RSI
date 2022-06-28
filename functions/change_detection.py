@@ -2,12 +2,19 @@ import paddlers as pdrs
 import cv2 as cv
 import numpy as np
 import time
+from skimage import morphology
 from functions.object_classification import add_alpha
 
 
 def load_change_detection(model_path):
     predictor = pdrs.deploy.Predictor(model_path)
     return predictor
+
+
+def repair(img, o_threshold, h_threshold):
+    img_t = morphology.remove_small_objects(img.astype(bool), o_threshold, connectivity=2)
+    img_t = morphology.remove_small_holes(img_t.astype(bool), h_threshold, connectivity=2)
+    return img_t.astype(int) * 255
 
 
 def change_detection(A, B, predictor):
@@ -18,14 +25,17 @@ def change_detection(A, B, predictor):
 
     result_map = result["label_map"]
     score_map = result['score_map']
-    score = sum(map(sum, score_map[result_map == 1])) / (len(score_map[result_map == 1]) + 1)
 
     result = np.array(result_map, dtype=np.uint8)
     result = result * 255
+    result = repair(result, 200, 200)
+    # result = repair(result, 200, 1000)
+    label = (result / 255).astype(int)
+    score = sum(map(sum, score_map[label == 1])) / (len(score_map[label == 1]) + 1)
 
     lut = np.zeros((256, 3), dtype=np.uint8)
     lut[1] = [1, 0, 255]
-    bgr_res = lut[result_map]
+    bgr_res = lut[label]
     alpha = add_alpha(bgr_res)
 
     img_a = cv.imread(A)
