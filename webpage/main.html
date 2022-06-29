@@ -368,7 +368,7 @@
         const obj = document.createElement('img');
         obj.className = 'types_img';
         full_interact.appendChild(obj);
-        obj.src = './res/roads.png';
+        obj.src = './res/roads.png?'+Math.random();
         obj.draggable = false;
 
         let r = window.innerHeight * 0.95 / shape[0]
@@ -377,7 +377,7 @@
         detail.style.width = (d_width).toString() + 'px'
         let d_height = window.innerHeight * 0.95;
 
-        detail_img.src = './res/roads.png';
+        detail_img.src = './res/roads.png?'+Math.random();
 
         function fit_img(w, h) {
             let rrw = d_width / w;
@@ -415,15 +415,11 @@
 
         opt2.onclick = function () {
             cf = false;
-            detail_img.src = './res/roads.png';
+            detail_img.src = './res/roads.png?'+Math.random();
             fit_img(shape[1], shape[0]);
             info1.innerHTML = '分辨率';
             info2.innerHTML = '缩放倍率';
             info3.innerHTML = '面积比例';
-        }
-
-        opt1.onclick = function () {
-
         }
 
         const infos = document.createElement('div');
@@ -433,14 +429,17 @@
         info1.className = 'infos';
         infos.appendChild(info1);
         info1.innerHTML = '分辨率';
+        info1.title = '分辨率';
         const info2 = document.createElement('div');
         info2.className = 'infos';
         infos.appendChild(info2);
         info2.innerHTML = '缩放倍率';
+        info2.title = '缩放倍率';
         const info3 = document.createElement('div');
         info3.className = 'infos';
         infos.appendChild(info3);
         info3.innerHTML = '面积比例';
+        info3.title = '面积比例';
 
         let x_s, y_s;
         let cf = false;
@@ -473,13 +472,14 @@
                 }
             }
         }
+        let x_e, y_e, x_ss, y_ss;
         full_interact.onmouseup = function (e) {
             if (cf) {
                 document.getElementById('select_box').remove();
-                let x_e = e.clientX - (window.innerWidth * 0.975 - r * shape[1]);
-                let y_e = e.clientY - (window.innerHeight * 0.025);
-                let x_ss = x_s - (window.innerWidth * 0.975 - r * shape[1]);
-                let y_ss = y_s - (window.innerHeight * 0.025);
+                x_e = e.clientX - (window.innerWidth * 0.975 - r * shape[1]);
+                y_e = e.clientY - (window.innerHeight * 0.025);
+                x_ss = x_s - (window.innerWidth * 0.975 - r * shape[1]);
+                y_ss = y_s - (window.innerHeight * 0.025);
 
                 if ((Math.abs(x_e - x_ss) > 10) && (Math.abs(y_e - y_ss) > 10)) {
                     let xhr = new XMLHttpRequest();
@@ -505,7 +505,7 @@
                     if (document.getElementById('select_box')) {
                         document.getElementById('select_box').remove();
                     }
-                    detail_img.src = './res/roads.png';
+                    detail_img.src = './res/roads.png?'+Math.random();
                     fit_img(shape[1], shape[0]);
                     info1.innerHTML = '分辨率';
                     info2.innerHTML = '缩放倍率';
@@ -520,11 +520,62 @@
                     document.getElementById('select_box').remove();
                 }
                 cf = false;
-                detail_img.src = './res/roads.png';
+                detail_img.src = './res/roads.png?'+Math.random();
                 fit_img(shape[1], shape[0]);
                 info1.innerHTML = '分辨率';
                 info2.innerHTML = '缩放倍率';
                 info3.innerHTML = '面积比例';
+            }
+        }
+
+        opt1.onclick = function () {
+            let xhr = new XMLHttpRequest();
+            xhr.open('POST', url, true);
+            let formData = new FormData();
+            formData.append('status', 'complete')
+            formData.append('x0', x_ss / r)
+            formData.append('y0', y_ss / r)
+            formData.append('x1', x_e / r)
+            formData.append('y1', y_e / r)
+            xhr.send(formData)
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState === XMLHttpRequest.DONE && xhr.status === 200) {
+                    let size = JSON.parse(xhr.response);
+                    detail_img.src = './res/clipP.png?' + Math.random();
+                    fit_img(size.w, size.h);
+                    info1.innerHTML = size.w.toString() + ' × ' + size.h.toString();
+                    info2.innerHTML = Math.min((size.w / shape[0]), (size.h / shape[1])).toFixed(4).toString();
+                    info3.innerHTML = (((size.w * size.h) / (shape[0] * shape[1])) * 100).toFixed(4).toString() + '%';
+                }
+            }
+
+            const opt3 = document.createElement('div');
+            opt3.className = 'opts';
+            opts.appendChild(opt3);
+            opt3.innerHTML = '确定';
+
+            opt3.onclick = function () {
+                let xhr = new XMLHttpRequest();
+                xhr.open('POST', url, true);
+                let formData = new FormData();
+                formData.append('status', 'confirm')
+                formData.append('x0', x_ss / r)
+                formData.append('y0', y_ss / r)
+                formData.append('x1', x_e / r)
+                formData.append('y1', y_e / r)
+                xhr.send(formData)
+                xhr.onreadystatechange = function () {
+                    if (xhr.readyState === XMLHttpRequest.DONE && xhr.status === 200) {
+                        let size = JSON.parse(xhr.response);
+                        detail_img.src = './res/clipP.png?' + Math.random();
+                        fit_img(size.w, size.h);
+                        info1.innerHTML = size.w.toString() + ' × ' + size.h.toString();
+                        info2.innerHTML = Math.min((size.w / shape[0]), (size.h / shape[1])).toFixed(4).toString();
+                        info3.innerHTML = (((size.w * size.h) / (shape[0] * shape[1])) * 100).toFixed(4).toString() + '%';
+                        obj.src = './res/roads.png?'+Math.random();
+                        opt3.remove();
+                    }
+                }
             }
         }
     } else if (type === 1) {

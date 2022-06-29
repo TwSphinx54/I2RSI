@@ -3,9 +3,10 @@ import os
 from flask import Flask, flash, request, redirect, url_for, render_template
 from urllib.request import urlretrieve
 from functions.object_detection import load_object_detection, object_detection
-from functions.object_classification import load_object_classification, object_classification
-from functions.object_extraction import load_object_extraction, object_extraction
+from functions.object_classification import load_object_classification, object_classification, add_alpha
+from functions.object_extraction import load_object_extraction, object_extraction, oe_mix
 from functions.change_detection import load_change_detection, change_detection
+from functions.road_repair import roads_repair
 import cv2 as cv
 
 UPLOAD_FOLDER = './webpage/res'
@@ -158,6 +159,54 @@ def main_process():
             img = clip_img(img, coord)
             cv.imwrite(UPLOAD_FOLDER + '/clipP.png', img)
             return {'h': img.shape[0], 'w': img.shape[1]}
+        elif status == 'complete':
+            road_o = cv.imread(UPLOAD_FOLDER + '/result.png')
+            road = roads_repair(UPLOAD_FOLDER + '/result.png')
+            coord = [request.values['x0'], request.values['y0'], request.values['x1'], request.values['y1']]
+            coord = [math.floor(float(k)) for k in coord]
+            if coord[2] < coord[0]:
+                coord[0], coord[2] = coord[2], coord[0]
+            if coord[3] < coord[1]:
+                coord[1], coord[3] = coord[3], coord[1]
+            road = clip_img(road, coord)
+            road_oc = clip_img(road_o, coord)
+            ori = cv.imread(UPLOAD_FOLDER + '/origin.png')
+            ori = clip_img(ori, coord)
+            ori_o = ori.copy()
+            ori[road[:, :, 0] == 255] = [142, 255, 30]
+            ori[road_oc[:, :, 0] == 255] = [1, 0, 255]
+            comp_prev = oe_mix(ori_o, ori)
+            cv.imwrite(UPLOAD_FOLDER + '/clipP.png', comp_prev)
+            return {'h': comp_prev.shape[0], 'w': comp_prev.shape[1]}
+        elif status == 'confirm':
+            road = roads_repair(UPLOAD_FOLDER + '/result.png')
+            coord = [request.values['x0'], request.values['y0'], request.values['x1'], request.values['y1']]
+            coord = [math.floor(float(k)) for k in coord]
+            if coord[2] < coord[0]:
+                coord[0], coord[2] = coord[2], coord[0]
+            if coord[3] < coord[1]:
+                coord[1], coord[3] = coord[3], coord[1]
+            road = clip_img(road, coord)
+            ori = cv.imread(UPLOAD_FOLDER + '/origin.png')
+            ori_o = ori.copy()
+            ori_c = clip_img(ori, coord)
+            ori_oc = ori_c.copy()
+            ori_c[road[:, :, 0] == 255] = [1, 0, 255]
+            comp_prev = oe_mix(ori_oc, ori_c)
+            cv.imwrite(UPLOAD_FOLDER + '/clipP.png', comp_prev)
+
+            road_o = cv.imread(UPLOAD_FOLDER + '/result.png')
+            road_o[coord[1]:coord[3], coord[0]:coord[2]] = road
+
+            ori[road_o[:, :, 0] == 255] = [1, 0, 255]
+            comp = oe_mix(ori_o, ori)
+            cv.imwrite(UPLOAD_FOLDER + '/mixed.png', comp)
+
+            road_o[road_o[:, :, 0] == 255] = [1, 0, 255]
+            road_o = add_alpha(road_o)
+            cv.imwrite(UPLOAD_FOLDER + '/roads.png', road_o)
+
+            return {'h': comp_prev.shape[0], 'w': comp_prev.shape[1]}
 
 
 if __name__ == '__main__':

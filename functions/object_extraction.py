@@ -10,6 +10,12 @@ def load_object_extraction(model_path):
     return predictor
 
 
+def oe_mix(img, road):
+    mixed = cv.addWeighted(img, 0.3, road, 0.7, 1)
+    mixed = cv.addWeighted(img, 0.3, mixed, 0.7, 1)
+    return mixed
+
+
 def object_extraction(img_path, predictor):
     img = cv.imread(img_path)
     t1 = time.time()
@@ -31,8 +37,7 @@ def object_extraction(img_path, predictor):
 
     img_o = img.copy()
     img[label_map == 1] = [1, 0, 255]
-    mixed = cv.addWeighted(img_o, 0.3, img, 0.7, 1)
-    mixed = cv.addWeighted(img_o, 0.3, mixed, 0.7, 1)
+    mixed = oe_mix(img_o, img)
 
     '''
     IoU为0.59，Acc为0.78，Kappa系数为0.72, F1为0.74
