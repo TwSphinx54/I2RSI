@@ -32,6 +32,17 @@
             <path d="M9 11l-4 4l4 4m-4 -4h11a4 4 0 0 0 0 -8h-1"></path>
         </svg>
     </div>
+    <a id="report_dl" href="./res/report.txt" download="report.txt" title="下载报告">
+        <svg width="80" height="80" viewBox="-3.5 -3.5 50 50" stroke-width="2" stroke="currentColor" fill="none"
+             stroke-linecap="round" stroke-linejoin="round">
+            <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+            <path d="M14 3v4a1 1 0 0 0 1 1h4"></path>
+            <path d="M17 21h-10a2 2 0 0 1 -2 -2v-14a2 2 0 0 1 2 -2h7l5 5v11a2 2 0 0 1 -2 2z"></path>
+            <line x1="9" y1="17" x2="9" y2="12"></line>
+            <line x1="12" y1="17" x2="12" y2="16"></line>
+            <line x1="15" y1="17" x2="15" y2="14"></line>
+        </svg>
+    </a>
     <div class="multi_content"></div>
     <div class="index">
         <div class="card">预测耗时</div>
@@ -138,6 +149,7 @@
         const detail = document.getElementById('detail');
         const detail_img = document.getElementById('detail_img');
         const download = document.getElementById('download');
+        const report_dl = document.getElementById('report_dl');
 
         const type_name = ['目标提取', '变化检测', '目标检测', '地物分类'];
         const type_eng = ['Object extraction', 'Change detection', 'Object detection', 'Feature classification'];
@@ -156,6 +168,7 @@
         fullscreen.style.display = 'none';
         index[0].style.display = 'none';
         index[1].style.display = 'none';
+        report_dl.style.display = 'none';
 
         let loc, score, period, shape, area;
         let paras;
@@ -918,6 +931,7 @@
         const detail = document.getElementById('detail');
         const detail_img = document.getElementById('detail_img');
         const download = document.getElementById('download');
+        const report_dl = document.getElementById('report_dl');
 
         const type_name = ['目标提取', '变化检测', '目标检测', '地物分类'];
         const type_eng = ['Object extraction', 'Change detection', 'Object detection', 'Feature classification'];
@@ -932,6 +946,7 @@
             res_prev.classList.add('show');
             r_pro.classList.add('show');
             back_p.classList.add('show');
+            report_dl.classList.add('show');
 
             for (let i = 0; i < card.length; i++) {
                 card[i].classList.add('show');

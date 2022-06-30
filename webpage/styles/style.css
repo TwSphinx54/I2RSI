@@ -568,7 +568,7 @@ body {
     opacity: 100%;
 }
 
-#bbox_wrapper{
+#bbox_wrapper {
     width: 100%;
     height: 100%;
     position: absolute;
@@ -934,6 +934,39 @@ body {
 }
 
 #back_pic.show {
+    opacity: 100%;
+    transform: none;
+}
+
+#report_dl {
+    width: 50px;
+    height: 50px;
+    border-radius: 15px;
+    background: var(--main-white);
+    box-shadow: 5px 5px 10px var(--main-white-shadow),
+    -5px -5px 10px var(--main-white-light);
+    position: fixed;
+    z-index: 2;
+    left: 30%;
+    top: 8.8%;
+    overflow: hidden;
+    color: var(--main-blueGray);
+
+    opacity: 0;
+    transform: translateX(50px);
+
+    cursor: pointer;
+    animation: ease;
+    transition: all 0.3s;
+    -webkit-transition: all 0.3s;
+}
+
+#report_dl:hover {
+    box-shadow: 2px 2px 5px var(--main-white-shadow),
+    -2px -2px 5px var(--main-white-light);
+}
+
+#report_dl.show {
     opacity: 100%;
     transform: none;
 }
