@@ -14,6 +14,7 @@
     <div id="f_main_subtitle">
         Object Detection
     </div>
+    <div id="multi_mode">批处理模式</div>
     <div id="change_pro" title="更换功能">
         <svg width="80" height="80" viewBox="-3.5 -3.5 50 50" stroke-width="2" stroke="currentColor" fill="none"
              stroke-linecap="round" stroke-linejoin="round">
@@ -31,6 +32,7 @@
             <path d="M9 11l-4 4l4 4m-4 -4h11a4 4 0 0 0 0 -8h-1"></path>
         </svg>
     </div>
+    <div class="multi_content"></div>
     <div class="index">
         <div class="card">预测耗时</div>
         <div class="card">平均得分</div>
@@ -82,483 +84,1087 @@
 </div>
 
 <script>
-    const url = 'http://127.0.0.1:8080/result'
-    const type = {{ pro }};
+    const url = 'http://127.0.0.1:8080/result';
+    const type = {{pro}};
     const elements = {{ ele }};
+    const multi_f = '{{ multiF }}';
     // const type = {{pro}};
+    // const elements = {{ ele }};
+    // const multi_f = '{{ multiF }}';
 
-    const card = document.getElementsByClassName('card');
-    let loc, score, period, shape, area;
-    if (type === 0) {
-        [score, period, shape] = elements;
-        const oacc = 0.973445;
-        const miou = 0.7738609047700991;
-        // card[1].innerHTML = '目标占比';
-        card[2].innerHTML = '模型OAcc';
-        card[3].innerHTML = '模型mIoU';
-
-        NumAutoPlusAnimation('content', {
-            time: 3500,
-            num: period,
-            regulator: 50
-        }, 0, 1)
-        NumAutoPlusAnimation('content', {
-            time: 3500,
-            num: score,
-            regulator: 50
-        }, 1, 3)
-        NumAutoPlusAnimation('content', {
-            time: 3500,
-            num: oacc,
-            regulator: 50
-        }, 2, 2)
-        NumAutoPlusAnimation('content', {
-            time: 3500,
-            num: miou,
-            regulator: 50
-        }, 3, 2)
-    } else if (type === 1) {
-        [score, period, shape] = elements;
-        const miou = 0.114514;
-        const f1 = 0.1919810;
-        card[2].innerHTML = '模型mIoU';
-        card[3].innerHTML = '模型F1';
-
-        NumAutoPlusAnimation('content', {
-            time: 3500,
-            num: period,
-            regulator: 50
-        }, 0, 1)
-        NumAutoPlusAnimation('content', {
-            time: 3500,
-            num: score,
-            regulator: 50
-        }, 1, 3)
-        NumAutoPlusAnimation('content', {
-            time: 3500,
-            num: miou,
-            regulator: 50
-        }, 2, 2)
-        NumAutoPlusAnimation('content', {
-            time: 3500,
-            num: f1,
-            regulator: 50
-        }, 3, 2)
-    } else if (type === 2) {
-        [loc, score, period, shape] = elements;
-        const map = 68.30;
-        const loss = 6.3706465;
-        card[2].innerHTML = '模型mAP';
-        card[3].innerHTML = '模型loss';
-
-        NumAutoPlusAnimation('content', {
-            time: 3500,
-            num: period,
-            regulator: 50
-        }, 0, 1)
-        if (score.length > 0) {
-            NumAutoPlusAnimation('content', {
-                time: 3500,
-                num: (score.reduce((a, b) => a + b) / score.length),
-                regulator: 50
-            }, 1, 3)
-        } else {
-            document.getElementsByClassName('content')[1].innerHTML = 'Null';
-        }
-        NumAutoPlusAnimation('content', {
-            time: 3500,
-            num: map,
-            regulator: 50
-        }, 2, 2)
-        NumAutoPlusAnimation('content', {
-            time: 3500,
-            num: loss,
-            regulator: 50
-        }, 3, 2)
-    } else if (type === 3) {
-        [score, period, shape, area] = elements;
-        const n_score = [];
-        for (let k = 0; k < score.length; k++) {
-            if (score[k] > 0.01) {
-                n_score.push(score[k]);
+    if (multi_f === 'True') {
+        const num = {{ no }};
+        // const num = {{ no }};
+        const r_pro = document.getElementById('change_pro');
+        r_pro.onclick = function () {
+            let xhr = new XMLHttpRequest();
+            xhr.open('POST', url, true);
+            let formData = new FormData();
+            formData.append('status', 'change');
+            xhr.send(formData);
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState === XMLHttpRequest.DONE && xhr.status === 200) {
+                    window.location.href = xhr.responseURL
+                }
             }
         }
-        const oacc = 0.85;
-        const f1 = 0.47;
-        card[2].innerHTML = '模型OAcc';
-        card[3].innerHTML = '模型F1';
-
-        NumAutoPlusAnimation('content', {
-            time: 3500,
-            num: period,
-            regulator: 50
-        }, 0, 1)
-        if (n_score.length > 0) {
-            NumAutoPlusAnimation('content', {
-                time: 3500,
-                num: (n_score.reduce((a, b) => a + b) / n_score.length),
-                regulator: 50
-            }, 1, 3)
-        } else {
-            document.getElementsByClassName('content')[1].innerHTML = 'Null';
-        }
-        NumAutoPlusAnimation('content', {
-            time: 3500,
-            num: oacc,
-            regulator: 50
-        }, 2, 2)
-        NumAutoPlusAnimation('content', {
-            time: 3500,
-            num: f1,
-            regulator: 50
-        }, 3, 2)
-    }
-
-    function NumAutoPlusAnimation(targetEle, options, i, fix) {
-        options = options || {};
-
-        let $this = document.getElementsByClassName(targetEle)[i],
-            time = options.time || $this.data('time'), //总时间--毫秒为单位
-            finalNum = options.num || $this.data('value'), //要显示的真实数值
-            regulator = options.regulator || 100, //调速器，改变regulator的数值可以调节数字改变的速度
-
-            step = finalNum / (time / regulator),/*每30ms增加的数值--*/
-            count = 0, //计数器
-            initial = 0;
-
-        let timer = setInterval(function () {
-
-            count = count + step;
-
-            if (count >= finalNum) {
-                clearInterval(timer);
-                count = finalNum;
-            }
-            //t未发生改变的话就直接返回
-            //避免调用text函数，提高DOM性能
-            let t = count.toFixed(fix);
-            if (t === initial) return;
-
-            initial = t;
-
-            $this.innerHTML = initial;
-        }, 30);
-    }
-
-    const r_pro = document.getElementById('change_pro');
-    r_pro.onclick = function () {
-        let xhr = new XMLHttpRequest();
-        xhr.open('POST', url, true);
-        let formData = new FormData();
-        formData.append('status', 'change');
-        xhr.send(formData);
-        xhr.onreadystatechange = function () {
-            if (xhr.readyState === XMLHttpRequest.DONE && xhr.status === 200) {
-                window.location.href = xhr.responseURL
+        const back_p = document.getElementById('back_pic');
+        back_p.onclick = function () {
+            let xhr = new XMLHttpRequest();
+            xhr.open('POST', url, true);
+            let formData = new FormData();
+            formData.append('status', 'back');
+            xhr.send(formData);
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState === XMLHttpRequest.DONE && xhr.status === 200) {
+                    window.location.href = xhr.responseURL
+                }
             }
         }
-    }
-    const back_p = document.getElementById('back_pic');
-    back_p.onclick = function () {
-        let xhr = new XMLHttpRequest();
-        xhr.open('POST', url, true);
-        let formData = new FormData();
-        formData.append('status', 'back');
-        xhr.send(formData);
-        xhr.onreadystatechange = function () {
-            if (xhr.readyState === XMLHttpRequest.DONE && xhr.status === 200) {
-                window.location.href = xhr.responseURL
-            }
-        }
-    }
 
-    const content = document.getElementsByClassName('content');
-    const f_main_title = document.getElementById('f_main_title');
-    const f_main_subtitle = document.getElementById('f_main_subtitle');
-    const f_title_bg = document.getElementById('f_title_bg');
-    const res_prev = document.getElementById('res_prev');
-    const ring = document.getElementById('ring');
-    const fullscreen = document.getElementById('fullscreen');
-    const back = document.getElementById('back');
-    const prev_img = document.getElementById('prev_img');
-    const full_interact = document.getElementById('full_interact');
-    const ori_img = document.getElementById('ori_img');
-    const detail = document.getElementById('detail');
-    const detail_img = document.getElementById('detail_img');
-    const download = document.getElementById('download');
+        const index = document.getElementsByClassName('index');
+        const f_main_title = document.getElementById('f_main_title');
+        const f_main_subtitle = document.getElementById('f_main_subtitle');
+        const f_title_bg = document.getElementById('f_title_bg');
+        const multi_mode = document.getElementById('multi_mode');
+        const multi_content = document.getElementsByClassName('multi_content');
+        const res_prev = document.getElementById('res_prev');
+        const ring = document.getElementById('ring');
+        const fullscreen = document.getElementById('fullscreen');
+        const back = document.getElementById('back');
+        const prev_img = document.getElementById('prev_img');
+        const full_interact = document.getElementById('full_interact');
+        const ori_img = document.getElementById('ori_img');
+        const detail = document.getElementById('detail');
+        const detail_img = document.getElementById('detail_img');
+        const download = document.getElementById('download');
 
-    const type_name = ['目标提取', '变化检测', '目标检测', '地物分类'];
-    const type_eng = ['Object extraction', 'Change detection', 'Object detection', 'Feature classification'];
-    let mode = 'prev';
+        const type_name = ['目标提取', '变化检测', '目标检测', '地物分类'];
+        const type_eng = ['Object extraction', 'Change detection', 'Object detection', 'Feature classification'];
 
-    function show(type) {
         f_main_title.innerHTML = type_name[type];
         f_main_subtitle.innerHTML = type_eng[type];
         f_main_title.classList.add('show');
         f_main_subtitle.classList.add('show');
         f_title_bg.classList.add('show');
-        res_prev.classList.add('show');
         r_pro.classList.add('show');
         back_p.classList.add('show');
+        multi_mode.classList.add('show');
+        multi_content[0].classList.add('show');
+        res_prev.classList.add('multi');
+        ring.style.display = 'none';
+        fullscreen.style.display = 'none';
+        index[0].style.display = 'none';
+        index[1].style.display = 'none';
 
-        for (let i = 0; i < card.length; i++) {
-            card[i].classList.add('show');
-            content[i].classList.add('show');
-        }
-    }
+        let loc, score, period, shape, area;
+        let paras;
+        for (let k = 0; k <= num; k++) {
+            const multi_res = document.createElement('div');
+            multi_res.className = 'multi_res';
+            multi_content[0].appendChild(multi_res);
+            multi_res.style.backgroundImage = 'url("./res/multi/' + k.toString() + '/result.png")';
 
-    show(type);
-
-    for (let i = 0; i < content.length; i++) {
-        content[i].onmouseover = function () {
-            content[i].classList.add('blur');
-            content[i].classList.add('focus');
-            card[i].classList.add('focus');
-        }
-        content[i].onmouseout = function () {
-            content[i].classList.remove('focus');
-            card[i].classList.remove('focus');
-        }
-    }
-
-    res_prev.onmouseover = function () {
-        if (mode === 'prev') {
-            ring.classList.add('show');
-            fullscreen.classList.add('show');
-        }
-    }
-    res_prev.onmouseout = function () {
-        if (mode === 'prev') {
-            ring.classList.remove('show');
-            fullscreen.classList.remove('show');
-            if (fullscreen.classList.contains('clicked')) {
-                fullscreen.classList.remove('clicked');
+            for (let i = 0; i < 4; i++) {
+                const multi_info = document.createElement('div');
+                multi_info.className = 'multi_info';
+                multi_res.appendChild(multi_info);
             }
         }
-    }
-
-    full_interact.onmouseover = function () {
-        download.classList.add('show');
-    }
-    full_interact.onmouseout = function () {
-        download.classList.remove('show');
-    }
-
-    fullscreen.onmouseover = function () {
-        if (mode === 'prev') {
-            ring.classList.add('show');
-            fullscreen.classList.add('show');
-        }
-    }
-    fullscreen.onclick = function () {
-        mode = 'detail';
-        fullscreen.classList.add('clicked');
-        ring.classList.remove('show');
-        fullscreen.classList.remove('show');
-        res_prev.classList.add('full')
-        prev_img.classList.add('fade');
-        full_interact.classList.add('show')
-        back.classList.add('show');
-        detail.classList.add('show');
-        ori_img.classList.add('show');
-    }
-    if (type === 0) {
-        download.href = './res/mixed.png';
-
-        const obj = document.createElement('img');
-        obj.className = 'types_img';
-        full_interact.appendChild(obj);
-        obj.src = './res/roads.png?'+Math.random();
-        obj.draggable = false;
-
-        let r = window.innerHeight * 0.95 / shape[0]
-        full_interact.style.width = (r * shape[1]).toString() + 'px'
-        let d_width = window.innerWidth * 0.95 - r * shape[1] - 70;
-        detail.style.width = (d_width).toString() + 'px'
-        let d_height = window.innerHeight * 0.95;
-
-        detail_img.src = './res/roads.png?'+Math.random();
-
-        function fit_img(w, h) {
-            let rrw = d_width / w;
-            let rrh = d_height / h;
-            if (rrh >= rrw) {
-                detail_img.style.width = d_width.toString() + 'px';
-                detail_img.style.height = (h * rrw).toString() + 'px';
-                detail_img.style.left = '0';
-                detail_img.style.top = '50%';
-                detail_img.style.marginLeft = '0';
-                detail_img.style.marginTop = '-' + (h * rrw / 2) + 'px';
-            } else {
-                detail_img.style.height = d_height.toString() + 'px';
-                detail_img.style.width = (w * rrh).toString() + 'px';
-                detail_img.style.top = '0';
-                detail_img.style.left = '50%';
-                detail_img.style.marginTop = '0';
-                detail_img.style.marginLeft = '-' + (w * rrh / 2) + 'px';
+        const multi_info = document.getElementsByClassName('multi_info');
+        const multi_res = document.getElementsByClassName('multi_res');
+        for (let k = 0; k <= num; k++) {
+            multi_res[k].onmouseover = function () {
+                let para_url = './res/multi/' + k.toString() + '/paras.json';
+                let xhr = new XMLHttpRequest();
+                xhr.open('GET', para_url);
+                xhr.send(null);
+                xhr.onload = function () {
+                    if (xhr.readyState === XMLHttpRequest.DONE && xhr.status === 200) {
+                        paras = JSON.parse(xhr.responseText);
+                        period = paras.period;
+                        score = paras.score;
+                        multi_info[k * 4].innerHTML = '预测耗时：' + period.toFixed(3).toString();
+                        if (type === 0) {
+                            multi_info[k * 4 + 1].innerHTML = '平均得分：' + score.toFixed(3).toString();
+                            const oacc = 0.973445;
+                            const miou = 0.7738609047700991;
+                            multi_info[k * 4 + 2].innerHTML = '模型OAcc：' + oacc.toFixed(3).toString();
+                            multi_info[k * 4 + 3].innerHTML = '模型mIoU：' + miou.toFixed(3).toString();
+                        } else if (type === 2) {
+                            multi_info[k * 4 + 1].innerHTML = '平均得分：' + (score.reduce((a, b) => a + b) / score.length).toFixed(3).toString();
+                            const map = 68.30;
+                            const loss = 6.3706465;
+                            multi_info[k * 4 + 2].innerHTML = '模型mAP：' + map.toFixed(3).toString();
+                            multi_info[k * 4 + 3].innerHTML = '模型loss：' + loss.toFixed(3).toString();
+                        } else if (type === 3) {
+                            const n_score = [];
+                            for (let k = 0; k < score.length; k++) {
+                                if (score[k] > 0.01) {
+                                    n_score.push(score[k]);
+                                }
+                            }
+                            multi_info[k * 4 + 1].innerHTML = '平均得分：' + (n_score.reduce((a, b) => a + b) / n_score.length).toFixed(3).toString();
+                            const oacc = 0.85;
+                            const f1 = 0.47;
+                            multi_info[k * 4 + 2].innerHTML = '模型OAcc：' + oacc.toFixed(3).toString();
+                            multi_info[k * 4 + 3].innerHTML = '模型F1：' + f1.toFixed(3).toString();
+                        }
+                        for (let i = 0; i < 4; i++) {
+                            multi_info[k * 4 + i].classList.add('show' + i.toString());
+                        }
+                    }
+                }
             }
-        }
+            multi_res[k].onmouseout = function () {
+                for (let i = 0; i < 4; i++) {
+                    multi_info[k * 4 + i].classList.remove('show' + i.toString());
+                }
+            }
+            multi_res[k].onclick = function () {
+                let para_url = './res/multi/' + k.toString() + '/paras.json';
+                let xhr_f = new XMLHttpRequest();
+                xhr_f.open('GET', para_url);
+                xhr_f.send(null);
+                xhr_f.onload = function () {
+                    if (xhr_f.readyState === XMLHttpRequest.DONE && xhr_f.status === 200) {
+                        paras = JSON.parse(xhr_f.responseText);
+                        period = paras.period;
+                        score = paras.score;
+                        shape = paras.shape;
+                        if (type === 2) {
+                            loc = paras.loc;
+                        } else if (type === 3) {
+                            area = paras.areas;
+                        }
+                    }
+                }
+                let xhr = new XMLHttpRequest();
+                xhr.open('POST', url, true);
+                let formData = new FormData();
+                formData.append('status', 'move');
+                formData.append('no', k.toString());
+                xhr.send(formData);
+                xhr.onreadystatechange = function () {
+                    if (xhr.readyState === XMLHttpRequest.DONE && xhr.status === 200) {
+                        res_prev.classList.add('full_M');
+                        prev_img.classList.add('fade');
+                        full_interact.classList.add('show')
+                        back.classList.add('show');
+                        detail.classList.add('show');
+                        ori_img.classList.add('show');
+                        ori_img.src = './res/origin.png?' + Math.random();
+                        detail_img.src = './res/origin.png?' + Math.random();
 
-        fit_img(shape[1], shape[0]);
+                        if (type === 0) {
+                            download.href = './res/mixed.png';
 
-        const opts = document.createElement('div');
-        opts.id = 'OE_opts';
-        detail.appendChild(opts);
-        const opt1 = document.createElement('div');
-        opt1.className = 'opts';
-        opts.appendChild(opt1);
-        opt1.innerHTML = '补全';
-        const opt2 = document.createElement('div');
-        opt2.className = 'opts';
-        opts.appendChild(opt2);
-        opt2.innerHTML = '重选';
+                            const obj = document.createElement('img');
+                            obj.className = 'types_img';
+                            full_interact.appendChild(obj);
+                            obj.src = './res/roads.png?' + Math.random();
+                            obj.draggable = false;
 
-        opt2.onclick = function () {
-            cf = false;
-            detail_img.src = './res/roads.png?'+Math.random();
-            fit_img(shape[1], shape[0]);
-            info1.innerHTML = '分辨率';
-            info2.innerHTML = '缩放倍率';
-            info3.innerHTML = '面积比例';
-        }
+                            let r = window.innerHeight * 0.95 / shape[0]
+                            full_interact.style.width = (r * shape[1]).toString() + 'px'
+                            let d_width = window.innerWidth * 0.95 - r * shape[1] - 70;
+                            detail.style.width = (d_width).toString() + 'px'
+                            let d_height = window.innerHeight * 0.95;
 
-        const infos = document.createElement('div');
-        infos.id = 'OE_infos';
-        detail.appendChild(infos);
-        const info1 = document.createElement('div');
-        info1.className = 'infos';
-        infos.appendChild(info1);
-        info1.innerHTML = '分辨率';
-        info1.title = '分辨率';
-        const info2 = document.createElement('div');
-        info2.className = 'infos';
-        infos.appendChild(info2);
-        info2.innerHTML = '缩放倍率';
-        info2.title = '缩放倍率';
-        const info3 = document.createElement('div');
-        info3.className = 'infos';
-        infos.appendChild(info3);
-        info3.innerHTML = '面积比例';
-        info3.title = '面积比例';
+                            detail_img.src = './res/roads.png?' + Math.random();
 
-        let x_s, y_s;
-        let cf = false;
-        full_interact.onmousedown = function (e) {
-            const select_box = document.createElement('div');
-            select_box.id = 'select_box';
-            full_interact.appendChild(select_box);
+                            function fit_img(w, h) {
+                                let rrw = d_width / w;
+                                let rrh = d_height / h;
+                                if (rrh >= rrw) {
+                                    detail_img.style.width = d_width.toString() + 'px';
+                                    detail_img.style.height = (h * rrw).toString() + 'px';
+                                    detail_img.style.left = '0';
+                                    detail_img.style.top = '50%';
+                                    detail_img.style.marginLeft = '0';
+                                    detail_img.style.marginTop = '-' + (h * rrw / 2) + 'px';
+                                } else {
+                                    detail_img.style.height = d_height.toString() + 'px';
+                                    detail_img.style.width = (w * rrh).toString() + 'px';
+                                    detail_img.style.top = '0';
+                                    detail_img.style.left = '50%';
+                                    detail_img.style.marginTop = '0';
+                                    detail_img.style.marginLeft = '-' + (w * rrh / 2) + 'px';
+                                }
+                            }
 
-            x_s = e.clientX;
-            y_s = e.clientY;
-            select_box.style.left = x_s.toString() + 'px';
-            select_box.style.top = y_s.toString() + 'px';
-            cf = true;
-        }
-        full_interact.onmousemove = function (e) {
-            if (cf) {
-                const select_box = document.getElementById('select_box');
-                let x_t = e.clientX;
-                let y_t = e.clientY;
-                select_box.style.width = Math.abs(x_t - x_s).toString() + 'px';
-                select_box.style.height = Math.abs(y_t - y_s).toString() + 'px';
+                            fit_img(shape[1], shape[0]);
 
-                if ((x_t >= x_s) && (y_t < y_s)) {
-                    select_box.style.top = y_t.toString() + 'px';
-                } else if (x_t < x_s) {
-                    select_box.style.left = x_t.toString() + 'px';
-                    if (y_t < y_s) {
-                        select_box.style.top = y_t.toString() + 'px';
+                            const opts = document.createElement('div');
+                            opts.id = 'OE_opts';
+                            detail.appendChild(opts);
+                            const opt1 = document.createElement('div');
+                            opt1.className = 'opts';
+                            opts.appendChild(opt1);
+                            opt1.innerHTML = '补全';
+                            const opt2 = document.createElement('div');
+                            opt2.className = 'opts';
+                            opts.appendChild(opt2);
+                            opt2.innerHTML = '重选';
+
+                            opt2.onclick = function () {
+                                cf = false;
+                                detail_img.src = './res/roads.png?' + Math.random();
+                                fit_img(shape[1], shape[0]);
+                                info1.innerHTML = '分辨率';
+                                info2.innerHTML = '缩放倍率';
+                                info3.innerHTML = '面积比例';
+                            }
+
+                            const infos = document.createElement('div');
+                            infos.id = 'OE_infos';
+                            detail.appendChild(infos);
+                            const info1 = document.createElement('div');
+                            info1.className = 'infos';
+                            infos.appendChild(info1);
+                            info1.innerHTML = '分辨率';
+                            info1.title = '分辨率';
+                            const info2 = document.createElement('div');
+                            info2.className = 'infos';
+                            infos.appendChild(info2);
+                            info2.innerHTML = '缩放倍率';
+                            info2.title = '缩放倍率';
+                            const info3 = document.createElement('div');
+                            info3.className = 'infos';
+                            infos.appendChild(info3);
+                            info3.innerHTML = '面积比例';
+                            info3.title = '面积比例';
+
+                            let x_s, y_s;
+                            let cf = false;
+                            full_interact.onmousedown = function (e) {
+                                const select_box = document.createElement('div');
+                                select_box.id = 'select_box';
+                                full_interact.appendChild(select_box);
+
+                                x_s = e.clientX;
+                                y_s = e.clientY;
+                                select_box.style.left = x_s.toString() + 'px';
+                                select_box.style.top = y_s.toString() + 'px';
+                                cf = true;
+                            }
+                            full_interact.onmousemove = function (e) {
+                                if (cf) {
+                                    const select_box = document.getElementById('select_box');
+                                    let x_t = e.clientX;
+                                    let y_t = e.clientY;
+                                    select_box.style.width = Math.abs(x_t - x_s).toString() + 'px';
+                                    select_box.style.height = Math.abs(y_t - y_s).toString() + 'px';
+
+                                    if ((x_t >= x_s) && (y_t < y_s)) {
+                                        select_box.style.top = y_t.toString() + 'px';
+                                    } else if (x_t < x_s) {
+                                        select_box.style.left = x_t.toString() + 'px';
+                                        if (y_t < y_s) {
+                                            select_box.style.top = y_t.toString() + 'px';
+                                        }
+                                    }
+                                }
+                            }
+                            let x_e, y_e, x_ss, y_ss;
+                            full_interact.onmouseup = function (e) {
+                                if (cf) {
+                                    document.getElementById('select_box').remove();
+                                    x_e = e.clientX - (window.innerWidth * 0.975 - r * shape[1]);
+                                    y_e = e.clientY - (window.innerHeight * 0.025);
+                                    x_ss = x_s - (window.innerWidth * 0.975 - r * shape[1]);
+                                    y_ss = y_s - (window.innerHeight * 0.025);
+
+                                    if ((Math.abs(x_e - x_ss) > 10) && (Math.abs(y_e - y_ss) > 10)) {
+                                        let xhr = new XMLHttpRequest();
+                                        xhr.open('POST', url, true);
+                                        let formData = new FormData();
+                                        formData.append('status', 'preview')
+                                        formData.append('x0', x_ss / r)
+                                        formData.append('y0', y_ss / r)
+                                        formData.append('x1', x_e / r)
+                                        formData.append('y1', y_e / r)
+                                        xhr.send(formData)
+                                        xhr.onreadystatechange = function () {
+                                            if (xhr.readyState === XMLHttpRequest.DONE && xhr.status === 200) {
+                                                let size = JSON.parse(xhr.response)
+                                                detail_img.src = './res/clipP.png?' + Math.random();
+                                                fit_img(size.w, size.h);
+                                                info1.innerHTML = size.w.toString() + ' × ' + size.h.toString()
+                                                info2.innerHTML = Math.min((size.w / shape[0]), (size.h / shape[1])).toFixed(4).toString();
+                                                info3.innerHTML = (((size.w * size.h) / (shape[0] * shape[1])) * 100).toFixed(4).toString() + '%';
+                                            }
+                                        }
+                                    } else {
+                                        if (document.getElementById('select_box')) {
+                                            document.getElementById('select_box').remove();
+                                        }
+                                        detail_img.src = './res/roads.png?' + Math.random();
+                                        fit_img(shape[1], shape[0]);
+                                        info1.innerHTML = '分辨率';
+                                        info2.innerHTML = '缩放倍率';
+                                        info3.innerHTML = '面积比例';
+                                    }
+                                }
+                                cf = false;
+                            }
+                            full_interact.onclick = function () {
+                                if (cf) {
+                                    if (document.getElementById('select_box')) {
+                                        document.getElementById('select_box').remove();
+                                    }
+                                    cf = false;
+                                    detail_img.src = './res/roads.png?' + Math.random();
+                                    fit_img(shape[1], shape[0]);
+                                    info1.innerHTML = '分辨率';
+                                    info2.innerHTML = '缩放倍率';
+                                    info3.innerHTML = '面积比例';
+                                }
+                            }
+
+                            opt1.onclick = function () {
+                                let xhr = new XMLHttpRequest();
+                                xhr.open('POST', url, true);
+                                let formData = new FormData();
+                                formData.append('status', 'complete')
+                                formData.append('x0', x_ss / r)
+                                formData.append('y0', y_ss / r)
+                                formData.append('x1', x_e / r)
+                                formData.append('y1', y_e / r)
+                                xhr.send(formData)
+                                xhr.onreadystatechange = function () {
+                                    if (xhr.readyState === XMLHttpRequest.DONE && xhr.status === 200) {
+                                        let size = JSON.parse(xhr.response);
+                                        detail_img.src = './res/clipP.png?' + Math.random();
+                                        fit_img(size.w, size.h);
+                                        info1.innerHTML = size.w.toString() + ' × ' + size.h.toString();
+                                        info2.innerHTML = Math.min((size.w / shape[0]), (size.h / shape[1])).toFixed(4).toString();
+                                        info3.innerHTML = (((size.w * size.h) / (shape[0] * shape[1])) * 100).toFixed(4).toString() + '%';
+                                    }
+                                }
+
+                                const opt3 = document.createElement('div');
+                                opt3.className = 'opts';
+                                opts.appendChild(opt3);
+                                opt3.innerHTML = '确定';
+
+                                opt3.onclick = function () {
+                                    let xhr = new XMLHttpRequest();
+                                    xhr.open('POST', url, true);
+                                    let formData = new FormData();
+                                    formData.append('status', 'confirm')
+                                    formData.append('x0', x_ss / r)
+                                    formData.append('y0', y_ss / r)
+                                    formData.append('x1', x_e / r)
+                                    formData.append('y1', y_e / r)
+                                    xhr.send(formData)
+                                    xhr.onreadystatechange = function () {
+                                        if (xhr.readyState === XMLHttpRequest.DONE && xhr.status === 200) {
+                                            let size = JSON.parse(xhr.response);
+                                            detail_img.src = './res/clipP.png?' + Math.random();
+                                            fit_img(size.w, size.h);
+                                            info1.innerHTML = size.w.toString() + ' × ' + size.h.toString();
+                                            info2.innerHTML = Math.min((size.w / shape[0]), (size.h / shape[1])).toFixed(4).toString();
+                                            info3.innerHTML = (((size.w * size.h) / (shape[0] * shape[1])) * 100).toFixed(4).toString() + '%';
+                                            obj.src = './res/roads.png?' + Math.random();
+                                            opt3.remove();
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        else if (type === 2) {
+                            download.href = './res/result.png';
+
+                            function fit_img(w, h) {
+                                let rrw = d_width / w;
+                                let rrh = d_height / h;
+                                if (rrh >= rrw) {
+                                    detail_img.style.width = d_width.toString() + 'px';
+                                    detail_img.style.height = (h * rrw).toString() + 'px';
+                                    detail_img.style.left = '0';
+                                    detail_img.style.top = '50%';
+                                    detail_img.style.marginLeft = '0';
+                                    detail_img.style.marginTop = '-' + (h * rrw / 2) + 'px';
+                                } else {
+                                    detail_img.style.height = d_height.toString() + 'px';
+                                    detail_img.style.width = (w * rrh).toString() + 'px';
+                                    detail_img.style.top = '0';
+                                    detail_img.style.left = '50%';
+                                    detail_img.style.marginTop = '0';
+                                    detail_img.style.marginLeft = '-' + (w * rrh / 2) + 'px';
+                                }
+                            }
+
+                            let r = window.innerHeight * 0.95 / shape[0];
+                            full_interact.style.width = (r * shape[1]).toString() + 'px';
+                            let d_width = window.innerWidth * 0.95 - r * shape[1] - 70;
+                            detail.style.width = (d_width).toString() + 'px';
+                            let d_height = window.innerHeight * 0.95;
+                            fit_img(shape[1], shape[0]);
+
+                            const bbox_wrapper = document.createElement('div');
+                            bbox_wrapper.id = 'bbox_wrapper';
+                            full_interact.appendChild(bbox_wrapper);
+
+                            let flag = new Uint8Array(loc.length);
+                            let bbox_c = [];
+                            for (let k = 0; k < loc.length; k++) {
+                                let this_loc = loc[k];
+                                const bbox = document.createElement('div');
+                                bbox.className = 'bbox';
+                                bbox_wrapper.appendChild(bbox);
+                                let t_width = (this_loc[2] - this_loc[0]) * r;
+                                let t_height = (this_loc[3] - this_loc[1]) * r;
+                                let t_top = this_loc[1] * r;
+                                let t_left = this_loc[0] * r;
+                                bbox.style.width = t_width.toString() + 'px';
+                                bbox.style.height = t_height.toString() + 'px';
+                                bbox.style.top = t_top.toString() + 'px';
+                                bbox.style.left = t_left.toString() + 'px';
+                                bbox_c.push([t_width / r, t_height / r, t_top / r, t_left / r]);
+                                bbox.style.lineHeight = t_height.toString() + 'px';
+                                bbox.style.fontSize = (t_width / 3).toString() + 'px';
+                            }
+
+                            let bbox = document.getElementsByClassName('bbox');
+                            for (let i = 0; i < bbox.length; i++) {
+                                bbox[i].onclick = function () {
+                                    if (flag[i] === 0) {
+                                        let prev = flag.indexOf(1)
+                                        if (prev > -1) {
+                                            flag[prev] = 0;
+                                            bbox[prev].classList.remove('clicked');
+                                            bbox[prev].innerHTML = '';
+                                        }
+                                        flag[i] = 1;
+                                        bbox[i].classList.add('clicked');
+                                        bbox[i].innerHTML = score[i].toFixed(2);
+
+                                        let xhr = new XMLHttpRequest();
+                                        xhr.open('POST', url, true);
+                                        let formData = new FormData();
+                                        formData.append('status', 'clip')
+                                        formData.append('x0', bbox_c[i][3])
+                                        formData.append('y0', bbox_c[i][2])
+                                        formData.append('x1', bbox_c[i][3] + bbox_c[i][0])
+                                        formData.append('y1', bbox_c[i][2] + bbox_c[i][1])
+                                        xhr.send(formData)
+                                        xhr.onreadystatechange = function () {
+                                            if (xhr.readyState === XMLHttpRequest.DONE && xhr.status === 200) {
+                                                let size = JSON.parse(xhr.response)
+                                                fit_img(size.w, size.h);
+                                                detail_img.src = './res/clip.png?' + Math.random();
+                                            }
+                                        }
+                                    } else if (flag[i] === 1) {
+                                        flag[i] = 0;
+                                        bbox[i].classList.remove('clicked');
+                                        bbox[i].innerHTML = '';
+                                        detail_img.src = './res/origin.png?' + Math.random();
+                                        fit_img(shape[1], shape[0]);
+                                    }
+                                }
+                            }
+                        }
+                        else if (type === 3) {
+                            download.href = './res/mixed.png';
+
+                            for (let k = 0; k < 4; k++) {
+                                const type_img = document.createElement('img');
+                                type_img.className = 'types_img';
+                                full_interact.appendChild(type_img);
+                                type_img.src = './res/class' + k.toString() + '.png?' + Math.random();
+                            }
+
+                            let r = window.innerHeight * 0.95 / shape[0];
+                            full_interact.style.width = (r * shape[1]).toString() + 'px';
+                            let d_width = window.innerWidth * 0.95 - r * shape[1] - 70;
+                            detail.style.width = (d_width).toString() + 'px'
+                            let d_height = window.innerHeight * 0.95;
+                            detail_img.style.display = 'none';
+
+
+                            let classes = ['人工用地', '道路', '林地', '空地'];
+                            for (let k = 0; k < 4; k++) {
+                                const oc_types = document.createElement('div');
+                                oc_types.className = 'oc_types';
+                                detail.appendChild(oc_types);
+                                oc_types.style.width = (d_width / 2.2).toString() + 'px';
+                                oc_types.style.height = (d_height / 2.2).toString() + 'px';
+
+                                const oc_types_img = document.createElement('img');
+                                oc_types_img.className = 'oc_types_img';
+                                oc_types.appendChild(oc_types_img);
+                                oc_types_img.src = './res/class' + k.toString() + '.png?' + Math.random();
+
+                                const oc_types_score = document.createElement('div');
+                                oc_types_score.className = 'oc_types_score';
+                                oc_types.appendChild(oc_types_score);
+                                // oc_types_score.innerHTML = score[k].toFixed(4);
+                                oc_types_score.style.width = (d_width / 2.2).toString() + 'px';
+                                oc_types_score.style.height = (d_height / 2.2).toString() + 'px';
+                                oc_types_score.style.lineHeight = (d_height / 2.2).toString() + 'px';
+                                oc_types_score.style.fontSize = (d_height / 8.8).toString() + 'px';
+                                oc_types_score.style.left = (d_width * 0.005 + (k % 2) * (d_width / 2.2 + d_width * 0.04)).toString() + 'px';
+                                oc_types_score.style.top = (d_height * 0.02 + (k > 1.5) * (d_height / 2.2 + d_height * 0.035)).toString() + 'px';
+
+                                const oc_info1 = document.createElement('div');
+                                oc_info1.className = 'oc_info';
+                                oc_types_score.appendChild(oc_info1);
+                                oc_info1.innerHTML = '类别：' + classes[k];
+                                const oc_info2 = document.createElement('div');
+                                oc_info2.className = 'oc_info';
+                                oc_types_score.appendChild(oc_info2);
+                                oc_info2.innerHTML = '平均得分：' + score[k].toFixed(4);
+                                const oc_info3 = document.createElement('div');
+                                oc_info3.className = 'oc_info';
+                                oc_types_score.appendChild(oc_info3);
+                                oc_info3.innerHTML = '类别面积：' + area[k].toString();
+                                const oc_info4 = document.createElement('div');
+                                oc_info4.className = 'oc_info';
+                                oc_types_score.appendChild(oc_info4);
+                                oc_info4.innerHTML = '面积比例：' + (area[k] / (shape[0] * shape[1]) * 100).toFixed(4).toString() + '%';
+                            }
+
+                            const type_img = document.getElementsByClassName('types_img');
+                            const oc_types = document.getElementsByClassName('oc_types');
+                            const oc_types_img = document.getElementsByClassName('oc_types_img');
+                            const oc_types_score = document.getElementsByClassName('oc_types_score');
+                            const oc_info = document.getElementsByClassName('oc_info');
+                            let flag = [0, 0, 0, 0];
+                            for (let k = 0; k < 4; k++) {
+                                oc_types[k].onclick = function () {
+                                    if (flag[k] === 0) {
+                                        let prev = flag.indexOf(1);
+                                        if (prev > -1) {
+                                            oc_types_score[prev].classList.remove('show');
+                                            oc_types_img[prev].classList.remove('focus');
+                                            type_img[prev].classList.remove('focus');
+                                            for (let i = 0; i < 4; i++) {
+                                                if (i !== prev) {
+                                                    type_img[i].classList.remove('blur');
+                                                }
+                                            }
+                                            for (let j = 0; j < 4; j++) {
+                                                oc_info[prev * 4 + j].classList.remove('show' + j.toString());
+                                            }
+                                            flag[prev] = 0;
+                                        }
+                                        oc_types_score[k].classList.add('show');
+                                        oc_types_img[k].classList.add('focus');
+                                        type_img[k].classList.add('focus');
+                                        for (let i = 0; i < 4; i++) {
+                                            if (i !== k) {
+                                                type_img[i].classList.add('blur');
+                                            }
+                                        }
+                                        for (let j = 0; j < 4; j++) {
+                                            oc_info[k * 4 + j].classList.add('show' + j.toString());
+                                        }
+                                        flag[k] = 1;
+                                    } else if (flag[k] === 1) {
+                                        oc_types_score[k].classList.remove('show');
+                                        oc_types_img[k].classList.remove('focus');
+                                        type_img[k].classList.remove('focus');
+                                        for (let i = 0; i < 4; i++) {
+                                            if (i !== k) {
+                                                type_img[i].classList.remove('blur');
+                                            }
+                                        }
+                                        for (let j = 0; j < 4; j++) {
+                                            oc_info[k * 4 + j].classList.remove('show' + j.toString());
+                                        }
+                                        flag[k] = 0;
+                                    }
+                                }
+                            }
+                        }
+
+                        back.onclick = function () {
+                            res_prev.classList.remove('full_M');
+                            prev_img.classList.remove('fade');
+                            full_interact.classList.remove('show');
+                            detail.classList.remove('show');
+                            ori_img.classList.remove('show');
+
+                            if (document.getElementById('bbox_wrapper')) {
+                                document.getElementById('bbox_wrapper').remove();
+                            }
+                            if (document.getElementsByClassName('types_img')){
+                                let type_img = document.getElementsByClassName('types_img');
+                                for (let k = type_img.length - 1; k >= 0; k--) {
+                                    type_img[k].remove();
+                                }
+                            }
+                            if (document.getElementsByClassName('oc_types')){
+                                let oc_types = document.getElementsByClassName('oc_types');
+                                for (let k = oc_types.length - 1; k >= 0; k--) {
+                                    oc_types[k].remove();
+                                }
+                            }
+                        }
+
+                        back.onmousedown = function () {
+                            back.classList.add('down');
+                        }
+                        back.onmouseup = function () {
+                            back.classList.remove('down');
+                            back.classList.remove('show');
+                        }
                     }
                 }
             }
         }
-        let x_e, y_e, x_ss, y_ss;
-        full_interact.onmouseup = function (e) {
-            if (cf) {
-                document.getElementById('select_box').remove();
-                x_e = e.clientX - (window.innerWidth * 0.975 - r * shape[1]);
-                y_e = e.clientY - (window.innerHeight * 0.025);
-                x_ss = x_s - (window.innerWidth * 0.975 - r * shape[1]);
-                y_ss = y_s - (window.innerHeight * 0.025);
+    } else {
+        document.getElementById('multi_mode').style.display = 'none';
+        document.getElementsByClassName('multi_content')[0].style.display = 'none';
+        const card = document.getElementsByClassName('card');
+        let loc, score, period, shape, area;
+        if (type === 0) {
+            [score, period, shape] = elements;
+            const oacc = 0.973445;
+            const miou = 0.7738609047700991;
+            // card[1].innerHTML = '目标占比';
+            card[2].innerHTML = '模型OAcc';
+            card[3].innerHTML = '模型mIoU';
 
-                if ((Math.abs(x_e - x_ss) > 10) && (Math.abs(y_e - y_ss) > 10)) {
-                    let xhr = new XMLHttpRequest();
-                    xhr.open('POST', url, true);
-                    let formData = new FormData();
-                    formData.append('status', 'preview')
-                    formData.append('x0', x_ss / r)
-                    formData.append('y0', y_ss / r)
-                    formData.append('x1', x_e / r)
-                    formData.append('y1', y_e / r)
-                    xhr.send(formData)
-                    xhr.onreadystatechange = function () {
-                        if (xhr.readyState === XMLHttpRequest.DONE && xhr.status === 200) {
-                            let size = JSON.parse(xhr.response)
-                            detail_img.src = './res/clipP.png?' + Math.random();
-                            fit_img(size.w, size.h);
-                            info1.innerHTML = size.w.toString() + ' × ' + size.h.toString()
-                            info2.innerHTML = Math.min((size.w / shape[0]), (size.h / shape[1])).toFixed(4).toString();
-                            info3.innerHTML = (((size.w * size.h) / (shape[0] * shape[1])) * 100).toFixed(4).toString() + '%';
+            NumAutoPlusAnimation('content', {
+                time: 3500,
+                num: period,
+                regulator: 50
+            }, 0, 1)
+            NumAutoPlusAnimation('content', {
+                time: 3500,
+                num: score,
+                regulator: 50
+            }, 1, 3)
+            NumAutoPlusAnimation('content', {
+                time: 3500,
+                num: oacc,
+                regulator: 50
+            }, 2, 2)
+            NumAutoPlusAnimation('content', {
+                time: 3500,
+                num: miou,
+                regulator: 50
+            }, 3, 2)
+        } else if (type === 1) {
+            [score, period, shape] = elements;
+            const miou = 0.114514;
+            const f1 = 0.1919810;
+            card[2].innerHTML = '模型mIoU';
+            card[3].innerHTML = '模型F1';
+
+            NumAutoPlusAnimation('content', {
+                time: 3500,
+                num: period,
+                regulator: 50
+            }, 0, 1)
+            NumAutoPlusAnimation('content', {
+                time: 3500,
+                num: score,
+                regulator: 50
+            }, 1, 3)
+            NumAutoPlusAnimation('content', {
+                time: 3500,
+                num: miou,
+                regulator: 50
+            }, 2, 2)
+            NumAutoPlusAnimation('content', {
+                time: 3500,
+                num: f1,
+                regulator: 50
+            }, 3, 2)
+        } else if (type === 2) {
+            [loc, score, period, shape] = elements;
+            const map = 68.30;
+            const loss = 6.3706465;
+            card[2].innerHTML = '模型mAP';
+            card[3].innerHTML = '模型loss';
+
+            NumAutoPlusAnimation('content', {
+                time: 3500,
+                num: period,
+                regulator: 50
+            }, 0, 1)
+            if (score.length > 0) {
+                NumAutoPlusAnimation('content', {
+                    time: 3500,
+                    num: (score.reduce((a, b) => a + b) / score.length),
+                    regulator: 50
+                }, 1, 3)
+            } else {
+                document.getElementsByClassName('content')[1].innerHTML = 'Null';
+            }
+            NumAutoPlusAnimation('content', {
+                time: 3500,
+                num: map,
+                regulator: 50
+            }, 2, 2)
+            NumAutoPlusAnimation('content', {
+                time: 3500,
+                num: loss,
+                regulator: 50
+            }, 3, 2)
+        } else if (type === 3) {
+            [score, period, shape, area] = elements;
+            const n_score = [];
+            for (let k = 0; k < score.length; k++) {
+                if (score[k] > 0.01) {
+                    n_score.push(score[k]);
+                }
+            }
+            const oacc = 0.85;
+            const f1 = 0.47;
+            card[2].innerHTML = '模型OAcc';
+            card[3].innerHTML = '模型F1';
+
+            NumAutoPlusAnimation('content', {
+                time: 3500,
+                num: period,
+                regulator: 50
+            }, 0, 1)
+            if (n_score.length > 0) {
+                NumAutoPlusAnimation('content', {
+                    time: 3500,
+                    num: (n_score.reduce((a, b) => a + b) / n_score.length),
+                    regulator: 50
+                }, 1, 3)
+            } else {
+                document.getElementsByClassName('content')[1].innerHTML = 'Null';
+            }
+            NumAutoPlusAnimation('content', {
+                time: 3500,
+                num: oacc,
+                regulator: 50
+            }, 2, 2)
+            NumAutoPlusAnimation('content', {
+                time: 3500,
+                num: f1,
+                regulator: 50
+            }, 3, 2)
+        }
+
+        function NumAutoPlusAnimation(targetEle, options, i, fix) {
+            options = options || {};
+
+            let $this = document.getElementsByClassName(targetEle)[i],
+                time = options.time || $this.data('time'), //总时间--毫秒为单位
+                finalNum = options.num || $this.data('value'), //要显示的真实数值
+                regulator = options.regulator || 100, //调速器，改变regulator的数值可以调节数字改变的速度
+
+                step = finalNum / (time / regulator),/*每30ms增加的数值--*/
+                count = 0, //计数器
+                initial = 0;
+
+            let timer = setInterval(function () {
+
+                count = count + step;
+
+                if (count >= finalNum) {
+                    clearInterval(timer);
+                    count = finalNum;
+                }
+                //t未发生改变的话就直接返回
+                //避免调用text函数，提高DOM性能
+                let t = count.toFixed(fix);
+                if (t === initial) return;
+
+                initial = t;
+
+                $this.innerHTML = initial;
+            }, 30);
+        }
+
+        const r_pro = document.getElementById('change_pro');
+        r_pro.onclick = function () {
+            let xhr = new XMLHttpRequest();
+            xhr.open('POST', url, true);
+            let formData = new FormData();
+            formData.append('status', 'change');
+            xhr.send(formData);
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState === XMLHttpRequest.DONE && xhr.status === 200) {
+                    window.location.href = xhr.responseURL
+                }
+            }
+        }
+        const back_p = document.getElementById('back_pic');
+        back_p.onclick = function () {
+            let xhr = new XMLHttpRequest();
+            xhr.open('POST', url, true);
+            let formData = new FormData();
+            formData.append('status', 'back');
+            xhr.send(formData);
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState === XMLHttpRequest.DONE && xhr.status === 200) {
+                    window.location.href = xhr.responseURL
+                }
+            }
+        }
+
+        const content = document.getElementsByClassName('content');
+        const f_main_title = document.getElementById('f_main_title');
+        const f_main_subtitle = document.getElementById('f_main_subtitle');
+        const f_title_bg = document.getElementById('f_title_bg');
+        const res_prev = document.getElementById('res_prev');
+        const ring = document.getElementById('ring');
+        const fullscreen = document.getElementById('fullscreen');
+        const back = document.getElementById('back');
+        const prev_img = document.getElementById('prev_img');
+        const full_interact = document.getElementById('full_interact');
+        const ori_img = document.getElementById('ori_img');
+        const detail = document.getElementById('detail');
+        const detail_img = document.getElementById('detail_img');
+        const download = document.getElementById('download');
+
+        const type_name = ['目标提取', '变化检测', '目标检测', '地物分类'];
+        const type_eng = ['Object extraction', 'Change detection', 'Object detection', 'Feature classification'];
+        let mode = 'prev';
+
+        function show(type) {
+            f_main_title.innerHTML = type_name[type];
+            f_main_subtitle.innerHTML = type_eng[type];
+            f_main_title.classList.add('show');
+            f_main_subtitle.classList.add('show');
+            f_title_bg.classList.add('show');
+            res_prev.classList.add('show');
+            r_pro.classList.add('show');
+            back_p.classList.add('show');
+
+            for (let i = 0; i < card.length; i++) {
+                card[i].classList.add('show');
+                content[i].classList.add('show');
+            }
+        }
+
+        show(type);
+
+        for (let i = 0; i < content.length; i++) {
+            content[i].onmouseover = function () {
+                content[i].classList.add('blur');
+                content[i].classList.add('focus');
+                card[i].classList.add('focus');
+            }
+            content[i].onmouseout = function () {
+                content[i].classList.remove('focus');
+                card[i].classList.remove('focus');
+            }
+        }
+
+        res_prev.onmouseover = function () {
+            if (mode === 'prev') {
+                ring.classList.add('show');
+                fullscreen.classList.add('show');
+            }
+        }
+        res_prev.onmouseout = function () {
+            if (mode === 'prev') {
+                ring.classList.remove('show');
+                fullscreen.classList.remove('show');
+                if (fullscreen.classList.contains('clicked')) {
+                    fullscreen.classList.remove('clicked');
+                }
+            }
+        }
+
+        full_interact.onmouseover = function () {
+            download.classList.add('show');
+        }
+        full_interact.onmouseout = function () {
+            download.classList.remove('show');
+        }
+
+        fullscreen.onmouseover = function () {
+            if (mode === 'prev') {
+                ring.classList.add('show');
+                fullscreen.classList.add('show');
+            }
+        }
+        fullscreen.onclick = function () {
+            mode = 'detail';
+            fullscreen.classList.add('clicked');
+            ring.classList.remove('show');
+            fullscreen.classList.remove('show');
+            res_prev.classList.add('full')
+            prev_img.classList.add('fade');
+            full_interact.classList.add('show')
+            back.classList.add('show');
+            detail.classList.add('show');
+            ori_img.classList.add('show');
+        }
+        if (type === 0) {
+            download.href = './res/mixed.png';
+
+            const obj = document.createElement('img');
+            obj.className = 'types_img';
+            full_interact.appendChild(obj);
+            obj.src = './res/roads.png?' + Math.random();
+            obj.draggable = false;
+
+            let r = window.innerHeight * 0.95 / shape[0]
+            full_interact.style.width = (r * shape[1]).toString() + 'px'
+            let d_width = window.innerWidth * 0.95 - r * shape[1] - 70;
+            detail.style.width = (d_width).toString() + 'px'
+            let d_height = window.innerHeight * 0.95;
+
+            detail_img.src = './res/roads.png?' + Math.random();
+
+            function fit_img(w, h) {
+                let rrw = d_width / w;
+                let rrh = d_height / h;
+                if (rrh >= rrw) {
+                    detail_img.style.width = d_width.toString() + 'px';
+                    detail_img.style.height = (h * rrw).toString() + 'px';
+                    detail_img.style.left = '0';
+                    detail_img.style.top = '50%';
+                    detail_img.style.marginLeft = '0';
+                    detail_img.style.marginTop = '-' + (h * rrw / 2) + 'px';
+                } else {
+                    detail_img.style.height = d_height.toString() + 'px';
+                    detail_img.style.width = (w * rrh).toString() + 'px';
+                    detail_img.style.top = '0';
+                    detail_img.style.left = '50%';
+                    detail_img.style.marginTop = '0';
+                    detail_img.style.marginLeft = '-' + (w * rrh / 2) + 'px';
+                }
+            }
+
+            fit_img(shape[1], shape[0]);
+
+            const opts = document.createElement('div');
+            opts.id = 'OE_opts';
+            detail.appendChild(opts);
+            const opt1 = document.createElement('div');
+            opt1.className = 'opts';
+            opts.appendChild(opt1);
+            opt1.innerHTML = '补全';
+            const opt2 = document.createElement('div');
+            opt2.className = 'opts';
+            opts.appendChild(opt2);
+            opt2.innerHTML = '重选';
+
+            opt2.onclick = function () {
+                cf = false;
+                detail_img.src = './res/roads.png?' + Math.random();
+                fit_img(shape[1], shape[0]);
+                info1.innerHTML = '分辨率';
+                info2.innerHTML = '缩放倍率';
+                info3.innerHTML = '面积比例';
+            }
+
+            const infos = document.createElement('div');
+            infos.id = 'OE_infos';
+            detail.appendChild(infos);
+            const info1 = document.createElement('div');
+            info1.className = 'infos';
+            infos.appendChild(info1);
+            info1.innerHTML = '分辨率';
+            info1.title = '分辨率';
+            const info2 = document.createElement('div');
+            info2.className = 'infos';
+            infos.appendChild(info2);
+            info2.innerHTML = '缩放倍率';
+            info2.title = '缩放倍率';
+            const info3 = document.createElement('div');
+            info3.className = 'infos';
+            infos.appendChild(info3);
+            info3.innerHTML = '面积比例';
+            info3.title = '面积比例';
+
+            let x_s, y_s;
+            let cf = false;
+            full_interact.onmousedown = function (e) {
+                const select_box = document.createElement('div');
+                select_box.id = 'select_box';
+                full_interact.appendChild(select_box);
+
+                x_s = e.clientX;
+                y_s = e.clientY;
+                select_box.style.left = x_s.toString() + 'px';
+                select_box.style.top = y_s.toString() + 'px';
+                cf = true;
+            }
+            full_interact.onmousemove = function (e) {
+                if (cf) {
+                    const select_box = document.getElementById('select_box');
+                    let x_t = e.clientX;
+                    let y_t = e.clientY;
+                    select_box.style.width = Math.abs(x_t - x_s).toString() + 'px';
+                    select_box.style.height = Math.abs(y_t - y_s).toString() + 'px';
+
+                    if ((x_t >= x_s) && (y_t < y_s)) {
+                        select_box.style.top = y_t.toString() + 'px';
+                    } else if (x_t < x_s) {
+                        select_box.style.left = x_t.toString() + 'px';
+                        if (y_t < y_s) {
+                            select_box.style.top = y_t.toString() + 'px';
                         }
                     }
-                } else {
+                }
+            }
+            let x_e, y_e, x_ss, y_ss;
+            full_interact.onmouseup = function (e) {
+                if (cf) {
+                    document.getElementById('select_box').remove();
+                    x_e = e.clientX - (window.innerWidth * 0.975 - r * shape[1]);
+                    y_e = e.clientY - (window.innerHeight * 0.025);
+                    x_ss = x_s - (window.innerWidth * 0.975 - r * shape[1]);
+                    y_ss = y_s - (window.innerHeight * 0.025);
+
+                    if ((Math.abs(x_e - x_ss) > 10) && (Math.abs(y_e - y_ss) > 10)) {
+                        let xhr = new XMLHttpRequest();
+                        xhr.open('POST', url, true);
+                        let formData = new FormData();
+                        formData.append('status', 'preview')
+                        formData.append('x0', x_ss / r)
+                        formData.append('y0', y_ss / r)
+                        formData.append('x1', x_e / r)
+                        formData.append('y1', y_e / r)
+                        xhr.send(formData)
+                        xhr.onreadystatechange = function () {
+                            if (xhr.readyState === XMLHttpRequest.DONE && xhr.status === 200) {
+                                let size = JSON.parse(xhr.response)
+                                detail_img.src = './res/clipP.png?' + Math.random();
+                                fit_img(size.w, size.h);
+                                info1.innerHTML = size.w.toString() + ' × ' + size.h.toString()
+                                info2.innerHTML = Math.min((size.w / shape[0]), (size.h / shape[1])).toFixed(4).toString();
+                                info3.innerHTML = (((size.w * size.h) / (shape[0] * shape[1])) * 100).toFixed(4).toString() + '%';
+                            }
+                        }
+                    } else {
+                        if (document.getElementById('select_box')) {
+                            document.getElementById('select_box').remove();
+                        }
+                        detail_img.src = './res/roads.png?' + Math.random();
+                        fit_img(shape[1], shape[0]);
+                        info1.innerHTML = '分辨率';
+                        info2.innerHTML = '缩放倍率';
+                        info3.innerHTML = '面积比例';
+                    }
+                }
+                cf = false;
+            }
+            full_interact.onclick = function () {
+                if (cf) {
                     if (document.getElementById('select_box')) {
                         document.getElementById('select_box').remove();
                     }
-                    detail_img.src = './res/roads.png?'+Math.random();
+                    cf = false;
+                    detail_img.src = './res/roads.png?' + Math.random();
                     fit_img(shape[1], shape[0]);
                     info1.innerHTML = '分辨率';
                     info2.innerHTML = '缩放倍率';
                     info3.innerHTML = '面积比例';
                 }
             }
-            cf = false;
-        }
-        full_interact.onclick = function () {
-            if (cf) {
-                if (document.getElementById('select_box')) {
-                    document.getElementById('select_box').remove();
-                }
-                cf = false;
-                detail_img.src = './res/roads.png?'+Math.random();
-                fit_img(shape[1], shape[0]);
-                info1.innerHTML = '分辨率';
-                info2.innerHTML = '缩放倍率';
-                info3.innerHTML = '面积比例';
-            }
-        }
 
-        opt1.onclick = function () {
-            let xhr = new XMLHttpRequest();
-            xhr.open('POST', url, true);
-            let formData = new FormData();
-            formData.append('status', 'complete')
-            formData.append('x0', x_ss / r)
-            formData.append('y0', y_ss / r)
-            formData.append('x1', x_e / r)
-            formData.append('y1', y_e / r)
-            xhr.send(formData)
-            xhr.onreadystatechange = function () {
-                if (xhr.readyState === XMLHttpRequest.DONE && xhr.status === 200) {
-                    let size = JSON.parse(xhr.response);
-                    detail_img.src = './res/clipP.png?' + Math.random();
-                    fit_img(size.w, size.h);
-                    info1.innerHTML = size.w.toString() + ' × ' + size.h.toString();
-                    info2.innerHTML = Math.min((size.w / shape[0]), (size.h / shape[1])).toFixed(4).toString();
-                    info3.innerHTML = (((size.w * size.h) / (shape[0] * shape[1])) * 100).toFixed(4).toString() + '%';
-                }
-            }
-
-            const opt3 = document.createElement('div');
-            opt3.className = 'opts';
-            opts.appendChild(opt3);
-            opt3.innerHTML = '确定';
-
-            opt3.onclick = function () {
+            opt1.onclick = function () {
                 let xhr = new XMLHttpRequest();
                 xhr.open('POST', url, true);
                 let formData = new FormData();
-                formData.append('status', 'confirm')
+                formData.append('status', 'complete')
                 formData.append('x0', x_ss / r)
                 formData.append('y0', y_ss / r)
                 formData.append('x1', x_e / r)
@@ -572,117 +1178,19 @@
                         info1.innerHTML = size.w.toString() + ' × ' + size.h.toString();
                         info2.innerHTML = Math.min((size.w / shape[0]), (size.h / shape[1])).toFixed(4).toString();
                         info3.innerHTML = (((size.w * size.h) / (shape[0] * shape[1])) * 100).toFixed(4).toString() + '%';
-                        obj.src = './res/roads.png?'+Math.random();
-                        opt3.remove();
                     }
                 }
-            }
-        }
-    } else if (type === 1) {
-        download.href = './res/mixed.png';
-        ori_img.src = './res/A.png';
-        ori_img.style.opacity = '50%';
 
-        const B_img = document.createElement('img');
-        B_img.className = 'types_img';
-        full_interact.appendChild(B_img);
-        B_img.src = './res/B.png';
+                const opt3 = document.createElement('div');
+                opt3.className = 'opts';
+                opts.appendChild(opt3);
+                opt3.innerHTML = '确定';
 
-        const change = document.createElement('img');
-        change.className = 'types_img';
-        full_interact.appendChild(change);
-        change.src = './res/change.png';
-        change.draggable = false;
-
-        let r = window.innerHeight * 0.95 / shape[0]
-        full_interact.style.width = (r * shape[1]).toString() + 'px'
-        let d_width = window.innerWidth * 0.95 - r * shape[1] - 70;
-        detail.style.width = (d_width).toString() + 'px'
-        let d_height = window.innerHeight * 0.95;
-        detail_img.style.display = 'none';
-
-        const detail_A = document.createElement('div');
-        detail_A.className = 'AB_detail';
-        detail.appendChild(detail_A);
-        detail_A.style.top = '1%';
-
-        const detail_B = document.createElement('div');
-        detail_B.className = 'AB_detail';
-        detail.appendChild(detail_B);
-        detail_B.style.bottom = '1%';
-
-        const detail_A_img = document.createElement('img');
-        detail_A_img.className = 'AB_detail_img';
-        detail_A.appendChild(detail_A_img);
-        detail_A_img.src = './res/A.png';
-
-        const detail_B_img = document.createElement('img');
-        detail_B_img.className = 'AB_detail_img';
-        detail_B.appendChild(detail_B_img);
-        detail_B_img.src = './res/B.png';
-
-        function fit_AB_img(img, w, h) {
-            let ow = d_width;
-            let oh = d_height * 0.485;
-            let rrw = ow / w;
-            let rrh = oh / h;
-            if (rrh >= rrw) {
-                img.style.width = ow.toString() + 'px';
-                img.style.height = (h * rrw).toString() + 'px';
-            } else {
-                img.style.height = oh.toString() + 'px';
-                img.style.width = (w * rrh).toString() + 'px';
-            }
-        }
-
-        fit_AB_img(detail_A_img, shape[0], shape[1]);
-        fit_AB_img(detail_B_img, shape[0], shape[1]);
-
-        let x_s, y_s;
-        let cf = false;
-        full_interact.style.cursor = 'crosshair';
-        full_interact.onmousedown = function (e) {
-            const select_box = document.createElement('div');
-            select_box.id = 'select_box';
-            full_interact.appendChild(select_box);
-
-            x_s = e.clientX;
-            y_s = e.clientY;
-            select_box.style.left = x_s.toString() + 'px';
-            select_box.style.top = y_s.toString() + 'px';
-            cf = true;
-        }
-        full_interact.onmousemove = function (e) {
-            if (cf) {
-                const select_box = document.getElementById('select_box');
-                let x_t = e.clientX;
-                let y_t = e.clientY;
-                select_box.style.width = Math.abs(x_t - x_s).toString() + 'px';
-                select_box.style.height = Math.abs(y_t - y_s).toString() + 'px';
-
-                if ((x_t >= x_s) && (y_t < y_s)) {
-                    select_box.style.top = y_t.toString() + 'px';
-                } else if (x_t < x_s) {
-                    select_box.style.left = x_t.toString() + 'px';
-                    if (y_t < y_s) {
-                        select_box.style.top = y_t.toString() + 'px';
-                    }
-                }
-            }
-        }
-        full_interact.onmouseup = function (e) {
-            if (cf) {
-                document.getElementById('select_box').remove();
-                let x_e = e.clientX - (window.innerWidth * 0.975 - r * shape[1]);
-                let y_e = e.clientY - (window.innerHeight * 0.025);
-                let x_ss = x_s - (window.innerWidth * 0.975 - r * shape[1]);
-                let y_ss = y_s - (window.innerHeight * 0.025);
-
-                if ((Math.abs(x_e - x_ss) > 10) && (Math.abs(y_e - y_ss) > 10)) {
+                opt3.onclick = function () {
                     let xhr = new XMLHttpRequest();
                     xhr.open('POST', url, true);
                     let formData = new FormData();
-                    formData.append('status', 'select')
+                    formData.append('status', 'confirm')
                     formData.append('x0', x_ss / r)
                     formData.append('y0', y_ss / r)
                     formData.append('x1', x_e / r)
@@ -690,255 +1198,380 @@
                     xhr.send(formData)
                     xhr.onreadystatechange = function () {
                         if (xhr.readyState === XMLHttpRequest.DONE && xhr.status === 200) {
-                            let size = JSON.parse(xhr.response)
-                            detail_A_img.src = './res/clipA.png?' + Math.random();
-                            detail_B_img.src = './res/clipB.png?' + Math.random();
-                            fit_AB_img(detail_A_img, size.w, size.h);
-                            fit_AB_img(detail_B_img, size.w, size.h);
+                            let size = JSON.parse(xhr.response);
+                            detail_img.src = './res/clipP.png?' + Math.random();
+                            fit_img(size.w, size.h);
+                            info1.innerHTML = size.w.toString() + ' × ' + size.h.toString();
+                            info2.innerHTML = Math.min((size.w / shape[0]), (size.h / shape[1])).toFixed(4).toString();
+                            info3.innerHTML = (((size.w * size.h) / (shape[0] * shape[1])) * 100).toFixed(4).toString() + '%';
+                            obj.src = './res/roads.png?' + Math.random();
+                            opt3.remove();
                         }
                     }
+                }
+            }
+        } else if (type === 1) {
+            download.href = './res/mixed.png';
+            ori_img.src = './res/A.png?' + Math.random();
+            ori_img.style.opacity = '50%';
+
+            const B_img = document.createElement('img');
+            B_img.className = 'types_img';
+            full_interact.appendChild(B_img);
+            B_img.src = './res/B.png?' + Math.random();
+
+            const change = document.createElement('img');
+            change.className = 'types_img';
+            full_interact.appendChild(change);
+            change.src = './res/change.png?' + Math.random();
+            change.draggable = false;
+
+            let r = window.innerHeight * 0.95 / shape[0]
+            full_interact.style.width = (r * shape[1]).toString() + 'px'
+            let d_width = window.innerWidth * 0.95 - r * shape[1] - 70;
+            detail.style.width = (d_width).toString() + 'px'
+            let d_height = window.innerHeight * 0.95;
+            detail_img.style.display = 'none';
+
+            const detail_A = document.createElement('div');
+            detail_A.className = 'AB_detail';
+            detail.appendChild(detail_A);
+            detail_A.style.top = '1%';
+
+            const detail_B = document.createElement('div');
+            detail_B.className = 'AB_detail';
+            detail.appendChild(detail_B);
+            detail_B.style.bottom = '1%';
+
+            const detail_A_img = document.createElement('img');
+            detail_A_img.className = 'AB_detail_img';
+            detail_A.appendChild(detail_A_img);
+            detail_A_img.src = './res/A.png?' + Math.random();
+
+            const detail_B_img = document.createElement('img');
+            detail_B_img.className = 'AB_detail_img';
+            detail_B.appendChild(detail_B_img);
+            detail_B_img.src = './res/B.png?' + Math.random();
+
+            function fit_AB_img(img, w, h) {
+                let ow = d_width;
+                let oh = d_height * 0.485;
+                let rrw = ow / w;
+                let rrh = oh / h;
+                if (rrh >= rrw) {
+                    img.style.width = ow.toString() + 'px';
+                    img.style.height = (h * rrw).toString() + 'px';
                 } else {
+                    img.style.height = oh.toString() + 'px';
+                    img.style.width = (w * rrh).toString() + 'px';
+                }
+            }
+
+            fit_AB_img(detail_A_img, shape[0], shape[1]);
+            fit_AB_img(detail_B_img, shape[0], shape[1]);
+
+            let x_s, y_s;
+            let cf = false;
+            full_interact.style.cursor = 'crosshair';
+            full_interact.onmousedown = function (e) {
+                const select_box = document.createElement('div');
+                select_box.id = 'select_box';
+                full_interact.appendChild(select_box);
+
+                x_s = e.clientX;
+                y_s = e.clientY;
+                select_box.style.left = x_s.toString() + 'px';
+                select_box.style.top = y_s.toString() + 'px';
+                cf = true;
+            }
+            full_interact.onmousemove = function (e) {
+                if (cf) {
+                    const select_box = document.getElementById('select_box');
+                    let x_t = e.clientX;
+                    let y_t = e.clientY;
+                    select_box.style.width = Math.abs(x_t - x_s).toString() + 'px';
+                    select_box.style.height = Math.abs(y_t - y_s).toString() + 'px';
+
+                    if ((x_t >= x_s) && (y_t < y_s)) {
+                        select_box.style.top = y_t.toString() + 'px';
+                    } else if (x_t < x_s) {
+                        select_box.style.left = x_t.toString() + 'px';
+                        if (y_t < y_s) {
+                            select_box.style.top = y_t.toString() + 'px';
+                        }
+                    }
+                }
+            }
+            full_interact.onmouseup = function (e) {
+                if (cf) {
+                    document.getElementById('select_box').remove();
+                    let x_e = e.clientX - (window.innerWidth * 0.975 - r * shape[1]);
+                    let y_e = e.clientY - (window.innerHeight * 0.025);
+                    let x_ss = x_s - (window.innerWidth * 0.975 - r * shape[1]);
+                    let y_ss = y_s - (window.innerHeight * 0.025);
+
+                    if ((Math.abs(x_e - x_ss) > 10) && (Math.abs(y_e - y_ss) > 10)) {
+                        let xhr = new XMLHttpRequest();
+                        xhr.open('POST', url, true);
+                        let formData = new FormData();
+                        formData.append('status', 'select')
+                        formData.append('x0', x_ss / r)
+                        formData.append('y0', y_ss / r)
+                        formData.append('x1', x_e / r)
+                        formData.append('y1', y_e / r)
+                        xhr.send(formData)
+                        xhr.onreadystatechange = function () {
+                            if (xhr.readyState === XMLHttpRequest.DONE && xhr.status === 200) {
+                                let size = JSON.parse(xhr.response)
+                                detail_A_img.src = './res/clipA.png?' + Math.random();
+                                detail_B_img.src = './res/clipB.png?' + Math.random();
+                                fit_AB_img(detail_A_img, size.w, size.h);
+                                fit_AB_img(detail_B_img, size.w, size.h);
+                            }
+                        }
+                    } else {
+                        if (document.getElementById('select_box')) {
+                            document.getElementById('select_box').remove();
+                        }
+                        detail_A_img.src = './res/A.png?' + Math.random();
+                        detail_B_img.src = './res/B.png?' + Math.random();
+                        fit_AB_img(detail_A_img, shape[0], shape[1]);
+                        fit_AB_img(detail_B_img, shape[0], shape[1]);
+                    }
+                }
+                cf = false;
+            }
+            full_interact.onclick = function () {
+                if (cf) {
                     if (document.getElementById('select_box')) {
                         document.getElementById('select_box').remove();
                     }
-                    detail_A_img.src = './res/A.png';
-                    detail_B_img.src = './res/B.png';
+                    cf = false;
+                    detail_A_img.src = './res/A.png?' + Math.random();
+                    detail_B_img.src = './res/B.png?' + Math.random();
                     fit_AB_img(detail_A_img, shape[0], shape[1]);
                     fit_AB_img(detail_B_img, shape[0], shape[1]);
                 }
             }
-            cf = false;
-        }
-        full_interact.onclick = function () {
-            if (cf) {
-                if (document.getElementById('select_box')) {
-                    document.getElementById('select_box').remove();
+        } else if (type === 2) {
+            download.href = './res/result.png';
+
+            function fit_img(w, h) {
+                let rrw = d_width / w;
+                let rrh = d_height / h;
+                if (rrh >= rrw) {
+                    detail_img.style.width = d_width.toString() + 'px';
+                    detail_img.style.height = (h * rrw).toString() + 'px';
+                    detail_img.style.left = '0';
+                    detail_img.style.top = '50%';
+                    detail_img.style.marginLeft = '0';
+                    detail_img.style.marginTop = '-' + (h * rrw / 2) + 'px';
+                } else {
+                    detail_img.style.height = d_height.toString() + 'px';
+                    detail_img.style.width = (w * rrh).toString() + 'px';
+                    detail_img.style.top = '0';
+                    detail_img.style.left = '50%';
+                    detail_img.style.marginTop = '0';
+                    detail_img.style.marginLeft = '-' + (w * rrh / 2) + 'px';
                 }
-                cf = false;
-                detail_A_img.src = './res/A.png';
-                detail_B_img.src = './res/B.png';
-                fit_AB_img(detail_A_img, shape[0], shape[1]);
-                fit_AB_img(detail_B_img, shape[0], shape[1]);
             }
-        }
-    } else if (type === 2) {
-        download.href = './res/result.png';
 
-        function fit_img(w, h) {
-            let rrw = d_width / w;
-            let rrh = d_height / h;
-            if (rrh >= rrw) {
-                detail_img.style.width = d_width.toString() + 'px';
-                detail_img.style.height = (h * rrw).toString() + 'px';
-                detail_img.style.left = '0';
-                detail_img.style.top = '50%';
-                detail_img.style.marginLeft = '0';
-                detail_img.style.marginTop = '-' + (h * rrw / 2) + 'px';
-            } else {
-                detail_img.style.height = d_height.toString() + 'px';
-                detail_img.style.width = (w * rrh).toString() + 'px';
-                detail_img.style.top = '0';
-                detail_img.style.left = '50%';
-                detail_img.style.marginTop = '0';
-                detail_img.style.marginLeft = '-' + (w * rrh / 2) + 'px';
+            let r = window.innerHeight * 0.95 / shape[0];
+            full_interact.style.width = (r * shape[1]).toString() + 'px';
+            let d_width = window.innerWidth * 0.95 - r * shape[1] - 70;
+            detail.style.width = (d_width).toString() + 'px';
+            let d_height = window.innerHeight * 0.95;
+            fit_img(shape[1], shape[0]);
+
+            let flag = new Uint8Array(loc.length);
+            let bbox_c = [];
+            for (let k = 0; k < loc.length; k++) {
+                let this_loc = loc[k];
+                const bbox = document.createElement('div');
+                bbox.className = 'bbox';
+                full_interact.appendChild(bbox);
+                let t_width = (this_loc[2] - this_loc[0]) * r;
+                let t_height = (this_loc[3] - this_loc[1]) * r;
+                let t_top = this_loc[1] * r;
+                let t_left = this_loc[0] * r;
+                bbox.style.width = t_width.toString() + 'px';
+                bbox.style.height = t_height.toString() + 'px';
+                bbox.style.top = t_top.toString() + 'px';
+                bbox.style.left = t_left.toString() + 'px';
+                bbox_c.push([t_width / r, t_height / r, t_top / r, t_left / r]);
+                bbox.style.lineHeight = t_height.toString() + 'px';
+                bbox.style.fontSize = (t_width / 3).toString() + 'px';
             }
-        }
 
-        let r = window.innerHeight * 0.95 / shape[0];
-        full_interact.style.width = (r * shape[1]).toString() + 'px';
-        let d_width = window.innerWidth * 0.95 - r * shape[1] - 70;
-        detail.style.width = (d_width).toString() + 'px';
-        let d_height = window.innerHeight * 0.95;
-        fit_img(shape[1], shape[0]);
-
-        let flag = new Uint8Array(loc.length);
-        let bbox_c = [];
-        for (let k = 0; k < loc.length; k++) {
-            let this_loc = loc[k];
-            const bbox = document.createElement('div');
-            bbox.className = 'bbox';
-            full_interact.appendChild(bbox);
-            let t_width = (this_loc[2] - this_loc[0]) * r;
-            let t_height = (this_loc[3] - this_loc[1]) * r;
-            let t_top = this_loc[1] * r;
-            let t_left = this_loc[0] * r;
-            bbox.style.width = t_width.toString() + 'px';
-            bbox.style.height = t_height.toString() + 'px';
-            bbox.style.top = t_top.toString() + 'px';
-            bbox.style.left = t_left.toString() + 'px';
-            bbox_c.push([t_width / r, t_height / r, t_top / r, t_left / r]);
-            bbox.style.lineHeight = t_height.toString() + 'px';
-            bbox.style.fontSize = (t_width / 3).toString() + 'px';
-        }
-
-        bbox = document.getElementsByClassName('bbox');
-        for (let i = 0; i < bbox.length; i++) {
-            bbox[i].onclick = function () {
-                if (flag[i] === 0) {
-                    let prev = flag.indexOf(1)
-                    if (prev > -1) {
-                        flag[prev] = 0;
-                        bbox[prev].classList.remove('clicked');
-                        bbox[prev].innerHTML = '';
-                    }
-                    flag[i] = 1;
-                    bbox[i].classList.add('clicked');
-                    bbox[i].innerHTML = score[i].toFixed(2);
-
-                    let xhr = new XMLHttpRequest();
-                    xhr.open('POST', url, true);
-                    let formData = new FormData();
-                    formData.append('status', 'clip')
-                    formData.append('x0', bbox_c[i][3])
-                    formData.append('y0', bbox_c[i][2])
-                    formData.append('x1', bbox_c[i][3] + bbox_c[i][0])
-                    formData.append('y1', bbox_c[i][2] + bbox_c[i][1])
-                    xhr.send(formData)
-                    xhr.onreadystatechange = function () {
-                        if (xhr.readyState === XMLHttpRequest.DONE && xhr.status === 200) {
-                            let size = JSON.parse(xhr.response)
-                            fit_img(size.w, size.h);
-                            detail_img.src = './res/clip.png?' + Math.random();
+            let bbox = document.getElementsByClassName('bbox');
+            for (let i = 0; i < bbox.length; i++) {
+                bbox[i].onclick = function () {
+                    if (flag[i] === 0) {
+                        let prev = flag.indexOf(1)
+                        if (prev > -1) {
+                            flag[prev] = 0;
+                            bbox[prev].classList.remove('clicked');
+                            bbox[prev].innerHTML = '';
                         }
+                        flag[i] = 1;
+                        bbox[i].classList.add('clicked');
+                        bbox[i].innerHTML = score[i].toFixed(2);
+
+                        let xhr = new XMLHttpRequest();
+                        xhr.open('POST', url, true);
+                        let formData = new FormData();
+                        formData.append('status', 'clip')
+                        formData.append('x0', bbox_c[i][3])
+                        formData.append('y0', bbox_c[i][2])
+                        formData.append('x1', bbox_c[i][3] + bbox_c[i][0])
+                        formData.append('y1', bbox_c[i][2] + bbox_c[i][1])
+                        xhr.send(formData)
+                        xhr.onreadystatechange = function () {
+                            if (xhr.readyState === XMLHttpRequest.DONE && xhr.status === 200) {
+                                let size = JSON.parse(xhr.response)
+                                fit_img(size.w, size.h);
+                                detail_img.src = './res/clip.png?' + Math.random();
+                            }
+                        }
+                    } else if (flag[i] === 1) {
+                        flag[i] = 0;
+                        bbox[i].classList.remove('clicked');
+                        bbox[i].innerHTML = '';
+                        detail_img.src = './res/origin.png?' + Math.random();
+                        fit_img(shape[1], shape[0]);
                     }
-                } else if (flag[i] === 1) {
-                    flag[i] = 0;
-                    bbox[i].classList.remove('clicked');
-                    bbox[i].innerHTML = '';
-                    detail_img.src = './res/origin.png';
-                    fit_img(shape[1], shape[0]);
                 }
             }
-        }
-    } else if (type === 3) {
-        download.href = './res/mixed.png';
+        } else if (type === 3) {
+            download.href = './res/mixed.png';
 
-        for (let k = 0; k < 4; k++) {
-            const type_img = document.createElement('img');
-            type_img.className = 'types_img';
-            full_interact.appendChild(type_img);
-            type_img.src = './res/class' + k.toString() + '.png';
-        }
+            for (let k = 0; k < 4; k++) {
+                const type_img = document.createElement('img');
+                type_img.className = 'types_img';
+                full_interact.appendChild(type_img);
+                type_img.src = './res/class' + k.toString() + '.png?' + Math.random();
+            }
 
-        let r = window.innerHeight * 0.95 / shape[0];
-        full_interact.style.width = (r * shape[1]).toString() + 'px';
-        let d_width = window.innerWidth * 0.95 - r * shape[1] - 70;
-        detail.style.width = (d_width).toString() + 'px'
-        let d_height = window.innerHeight * 0.95;
-        detail_img.style.display = 'none';
+            let r = window.innerHeight * 0.95 / shape[0];
+            full_interact.style.width = (r * shape[1]).toString() + 'px';
+            let d_width = window.innerWidth * 0.95 - r * shape[1] - 70;
+            detail.style.width = (d_width).toString() + 'px'
+            let d_height = window.innerHeight * 0.95;
+            detail_img.style.display = 'none';
 
 
-        let classes = ['人工用地', '道路', '林地', '空地'];
-        for (let k = 0; k < 4; k++) {
-            const oc_types = document.createElement('div');
-            oc_types.className = 'oc_types';
-            detail.appendChild(oc_types);
-            oc_types.style.width = (d_width / 2.2).toString() + 'px';
-            oc_types.style.height = (d_height / 2.2).toString() + 'px';
+            let classes = ['人工用地', '道路', '林地', '空地'];
+            for (let k = 0; k < 4; k++) {
+                const oc_types = document.createElement('div');
+                oc_types.className = 'oc_types';
+                detail.appendChild(oc_types);
+                oc_types.style.width = (d_width / 2.2).toString() + 'px';
+                oc_types.style.height = (d_height / 2.2).toString() + 'px';
 
-            const oc_types_img = document.createElement('img');
-            oc_types_img.className = 'oc_types_img';
-            oc_types.appendChild(oc_types_img);
-            oc_types_img.src = './res/class' + k.toString() + '.png';
+                const oc_types_img = document.createElement('img');
+                oc_types_img.className = 'oc_types_img';
+                oc_types.appendChild(oc_types_img);
+                oc_types_img.src = './res/class' + k.toString() + '.png?' + Math.random();
 
-            const oc_types_score = document.createElement('div');
-            oc_types_score.className = 'oc_types_score';
-            oc_types.appendChild(oc_types_score);
-            // oc_types_score.innerHTML = score[k].toFixed(4);
-            oc_types_score.style.width = (d_width / 2.2).toString() + 'px';
-            oc_types_score.style.height = (d_height / 2.2).toString() + 'px';
-            oc_types_score.style.lineHeight = (d_height / 2.2).toString() + 'px';
-            oc_types_score.style.fontSize = (d_height / 8.8).toString() + 'px';
-            oc_types_score.style.left = (d_width * 0.005 + (k % 2) * (d_width / 2.2 + d_width * 0.04)).toString() + 'px';
-            oc_types_score.style.top = (d_height * 0.02 + (k > 1.5) * (d_height / 2.2 + d_height * 0.035)).toString() + 'px';
+                const oc_types_score = document.createElement('div');
+                oc_types_score.className = 'oc_types_score';
+                oc_types.appendChild(oc_types_score);
+                // oc_types_score.innerHTML = score[k].toFixed(4);
+                oc_types_score.style.width = (d_width / 2.2).toString() + 'px';
+                oc_types_score.style.height = (d_height / 2.2).toString() + 'px';
+                oc_types_score.style.lineHeight = (d_height / 2.2).toString() + 'px';
+                oc_types_score.style.fontSize = (d_height / 8.8).toString() + 'px';
+                oc_types_score.style.left = (d_width * 0.005 + (k % 2) * (d_width / 2.2 + d_width * 0.04)).toString() + 'px';
+                oc_types_score.style.top = (d_height * 0.02 + (k > 1.5) * (d_height / 2.2 + d_height * 0.035)).toString() + 'px';
 
-            const oc_info1 = document.createElement('div');
-            oc_info1.className = 'oc_info';
-            oc_types_score.appendChild(oc_info1);
-            oc_info1.innerHTML = '类别：' + classes[k];
-            const oc_info2 = document.createElement('div');
-            oc_info2.className = 'oc_info';
-            oc_types_score.appendChild(oc_info2);
-            oc_info2.innerHTML = '平均得分：' + score[k].toFixed(4);
-            const oc_info3 = document.createElement('div');
-            oc_info3.className = 'oc_info';
-            oc_types_score.appendChild(oc_info3);
-            oc_info3.innerHTML = '类别面积：' + area[k].toString();
-            const oc_info4 = document.createElement('div');
-            oc_info4.className = 'oc_info';
-            oc_types_score.appendChild(oc_info4);
-            oc_info4.innerHTML = '面积比例：' + (area[k] / (shape[0] * shape[1]) * 100).toFixed(4).toString() + '%';
-        }
+                const oc_info1 = document.createElement('div');
+                oc_info1.className = 'oc_info';
+                oc_types_score.appendChild(oc_info1);
+                oc_info1.innerHTML = '类别：' + classes[k];
+                const oc_info2 = document.createElement('div');
+                oc_info2.className = 'oc_info';
+                oc_types_score.appendChild(oc_info2);
+                oc_info2.innerHTML = '平均得分：' + score[k].toFixed(4);
+                const oc_info3 = document.createElement('div');
+                oc_info3.className = 'oc_info';
+                oc_types_score.appendChild(oc_info3);
+                oc_info3.innerHTML = '类别面积：' + area[k].toString();
+                const oc_info4 = document.createElement('div');
+                oc_info4.className = 'oc_info';
+                oc_types_score.appendChild(oc_info4);
+                oc_info4.innerHTML = '面积比例：' + (area[k] / (shape[0] * shape[1]) * 100).toFixed(4).toString() + '%';
+            }
 
-        const type_img = document.getElementsByClassName('types_img');
-        const oc_types = document.getElementsByClassName('oc_types');
-        const oc_types_img = document.getElementsByClassName('oc_types_img');
-        const oc_types_score = document.getElementsByClassName('oc_types_score');
-        const oc_info = document.getElementsByClassName('oc_info');
-        let flag = [0, 0, 0, 0];
-        for (let k = 0; k < 4; k++) {
-            oc_types[k].onclick = function () {
-                if (flag[k] === 0) {
-                    let prev = flag.indexOf(1);
-                    if (prev > -1) {
-                        oc_types_score[prev].classList.remove('show');
-                        oc_types_img[prev].classList.remove('focus');
-                        type_img[prev].classList.remove('focus');
+            const type_img = document.getElementsByClassName('types_img');
+            const oc_types = document.getElementsByClassName('oc_types');
+            const oc_types_img = document.getElementsByClassName('oc_types_img');
+            const oc_types_score = document.getElementsByClassName('oc_types_score');
+            const oc_info = document.getElementsByClassName('oc_info');
+            let flag = [0, 0, 0, 0];
+            for (let k = 0; k < 4; k++) {
+                oc_types[k].onclick = function () {
+                    if (flag[k] === 0) {
+                        let prev = flag.indexOf(1);
+                        if (prev > -1) {
+                            oc_types_score[prev].classList.remove('show');
+                            oc_types_img[prev].classList.remove('focus');
+                            type_img[prev].classList.remove('focus');
+                            for (let i = 0; i < 4; i++) {
+                                if (i !== prev) {
+                                    type_img[i].classList.remove('blur');
+                                }
+                            }
+                            for (let j = 0; j < 4; j++) {
+                                oc_info[prev * 4 + j].classList.remove('show' + j.toString());
+                            }
+                            flag[prev] = 0;
+                        }
+                        oc_types_score[k].classList.add('show');
+                        oc_types_img[k].classList.add('focus');
+                        type_img[k].classList.add('focus');
                         for (let i = 0; i < 4; i++) {
-                            if (i !== prev) {
+                            if (i !== k) {
+                                type_img[i].classList.add('blur');
+                            }
+                        }
+                        for (let j = 0; j < 4; j++) {
+                            oc_info[k * 4 + j].classList.add('show' + j.toString());
+                        }
+                        flag[k] = 1;
+                    } else if (flag[k] === 1) {
+                        oc_types_score[k].classList.remove('show');
+                        oc_types_img[k].classList.remove('focus');
+                        type_img[k].classList.remove('focus');
+                        for (let i = 0; i < 4; i++) {
+                            if (i !== k) {
                                 type_img[i].classList.remove('blur');
                             }
                         }
                         for (let j = 0; j < 4; j++) {
-                            oc_info[prev * 4 + j].classList.remove('show' + j.toString());
+                            oc_info[k * 4 + j].classList.remove('show' + j.toString());
                         }
-                        flag[prev] = 0;
+                        flag[k] = 0;
                     }
-                    oc_types_score[k].classList.add('show');
-                    oc_types_img[k].classList.add('focus');
-                    type_img[k].classList.add('focus');
-                    for (let i = 0; i < 4; i++) {
-                        if (i !== k) {
-                            type_img[i].classList.add('blur');
-                        }
-                    }
-                    for (let j = 0; j < 4; j++) {
-                        oc_info[k * 4 + j].classList.add('show' + j.toString());
-                    }
-                    flag[k] = 1;
-                } else if (flag[k] === 1) {
-                    oc_types_score[k].classList.remove('show');
-                    oc_types_img[k].classList.remove('focus');
-                    type_img[k].classList.remove('focus');
-                    for (let i = 0; i < 4; i++) {
-                        if (i !== k) {
-                            type_img[i].classList.remove('blur');
-                        }
-                    }
-                    for (let j = 0; j < 4; j++) {
-                        oc_info[k * 4 + j].classList.remove('show' + j.toString());
-                    }
-                    flag[k] = 0;
                 }
             }
         }
-    }
 
-    back.onclick = function () {
-        mode = 'prev';
-        res_prev.classList.remove('full');
-        prev_img.classList.remove('fade');
-        full_interact.classList.remove('show');
-        detail.classList.remove('show');
-        ori_img.classList.remove('show');
-    }
+        back.onclick = function () {
+            mode = 'prev';
+            res_prev.classList.remove('full');
+            prev_img.classList.remove('fade');
+            full_interact.classList.remove('show');
+            detail.classList.remove('show');
+            ori_img.classList.remove('show');
+        }
 
-    back.onmousedown = function () {
-        back.classList.add('down');
-    }
-    back.onmouseup = function () {
-        back.classList.remove('down');
-        back.classList.remove('show');
+        back.onmousedown = function () {
+            back.classList.add('down');
+        }
+        back.onmouseup = function () {
+            back.classList.remove('down');
+            back.classList.remove('show');
+        }
     }
 </script>
 </body>

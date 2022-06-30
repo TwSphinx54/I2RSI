@@ -43,6 +43,21 @@
     <div class="input2">
         变化检测
     </div>
+    <input type="file" id="file3" style="display:none; width: 150px;position: fixed;top: 60%;left: 35%;" multiple>
+    <div class="input3">
+        批处理
+    </div>
+    <div id="multi"></div>
+    <div id="multi_go">
+        <svg width="300" height="300" viewBox="-4.7 -4.7 100 100" stroke-width="2" stroke="currentColor" fill="none"
+             stroke-linecap="round" stroke-linejoin="round">
+            <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+            <circle cx="12" cy="12" r="1"></circle>
+            <path d="M16.924 11.132a5 5 0 1 0 -4.056 5.792"></path>
+            <path d="M3 12a9 9 0 1 0 9 -9"></path>
+        </svg>
+    </div>
+    <div id="multi_loading"></div>
     <div class="start">
         <svg width="60" height="60" viewBox="-8.5 -8 50 50" stroke-width="2" stroke="currentColor"
              stroke-linecap="round" stroke-linejoin="round">
@@ -92,6 +107,8 @@
     const input_bt1 = document.getElementById('file1');
     const input2 = document.getElementsByClassName('input2')[0];
     const input_bt2 = document.getElementById('file2');
+    const input3 = document.getElementsByClassName('input3')[0];
+    const input_bt3 = document.getElementById('file3');
     const start_bt = document.getElementsByClassName('start')[0];
     const img_prev = document.getElementsByClassName('img_prev')[0];
     const img_prev2 = document.getElementsByClassName('img_prev2')[0];
@@ -104,12 +121,15 @@
     const rs_input = document.getElementById('rs_input');
     const rs_input_bg = document.getElementById('rs_input_bg');
     const rs_input_txt = document.getElementById('rs_input_txt');
+    const multi = document.getElementById('multi');
+    const multi_go = document.getElementById('multi_go');
 
     main_title.innerHTML = type_name[method];
     main_subtitle.innerHTML = type_eng[method];
     main_title.classList.add('show');
     main_subtitle.classList.add('show');
     input1.classList.add('show');
+    input3.classList.add('show');
     rs_input.classList.add('show');
 
 
@@ -127,6 +147,9 @@
     }
     input1.onclick = function () {
         input_bt1.click();
+    }
+    input3.onclick = function () {
+        input_bt3.click();
     }
 
     rs_input.onmouseover = function () {
@@ -321,6 +344,7 @@
 
     if (method === 1) {
         rs_input.style.display = 'none';
+        input3.style.display = 'none';
         input_bt1.addEventListener('change', function () {
             img_prev.classList.add('show');
 
@@ -443,8 +467,128 @@
             }
         })
     } else {
+        input_bt3.addEventListener('change', function () {
+            multi.classList.add('show');
+            multi_go.classList.add('show');
+            let file = input_bt3.files;
+            let deleted = [];
+            let flag = true;
+            for (let k = 0; k < file.length; k++) {
+                const wrapper = document.createElement('div');
+                wrapper.className = 'multi_wrapper';
+                multi.appendChild(wrapper);
+
+                const pic = document.createElement('div');
+                pic.className = 'multi_pic';
+                wrapper.appendChild(pic);
+                pic.innerHTML = '<svg width="40" height="40" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">\n' +
+                    '   <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>\n' +
+                    '   <line x1="4" y1="7" x2="20" y2="7"></line>\n' +
+                    '   <line x1="10" y1="11" x2="10" y2="17"></line>\n' +
+                    '   <line x1="14" y1="11" x2="14" y2="17"></line>\n' +
+                    '   <path d="M5 7l1 12a2 2 0 0 0 2 2h8a2 2 0 0 0 2 -2l1 -12"></path>\n' +
+                    '   <path d="M9 7v-3a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v3"></path>\n' +
+                    '</svg>';
+                pic.style.lineHeight = pic.offsetHeight.toString() + 'px';
+
+                let reader = new FileReader();
+                reader.onload = function (e) {
+                    let data = e.target.result;
+                    pic.style.backgroundImage = 'url(' + data + ')';
+                    pic.style.backgroundSize = 'cover';
+                };
+                reader.readAsDataURL(file[k]);
+                pic.onmouseover = function () {
+                    if (flag){
+                        pic.classList.add('hover');
+                    }
+                }
+                pic.onmouseout = function () {
+                    if (flag){
+                        pic.classList.remove('hover');
+                    }
+                }
+                pic.onclick = function () {
+                    if (flag) {
+                        deleted.push(k);
+                        wrapper.remove();
+                    }
+                }
+            }
+
+            function multi_pro(k) {
+                const load_logo = document.createElement('div');
+                load_logo.className = 'multi_loading_logo';
+                multi_loading.appendChild(load_logo);
+                load_logo.innerHTML = '<svg width="600" height="600" viewBox="-4.7 -4.7 100 100" stroke-width="2" stroke="currentColor" fill="none"\n' +
+                    '             stroke-linecap="round" stroke-linejoin="round">\n' +
+                    '            <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>\n' +
+                    '            <circle cx="12" cy="12" r="1"></circle>\n' +
+                    '            <path d="M16.924 11.132a5 5 0 1 0 -4.056 5.792"></path>\n' +
+                    '            <path d="M3 12a9 9 0 1 0 9 -9"></path>\n' +
+                    '        </svg>'
+                const load_text = document.createElement('div');
+                load_text.className = 'multi_loading_text';
+                multi_loading.appendChild(load_text);
+                load_text.innerHTML = '正在解译' + (k + 1).toString() + '/' + n_file.length.toString();
+
+                let xhr = new XMLHttpRequest();
+                xhr.open('POST', url, true);
+                let formData = new FormData();
+                formData.append('status', 'multi');
+                formData.append('image', file[k]);
+                formData.append('no', k);
+                if (k === n_file.length - 1){
+                    formData.append('is_end', 'yes');
+                }else{
+                    formData.append('is_end', 'no');
+                }
+                xhr.send(formData);
+                xhr.onreadystatechange = function () {
+                    if (xhr.readyState === XMLHttpRequest.DONE && xhr.status === 200) {
+                        load_logo.remove();
+                        load_text.remove();
+                        pic[k].style.color = 'var(--main-marrsGreen)';
+                        pic[k].style.background = 'var(--main-white-shadow)';
+                        pic[k].innerHTML = '<svg width="40" height="40" viewBox="0 0 24 24" ' +
+                            'stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" ' +
+                            'stroke-linejoin="round">\n' +
+                            '   <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>\n' +
+                            '   <path d="M5 12l5 5l10 -10"></path>\n' +
+                            '</svg>';
+                        if (k < n_file.length - 1) {
+                            multi_pro(k + 1);
+                        } else {
+                            const load_text = document.createElement('div');
+                            load_text.className = 'multi_loading_text';
+                            multi_loading.appendChild(load_text);
+                            load_text.innerHTML = '解译完成全部' + n_file.length.toString() + '张影像！';
+                            window.location.href = xhr.responseURL;
+                        }
+                    }
+                }
+            }
+
+            let n_file = [];
+            const pic = document.getElementsByClassName('multi_pic');
+            const multi_loading = document.getElementById('multi_loading');
+            multi_go.onclick = function () {
+                for (let k = 0; k < file.length; k++) {
+                    if (!(deleted.includes(k))) {
+                        n_file.push(file[k])
+                    }
+                }
+
+                multi_go.classList.remove('show');
+                multi_loading.classList.add('show');
+                flag = false;
+                multi_pro(0);
+            }
+        });
+
         input_bt1.addEventListener('change', function () {
             img_prev.classList.add('show');
+            input3.classList.remove('show');
 
             let file = input_bt1.files[0];
             let reader = new FileReader();
@@ -489,7 +633,7 @@
                 load_bg.classList.add('show');
                 container.classList.add('show');
                 loading_text.classList.add('show');
-                if (method === 0){
+                if (method === 0) {
                     loading_time.innerHTML = '预计用时1~2min';
                     loading_time.classList.add('show');
                 }

@@ -1,5 +1,6 @@
 import math
 import os
+import json
 from flask import Flask, flash, request, redirect, url_for, render_template
 from urllib.request import urlretrieve
 from functions.object_detection import load_object_detection, object_detection
@@ -8,6 +9,7 @@ from functions.object_extraction import load_object_extraction, object_extractio
 from functions.change_detection import load_change_detection, change_detection
 from functions.road_repair import roads_repair
 import cv2 as cv
+import shutil
 
 UPLOAD_FOLDER = './webpage/res'
 WEIGHT_FOLDER = './weights'
@@ -61,7 +63,7 @@ def upload_file():
         status = request.values['status']
         if status == 'change':
             return redirect(url_for('welcome', animation=False))
-        else:
+        elif (status == 'upload') | (status == 'select'):
             if pro == '1':
                 file1 = request.files['image1']
                 file2 = request.files['image2']
@@ -108,19 +110,69 @@ def upload_file():
                     for k in range(4):
                         cv.imwrite(UPLOAD_FOLDER + '/class' + str(k) + '.png', types[k])
                 return redirect(url_for('main_process'))
+        elif status == 'multi':
+            no = request.values['no']
+            if not os.path.exists(UPLOAD_FOLDER + '/multi'):
+                os.mkdir(UPLOAD_FOLDER + '/multi')
+            multi_path = UPLOAD_FOLDER + '/multi/' + no
+            if not os.path.exists(multi_path):
+                os.mkdir(multi_path)
+            filename = 'origin.png'
+            save_path = os.path.join(multi_path, filename)
+            if status == 'select':
+                urlretrieve(request.values['img_url'], save_path)
+            else:
+                file = request.files['image']
+                file.save(save_path)
+            if pro == '0':
+                res, roads, score, period, mixed = object_extraction(save_path, model)
+                shape = list(res.shape)
+                cv.imwrite(multi_path + '/result.png', res)
+                cv.imwrite(multi_path + '/roads.png', roads)
+                cv.imwrite(multi_path + '/mixed.png', mixed)
+                paras = {'score': score, 'period': period, 'shape': shape}
+                paras_json = json.dumps(paras)
+                with open(multi_path + '/paras.json', 'w') as file:
+                    file.write(paras_json)
+            elif pro == '2':
+                res, loc, score, period = object_detection(save_path, model)
+                shape = list(res.shape)
+                cv.imwrite(multi_path + '/result.png', res)
+                paras = {'loc': loc, 'score': score, 'period': period, 'shape': shape}
+                paras_json = json.dumps(paras)
+                with open(multi_path + '/paras.json', 'w') as file:
+                    file.write(paras_json)
+            elif pro == '3':
+                res, types, score, period, areas, mixed = object_classification(save_path, model)
+                cv.imwrite(multi_path + '/result.png', res)
+                cv.imwrite(multi_path + '/mixed.png', mixed)
+                shape = list(res.shape)
+                for k in range(4):
+                    cv.imwrite(multi_path + '/class' + str(k) + '.png', types[k])
+                paras = {'score': score, 'period': period, 'shape': shape, 'areas': areas}
+                paras_json = json.dumps(paras)
+                with open(multi_path + '/paras.json', 'w') as file:
+                    file.write(paras_json)
+            is_end = request.values['is_end']
+            if is_end == 'yes':
+                return redirect(url_for('main_process', multi=True, no=no))
+            else:
+                return 'DONE'
 
 
 @app.route('/result', methods=['GET', 'POST'])
 def main_process():
     if request.method == 'GET':
+        multi = request.args.get('multi')
+        no = request.args.get('no')
         if pro == '1':
-            return render_template('main.html', pro=pro, ele=[score, period, shape])
+            return render_template('main.html', pro=pro, ele=[score, period, shape], multiF=multi, no=no)
         elif pro == '2':
-            return render_template('main.html', pro=pro, ele=[loc, score, period, shape])
+            return render_template('main.html', pro=pro, ele=[loc, score, period, shape], multiF=multi, no=no)
         elif pro == '3':
-            return render_template('main.html', pro=pro, ele=[score, period, shape, areas])
+            return render_template('main.html', pro=pro, ele=[score, period, shape, areas], multiF=multi, no=no)
         else:
-            return render_template('main.html', pro=pro, ele=[score, period, shape])
+            return render_template('main.html', pro=pro, ele=[score, period, shape], multiF=multi, no=no)
     elif request.method == 'POST':
         status = request.values['status']
         if status == 'change':
@@ -207,6 +259,23 @@ def main_process():
             cv.imwrite(UPLOAD_FOLDER + '/roads.png', road_o)
 
             return {'h': comp_prev.shape[0], 'w': comp_prev.shape[1]}
+        elif status == 'move':
+            no = request.values['no']
+            if pro == '0':
+                shutil.copy(UPLOAD_FOLDER + '/multi/' + no + '/origin.png', UPLOAD_FOLDER)
+                shutil.copy(UPLOAD_FOLDER + '/multi/' + no + '/result.png', UPLOAD_FOLDER)
+                shutil.copy(UPLOAD_FOLDER + '/multi/' + no + '/roads.png', UPLOAD_FOLDER)
+                shutil.copy(UPLOAD_FOLDER + '/multi/' + no + '/mixed.png', UPLOAD_FOLDER)
+            elif pro == '2':
+                shutil.copy(UPLOAD_FOLDER + '/multi/' + no + '/origin.png', UPLOAD_FOLDER)
+                shutil.copy(UPLOAD_FOLDER + '/multi/' + no + '/result.png', UPLOAD_FOLDER)
+            elif pro == '3':
+                shutil.copy(UPLOAD_FOLDER + '/multi/' + no + '/origin.png', UPLOAD_FOLDER)
+                shutil.copy(UPLOAD_FOLDER + '/multi/' + no + '/result.png', UPLOAD_FOLDER)
+                shutil.copy(UPLOAD_FOLDER + '/multi/' + no + '/mixed.png', UPLOAD_FOLDER)
+                for k in range(4):
+                    shutil.copy(UPLOAD_FOLDER + '/multi/' + no + '/class' + str(k) + '.png', UPLOAD_FOLDER)
+            return 'DONE'
 
 
 if __name__ == '__main__':
