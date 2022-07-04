@@ -42,4 +42,4 @@ def object_extraction(img_path, predictor):
     '''
     IoU为0.59，Acc为0.78，Kappa系数为0.72, F1为0.74
     '''
-    return res, roads, scores, period, mixed
+    return res, roads, scores, period, mixed, score_map

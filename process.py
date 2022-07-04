@@ -9,6 +9,7 @@ from functions.object_extraction import load_object_extraction, object_extractio
 from functions.change_detection import load_change_detection, change_detection
 from functions.road_repair import roads_repair
 import cv2 as cv
+import numpy as np
 import shutil
 
 UPLOAD_FOLDER = './webpage/res'
@@ -116,7 +117,8 @@ def upload_file():
                     B = os.path.join(app.config['UPLOAD_FOLDER'], filename2)
                     file1.save(A)
                     file2.save(B)
-                    res, alpha, score, period, mixed = change_detection(A, B, model, o_threshold, h_threshold)
+                    res, alpha, score, period, mixed = change_detection(A, B, model, o_threshold,
+                                                                        h_threshold)
                     shape = list(res.shape)
                     cv.imwrite(UPLOAD_FOLDER + '/result.png', res)
                     cv.imwrite(UPLOAD_FOLDER + '/change.png', alpha)
@@ -135,11 +137,12 @@ def upload_file():
                     file.save(save_path)
                     fn = file.filename
                 if pro == '0':
-                    res, roads, score, period, mixed = object_extraction(save_path, model)
+                    res, roads, score, period, mixed, score_map = object_extraction(save_path, model)
                     shape = list(res.shape)
                     cv.imwrite(UPLOAD_FOLDER + '/result.png', res)
                     cv.imwrite(UPLOAD_FOLDER + '/roads.png', roads)
                     cv.imwrite(UPLOAD_FOLDER + '/mixed.png', mixed)
+                    np.save(UPLOAD_FOLDER + '/score.npy', score_map[:, :, 1])
                     write_report(UPLOAD_FOLDER + '/report.txt', pro, [score, period, shape, fn])
                 elif pro == '2':
                     res, loc, score, period = object_detection(save_path, model)
@@ -170,11 +173,12 @@ def upload_file():
                 file = request.files['image']
                 file.save(save_path)
             if pro == '0':
-                res, roads, score, period, mixed = object_extraction(save_path, model)
+                res, roads, score, period, mixed, score_map = object_extraction(save_path, model)
                 shape = list(res.shape)
                 cv.imwrite(multi_path + '/result.png', res)
                 cv.imwrite(multi_path + '/roads.png', roads)
                 cv.imwrite(multi_path + '/mixed.png', mixed)
+                np.save(UPLOAD_FOLDER + '/score.npy', score_map[:,:,1])
                 paras = {'score': score, 'period': period, 'shape': shape}
                 paras_json = json.dumps(paras)
                 with open(multi_path + '/paras.json', 'w') as file:
@@ -258,41 +262,43 @@ def main_process():
             return {'h': img.shape[0], 'w': img.shape[1]}
         elif status == 'complete':
             road_o = cv.imread(UPLOAD_FOLDER + '/result.png')
-            road = roads_repair(UPLOAD_FOLDER + '/result.png')
             coord = [request.values['x0'], request.values['y0'], request.values['x1'], request.values['y1']]
             coord = [math.floor(float(k)) for k in coord]
             if coord[2] < coord[0]:
                 coord[0], coord[2] = coord[2], coord[0]
             if coord[3] < coord[1]:
                 coord[1], coord[3] = coord[3], coord[1]
-            road = clip_img(road, coord)
+            road = roads_repair(UPLOAD_FOLDER + '/result.png', UPLOAD_FOLDER + '/score.npy', coord)
             road_oc = clip_img(road_o, coord)
             ori = cv.imread(UPLOAD_FOLDER + '/origin.png')
             ori = clip_img(ori, coord)
             ori_o = ori.copy()
-            ori[road[:, :, 0] == 255] = [142, 255, 30]
+            ori[road == 255] = [142, 255, 30]
             ori[road_oc[:, :, 0] == 255] = [1, 0, 255]
             comp_prev = oe_mix(ori_o, ori)
             cv.imwrite(UPLOAD_FOLDER + '/clipP.png', comp_prev)
             return {'h': comp_prev.shape[0], 'w': comp_prev.shape[1]}
         elif status == 'confirm':
-            road = roads_repair(UPLOAD_FOLDER + '/result.png')
             coord = [request.values['x0'], request.values['y0'], request.values['x1'], request.values['y1']]
             coord = [math.floor(float(k)) for k in coord]
             if coord[2] < coord[0]:
                 coord[0], coord[2] = coord[2], coord[0]
             if coord[3] < coord[1]:
                 coord[1], coord[3] = coord[3], coord[1]
-            road = clip_img(road, coord)
+            road = roads_repair(UPLOAD_FOLDER + '/result.png', UPLOAD_FOLDER + '/score.npy', coord)
             ori = cv.imread(UPLOAD_FOLDER + '/origin.png')
             ori_o = ori.copy()
             ori_c = clip_img(ori, coord)
             ori_oc = ori_c.copy()
-            ori_c[road[:, :, 0] == 255] = [1, 0, 255]
+            ori_c[road == 255] = [1, 0, 255]
             comp_prev = oe_mix(ori_oc, ori_c)
             cv.imwrite(UPLOAD_FOLDER + '/clipP.png', comp_prev)
 
             road_o = cv.imread(UPLOAD_FOLDER + '/result.png')
+            lut = np.zeros((256, 3), dtype=np.uint8)
+            lut[255] = [255, 255, 255]
+            lut[0] = [0, 0, 0]
+            road = lut[road]
             road_o[coord[1]:coord[3], coord[0]:coord[2]] = road
 
             ori[road_o[:, :, 0] == 255] = [1, 0, 255]

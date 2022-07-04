@@ -327,6 +327,10 @@
                                 info1.innerHTML = '分辨率';
                                 info2.innerHTML = '缩放倍率';
                                 info3.innerHTML = '面积比例';
+                                let optss = document.getElementsByClassName('opts');
+                                if (optss.length > 2) {
+                                    optss[2].remove();
+                                }
                             }
 
                             const infos = document.createElement('div');
@@ -420,6 +424,10 @@
                                     }
                                 }
                                 cf = false;
+                                let optss = document.getElementsByClassName('opts');
+                                if (optss.length > 2) {
+                                    optss[2].remove();
+                                }
                             }
                             full_interact.onclick = function () {
                                 if (cf) {
@@ -863,8 +871,8 @@
             options = options || {};
 
             let $this = document.getElementsByClassName(targetEle)[i],
-                time = options.time || $this.data('time'), //总时间--毫秒为单位
-                finalNum = options.num || $this.data('value'), //要显示的真实数值
+                time = options.time, //总时间--毫秒为单位
+                finalNum = options.num, //要显示的真实数值
                 regulator = options.regulator || 100, //调速器，改变regulator的数值可以调节数字改变的速度
 
                 step = finalNum / (time / regulator),/*每30ms增加的数值--*/
@@ -1067,6 +1075,10 @@
                 info1.innerHTML = '分辨率';
                 info2.innerHTML = '缩放倍率';
                 info3.innerHTML = '面积比例';
+                let optss = document.getElementsByClassName('opts');
+                if (optss.length > 2){
+                    optss[2].remove();
+                }
             }
 
             const infos = document.createElement('div');
@@ -1160,6 +1172,10 @@
                     }
                 }
                 cf = false;
+                let optss = document.getElementsByClassName('opts');
+                if (optss.length > 2) {
+                    optss[2].remove();
+                }
             }
             full_interact.onclick = function () {
                 if (cf) {
