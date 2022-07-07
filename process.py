@@ -35,7 +35,7 @@ def write_report(file_path, method, paras):
             score_p, period_p, shape_p, fn1, fn2 = paras
             f.write(fn1 + '\n')
             f.write(fn2 + '\n')
-            f.write('提取道路平均得分：' + str(score_p) + '\n')
+            f.write('变化部分平均得分：' + str(score_p) + '\n')
             f.write('图像解译时间：' + str(period_p) + 'ms\n')
             f.write('图像分辨率：' + str(shape_p[0]) + '×' + str(shape_p[1]) + '\n')
         elif method == '2':
