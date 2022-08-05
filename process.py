@@ -27,39 +27,58 @@ def write_report(file_path, method, paras):
     with open(file_path, 'w') as f:
         if method == '0':
             score_p, period_p, shape_p, fn = paras
-            f.write(fn + '\n')
-            f.write('提取道路平均得分：' + str(score_p) + '\n')
-            f.write('图像解译时间：' + str(period_p) + 'ms\n')
-            f.write('图像分辨率：' + str(shape_p[0]) + '×' + str(shape_p[1]) + '\n')
+            f.write('<center>I2RSI遥感图像智能解译系统</center>\n\n')
+            f.write('# 分析报告\n\n')
+            f.write('## 基本信息\n\n')
+            f.write('**解译方式**：目标提取\n\n')
+            f.write('**文件名**：' + fn + '\n\n')
+            f.write('**图像解译时间**：' + str(period_p) + 'ms\n\n')
+            f.write('**图像分辨率**：' + str(shape_p[0]) + '×' + str(shape_p[1]) + '\n\n')
+            f.write('## 检测结果\n\n')
+            f.write('**提取道路平均得分**：' + str(score_p) + '\n')
         elif method == '1':
             score_p, period_p, shape_p, fn1, fn2 = paras
-            f.write(fn1 + '\n')
-            f.write(fn2 + '\n')
-            f.write('变化部分平均得分：' + str(score_p) + '\n')
-            f.write('图像解译时间：' + str(period_p) + 'ms\n')
-            f.write('图像分辨率：' + str(shape_p[0]) + '×' + str(shape_p[1]) + '\n')
+            f.write('<center>I2RSI遥感图像智能解译系统</center>\n\n')
+            f.write('# 分析报告\n\n')
+            f.write('## 基本信息\n\n')
+            f.write('**解译方式**：变化检测\n\n')
+            f.write('**文件名**：\n\n* ' + fn1 + '\n* ' + fn2 + '\n\n')
+            f.write('**图像解译时间**：' + str(period_p) + 'ms\n\n')
+            f.write('**图像分辨率**：' + str(shape_p[0]) + '×' + str(shape_p[1]) + '\n\n')
+            f.write('## 检测结果\n\n')
+            f.write('**变化部分平均得分**：' + str(score_p) + '\n')
         elif method == '2':
             loc_p, score_p, period_p, shape_p, fn = paras
-            f.write(fn + '\n')
-            f.write('图像解译时间：' + str(period_p) + 'ms\n')
-            f.write('图像分辨率：' + str(shape_p[0]) + '×' + str(shape_p[1]) + '\n')
+            f.write('<center>I2RSI遥感图像智能解译系统</center>\n\n')
+            f.write('# 分析报告\n\n')
+            f.write('## 基本信息\n\n')
+            f.write('**解译方式**：目标检测\n\n')
+            f.write('**文件名**：' + fn + '\n\n')
+            f.write('**图像解译时间**：' + str(period_p) + 'ms\n\n')
+            f.write('**图像分辨率**：' + str(shape_p[0]) + '×' + str(shape_p[1]) + '\n\n')
+            f.write('## 检测结果\n\n')
             for i in range(len(score_p)):
-                f.write('--------------------------------------------\n')
-                f.write('目标' + str(i + 1) + '\n')
-                f.write('目标位于图像上的坐标：' + str(loc[i]) + '\n')
-                f.write('目标得分：' + str(score_p[i]) + '\n')
+                f.write('---\n\n')
+                f.write('### 目标' + str(i + 1) + '\n\n')
+                f.write('**目标位于图像上的坐标**：' + str(loc[i]) + '\n\n')
+                f.write('**目标得分**：' + str(score_p[i]) + '\n\n')
         elif method == '3':
             score_p, period_p, shape_p, areas_p, fn = paras
-            f.write(fn + '\n')
-            f.write('图像解译时间：' + str(period_p) + 'ms\n')
-            f.write('图像分辨率：' + str(shape_p[0]) + '×' + str(shape_p[1]) + '\n')
+            f.write('<center>I2RSI遥感图像智能解译系统</center>\n\n')
+            f.write('# 分析报告\n\n')
+            f.write('## 基本信息\n\n')
+            f.write('**解译方式**：变化检测\n\n')
+            f.write('**文件名**：' + fn + '\n\n')
+            f.write('**图像解译时间**：' + str(period_p) + 'ms\n\n')
+            f.write('**图像分辨率**：' + str(shape_p[0]) + '×' + str(shape_p[1]) + '\n\n')
+            f.write('## 检测结果\n\n')
             s = shape_p[0] * shape[1]
             for i in range(4):
-                f.write('--------------------------------------------\n')
-                f.write('类别' + str(i + 1) + '\n')
-                f.write('类别得分：' + str(score_p[i]) + '\n')
-                f.write('类别面积：' + str(areas_p[i]) + '\n')
-                f.write('类别占比：' + str(areas_p[i] / s * 100) + '%\n')
+                f.write('---\n')
+                f.write('## 类别' + str(i + 1) + '\n\n')
+                f.write('**类别得分**：' + str(score_p[i]) + '\n\n')
+                f.write('**类别面积**：' + str(areas_p[i]) + '\n\n')
+                f.write('**类别占比**：' + str(areas_p[i] / s * 100) + '%\n\n')
     return True
 
 
@@ -123,7 +142,7 @@ def upload_file():
                     cv.imwrite(UPLOAD_FOLDER + '/result.png', res)
                     cv.imwrite(UPLOAD_FOLDER + '/change.png', alpha)
                     cv.imwrite(UPLOAD_FOLDER + '/mixed.png', mixed)
-                    write_report(UPLOAD_FOLDER + '/report.txt', pro,
+                    write_report(UPLOAD_FOLDER + '/report.md', pro,
                                  [score, period, shape, file1.filename, file2.filename])
                     return redirect(url_for('main_process'))
             else:
@@ -143,12 +162,12 @@ def upload_file():
                     cv.imwrite(UPLOAD_FOLDER + '/roads.png', roads)
                     cv.imwrite(UPLOAD_FOLDER + '/mixed.png', mixed)
                     np.save(UPLOAD_FOLDER + '/score.npy', score_map[:, :, 1])
-                    write_report(UPLOAD_FOLDER + '/report.txt', pro, [score, period, shape, fn])
+                    write_report(UPLOAD_FOLDER + '/report.md', pro, [score, period, shape, fn])
                 elif pro == '2':
                     res, loc, score, period = object_detection(save_path, model)
                     shape = list(res.shape)
                     cv.imwrite(UPLOAD_FOLDER + '/result.png', res)
-                    write_report(UPLOAD_FOLDER + '/report.txt', pro, [loc, score, period, shape, fn])
+                    write_report(UPLOAD_FOLDER + '/report.md', pro, [loc, score, period, shape, fn])
                 elif pro == '3':
                     res, types, score, period, areas, mixed = object_classification(save_path, model)
                     cv.imwrite(UPLOAD_FOLDER + '/result.png', res)
@@ -156,7 +175,7 @@ def upload_file():
                     shape = list(res.shape)
                     for k in range(4):
                         cv.imwrite(UPLOAD_FOLDER + '/class' + str(k) + '.png', types[k])
-                    write_report(UPLOAD_FOLDER + '/report.txt', pro, [score, period, shape, areas, fn])
+                    write_report(UPLOAD_FOLDER + '/report.md', pro, [score, period, shape, areas, fn])
                 return redirect(url_for('main_process'))
         elif status == 'multi':
             no = request.values['no']
@@ -178,7 +197,7 @@ def upload_file():
                 cv.imwrite(multi_path + '/result.png', res)
                 cv.imwrite(multi_path + '/roads.png', roads)
                 cv.imwrite(multi_path + '/mixed.png', mixed)
-                np.save(UPLOAD_FOLDER + '/score.npy', score_map[:,:,1])
+                np.save(UPLOAD_FOLDER + '/score.npy', score_map[:, :, 1])
                 paras = {'score': score, 'period': period, 'shape': shape}
                 paras_json = json.dumps(paras)
                 with open(multi_path + '/paras.json', 'w') as file:
@@ -305,6 +324,7 @@ def main_process():
             comp = oe_mix(ori_o, ori)
             cv.imwrite(UPLOAD_FOLDER + '/mixed.png', comp)
 
+            cv.imwrite(UPLOAD_FOLDER + '/result.png', road_o)
             road_o[road_o[:, :, 0] == 255] = [1, 0, 255]
             road_o = add_alpha(road_o)
             cv.imwrite(UPLOAD_FOLDER + '/roads.png', road_o)
