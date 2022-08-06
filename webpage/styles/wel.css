@@ -518,6 +518,14 @@
     z-index: 3;
 }
 
+#mask {
+    height: 100%;
+    width: 100%;
+    position: fixed;
+    z-index: 10;
+    display: block;
+}
+
 #ring_t {
     width: 170px;
     height: 170px;
@@ -911,7 +919,7 @@
     -webkit-transition: all 0.5s, width 0.5s 0.7s, color 0.3s 1s;
 }
 
-.cd_para_name.active{
+.cd_para_name.active {
     background-color: rgba(255, 255, 255, 0.7);
 }
 
@@ -1089,6 +1097,10 @@
     animation: ease-out;
     transition: all 0.5s, width 0.5s 0.5s, z-index 0s 0.5s;
     -webkit-transition: all 0.5s, width 0.5s 0.5s, z-index 0s 0.5s;
+}
+
+.function_bt.focus {
+    top: 40%;
 }
 
 #bt_alt {

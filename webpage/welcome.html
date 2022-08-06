@@ -504,6 +504,22 @@
         }
 
         go[i].onclick = function () {
+            const mask = document.createElement('div');
+            mask.id = 'mask';
+            document.getElementById('background').appendChild(mask);
+
+            function_bt[func_flag.indexOf(1)].classList.add('focus');
+
+            if (r_flag === 'False') {
+                for (let i = 0; i < alt_opt.length; i++) {
+                    alt_opt[i].classList.remove('showF' + i.toString())
+                }
+            } else {
+                for (let i = 0; i < alt_opt.length; i++) {
+                    alt_opt[i].classList.remove('show' + i.toString())
+                }
+            }
+
             if (functions[i].classList.contains('show0')) {
                 functions[i].classList.remove('show0')
             } else if (functions[i].classList.contains('showF')) {
