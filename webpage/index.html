@@ -35,6 +35,8 @@
         </svg>
     </div>
 
+    <div id="warning"></div>
+
     <input type="file" id="file1" style="display:none; width: 150px;position: fixed;top: 60%;left: 17%;">
     <div class="input1">
         选择图片
@@ -84,7 +86,6 @@
 <script>
     let url = 'http://127.0.0.1:8080/upload'
     const method = {{pro}};
-    // const method = {{pro}};
 
     const r_pro = document.getElementById('r_pro');
     r_pro.onclick = function () {
@@ -123,6 +124,7 @@
     const rs_input_txt = document.getElementById('rs_input_txt');
     const multi = document.getElementById('multi');
     const multi_go = document.getElementById('multi_go');
+    const warning = document.getElementById('warning');
 
     main_title.innerHTML = type_name[method];
     main_subtitle.innerHTML = type_eng[method];
@@ -346,122 +348,140 @@
         rs_input.style.display = 'none';
         input3.style.display = 'none';
         input_bt1.addEventListener('change', function () {
-            img_prev.classList.add('show');
+            let file_path = input_bt1.value;
+            let pos = file_path.lastIndexOf("\\");
+            let filename = file_path.substring(pos + 1);
+            let ext_name = filename.substring(filename.lastIndexOf("."), filename.length);
+            let support_ext = ['.png', '.jpg', 'jpeg']
+            if (support_ext.indexOf(ext_name) === -1) {
+                warning.innerHTML = '错误！上传图片格式有误，支持影像拓展名 .png .jpg .jpeg';
+            } else {
+                img_prev.classList.add('show');
 
-            let file = input_bt1.files[0];
-            let reader = new FileReader();
-            reader.onload = function (e) {
-                data1 = e.target.result;
+                let file = input_bt1.files[0];
+                let reader = new FileReader();
+                reader.onload = function (e) {
+                    data1 = e.target.result;
 
-                img_prev.style.backgroundImage = 'url(' + data1 + ')';
-                img_prev.style.backgroundSize = '70%';
-                img_prev.style.backgroundPosition = '0 50%';
-                img_prev.style.backgroundRepeat = 'no-repeat';
-            };
-            reader.readAsDataURL(file);
+                    img_prev.style.backgroundImage = 'url(' + data1 + ')';
+                    img_prev.style.backgroundSize = '70%';
+                    img_prev.style.backgroundPosition = '0 50%';
+                    img_prev.style.backgroundRepeat = 'no-repeat';
+                };
+                reader.readAsDataURL(file);
 
-            main_title.classList.add('move');
-            main_subtitle.classList.add('move');
-            r_pro.classList.add('move');
+                main_title.classList.add('move');
+                main_subtitle.classList.add('move');
+                r_pro.classList.add('move');
 
-            img_ready[0] = 1;
-            input1.classList.remove('hover');
-            input1.classList.add('ready');
-            input1.innerHTML = '<svg width="90" height="90" viewBox="-14 -1 50 50" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">\n' +
-                '   <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>\n' +
-                '   <path d="M5 12l5 5l10 -10"></path>\n' +
-                '</svg>';
-            input2.classList.add('show');
-            input2.onmouseover = function () {
-                if (img_ready[1] === 0) {
-                    input2.classList.add('hover');
+                img_ready[0] = 1;
+                input1.classList.remove('hover');
+                input1.classList.add('ready');
+                input1.innerHTML = '<svg width="90" height="90" viewBox="-14 -1 50 50" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">\n' +
+                    '   <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>\n' +
+                    '   <path d="M5 12l5 5l10 -10"></path>\n' +
+                    '</svg>';
+                input2.classList.add('show');
+                input2.onmouseover = function () {
+                    if (img_ready[1] === 0) {
+                        input2.classList.add('hover');
+                    }
                 }
-            }
-            input2.onmouseout = function () {
-                if (img_ready[1] === 0) {
-                    input2.classList.remove('hover');
+                input2.onmouseout = function () {
+                    if (img_ready[1] === 0) {
+                        input2.classList.remove('hover');
+                    }
                 }
-            }
-            input2.onclick = function () {
-                input_bt2.click();
+                input2.onclick = function () {
+                    input_bt2.click();
+                }
             }
         })
 
         input_bt2.addEventListener('change', function () {
-            img_prev.classList.add('move');
-            img_prev2.classList.add('show');
+            let file_path = input_bt2.value;
+            let pos = file_path.lastIndexOf("\\");
+            let filename = file_path.substring(pos + 1);
+            let ext_name = filename.substring(filename.lastIndexOf("."), filename.length);
+            let support_ext = ['.png', '.jpg', 'jpeg']
+            if (support_ext.indexOf(ext_name) === -1) {
+                warning.innerHTML = '错误！上传图片格式有误，支持影像拓展名 .png .jpg .jpeg';
+            } else {
+                img_prev.classList.add('move');
+                img_prev2.classList.add('show');
 
-            img_prev.onmouseover = function () {
-                img_prev.classList.add('focus');
-                img_prev2.classList.add('unfocus');
-            }
+                img_prev.onmouseover = function () {
+                    img_prev.classList.add('focus');
+                    img_prev2.classList.add('unfocus');
+                }
 
-            img_prev.onmouseout = function () {
-                img_prev.classList.remove('focus');
-                img_prev2.classList.remove('unfocus');
-            }
+                img_prev.onmouseout = function () {
+                    img_prev.classList.remove('focus');
+                    img_prev2.classList.remove('unfocus');
+                }
 
-            img_prev2.onmouseover = function () {
-                img_prev2.classList.add('focus');
-                img_prev.classList.add('unfocus');
-            }
+                img_prev2.onmouseover = function () {
+                    img_prev2.classList.add('focus');
+                    img_prev.classList.add('unfocus');
+                }
 
-            img_prev2.onmouseout = function () {
-                img_prev2.classList.remove('focus');
-                img_prev.classList.remove('unfocus');
-            }
+                img_prev2.onmouseout = function () {
+                    img_prev2.classList.remove('focus');
+                    img_prev.classList.remove('unfocus');
+                }
 
-            let file = input_bt2.files[0];
-            let reader = new FileReader();
-            reader.onload = function (e) {
-                data2 = e.target.result;
+                let file = input_bt2.files[0];
+                let reader = new FileReader();
+                reader.onload = function (e) {
+                    data2 = e.target.result;
 
-                img_prev2.style.backgroundImage = 'url(' + data2 + ')';
-                img_prev2.style.backgroundSize = '70%';
-                img_prev2.style.backgroundPosition = '0 20%';
-                img_prev2.style.backgroundRepeat = 'no-repeat';
-            };
-            reader.readAsDataURL(file);
+                    img_prev2.style.backgroundImage = 'url(' + data2 + ')';
+                    img_prev2.style.backgroundSize = '70%';
+                    img_prev2.style.backgroundPosition = '0 20%';
+                    img_prev2.style.backgroundRepeat = 'no-repeat';
+                };
+                reader.readAsDataURL(file);
 
-            img_ready[1] = 1;
-            input2.classList.remove('hover');
-            input2.classList.add('ready');
-            input2.innerHTML = '<svg width="90" height="90" viewBox="-14 -1 50 50" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">\n' +
-                '   <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>\n' +
-                '   <path d="M5 12l5 5l10 -10"></path>\n' +
-                '</svg>';
-            start_bt.classList.add('show');
-            start_bt.onmouseover = function () {
-                start_bt.classList.add('hover');
-                start_bt.innerHTML = '开始处理';
-            }
-            start_bt.onmouseout = function () {
-                start_bt.classList.remove('hover');
-                start_bt.innerHTML = '  <svg width="60" height="60"\n' +
-                    '             viewBox="-8.5 -8 50 50" stroke-width="2" stroke="currentColor" stroke-linecap="round"\n' +
-                    '             stroke-linejoin="round">\n' +
-                    '            <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>\n' +
-                    '            <path d="M5 19h14a2 2 0 0 0 1.84 -2.75l-7.1 -12.25a2 2 0 0 0 -3.5 0l-7.1 12.25a2 2 0 0 0 1.75 2.75"></path>\n' +
-                    '        </svg>';
-            }
+                img_ready[1] = 1;
+                input2.classList.remove('hover');
+                input2.classList.add('ready');
+                input2.innerHTML = '<svg width="90" height="90" viewBox="-14 -1 50 50" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">\n' +
+                    '   <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>\n' +
+                    '   <path d="M5 12l5 5l10 -10"></path>\n' +
+                    '</svg>';
+                start_bt.classList.add('show');
+                start_bt.onmouseover = function () {
+                    start_bt.classList.add('hover');
+                    start_bt.innerHTML = '开始处理';
+                }
+                start_bt.onmouseout = function () {
+                    start_bt.classList.remove('hover');
+                    start_bt.innerHTML = '  <svg width="60" height="60"\n' +
+                        '             viewBox="-8.5 -8 50 50" stroke-width="2" stroke="currentColor" stroke-linecap="round"\n' +
+                        '             stroke-linejoin="round">\n' +
+                        '            <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>\n' +
+                        '            <path d="M5 19h14a2 2 0 0 0 1.84 -2.75l-7.1 -12.25a2 2 0 0 0 -3.5 0l-7.1 12.25a2 2 0 0 0 1.75 2.75"></path>\n' +
+                        '        </svg>';
+                }
 
-            start_bt.onclick = function () {
-                load_bg.classList.add('show');
-                container.classList.add('show');
-                loading_text.classList.add('show');
-                loading_time.innerHTML = '预计用时1~2min';
-                loading_time.classList.add('show');
+                start_bt.onclick = function () {
+                    load_bg.classList.add('show');
+                    container.classList.add('show');
+                    loading_text.classList.add('show');
+                    loading_time.innerHTML = '预计用时1~2min';
+                    loading_time.classList.add('show');
 
-                let xhr = new XMLHttpRequest();
-                xhr.open('POST', url, true);
-                let formData = new FormData();
-                formData.append('status', 'upload')
-                formData.append('image1', input_bt1.files[0])
-                formData.append('image2', input_bt2.files[0])
-                xhr.send(formData)
-                xhr.onreadystatechange = function () {
-                    if (xhr.readyState === XMLHttpRequest.DONE && xhr.status === 200) {
-                        window.location.href = xhr.responseURL
+                    let xhr = new XMLHttpRequest();
+                    xhr.open('POST', url, true);
+                    let formData = new FormData();
+                    formData.append('status', 'upload')
+                    formData.append('image1', input_bt1.files[0])
+                    formData.append('image2', input_bt2.files[0])
+                    xhr.send(formData)
+                    xhr.onreadystatechange = function () {
+                        if (xhr.readyState === XMLHttpRequest.DONE && xhr.status === 200) {
+                            window.location.href = xhr.responseURL
+                        }
                     }
                 }
             }
@@ -499,12 +519,12 @@
                 };
                 reader.readAsDataURL(file[k]);
                 pic.onmouseover = function () {
-                    if (flag){
+                    if (flag) {
                         pic.classList.add('hover');
                     }
                 }
                 pic.onmouseout = function () {
-                    if (flag){
+                    if (flag) {
                         pic.classList.remove('hover');
                     }
                 }
@@ -538,9 +558,9 @@
                 formData.append('status', 'multi');
                 formData.append('image', file[k]);
                 formData.append('no', k);
-                if (k === n_file.length - 1){
+                if (k === n_file.length - 1) {
                     formData.append('is_end', 'yes');
-                }else{
+                } else {
                     formData.append('is_end', 'no');
                 }
                 xhr.send(formData);
@@ -587,67 +607,77 @@
         });
 
         input_bt1.addEventListener('change', function () {
-            img_prev.classList.add('show');
-            input3.classList.remove('show');
+            let file_path = input_bt1.value;
+            let pos = file_path.lastIndexOf("\\");
+            let filename = file_path.substring(pos + 1);
+            let ext_name = filename.substring(filename.lastIndexOf("."), filename.length);
+            let support_ext = ['.png', '.jpg', 'jpeg']
+            if (support_ext.indexOf(ext_name) === -1) {
+                warning.innerHTML = '错误！上传图片格式有误，支持影像拓展名 .png .jpg .jpeg';
+            } else {
+                warning.innerHTML = '';
+                img_prev.classList.add('show');
+                input3.classList.remove('show');
 
-            let file = input_bt1.files[0];
-            let reader = new FileReader();
-            reader.onload = function (e) {
-                data1 = e.target.result;
+                let file = input_bt1.files[0];
+                let reader = new FileReader();
+                reader.onload = function (e) {
+                    data1 = e.target.result;
 
-                img_prev.style.backgroundImage = 'url(' + data1 + ')';
-                img_prev.style.backgroundSize = '70%';
-                img_prev.style.backgroundPosition = '0 50%';
-                img_prev.style.backgroundRepeat = 'no-repeat';
-            };
-            reader.readAsDataURL(file);
+                    img_prev.style.backgroundImage = 'url(' + data1 + ')';
+                    img_prev.style.backgroundSize = '70%';
+                    img_prev.style.backgroundPosition = '0 50%';
+                    img_prev.style.backgroundRepeat = 'no-repeat';
+                };
+                reader.readAsDataURL(file);
 
-            main_title.classList.add('move');
-            main_subtitle.classList.add('move');
-            r_pro.classList.add('move');
+                main_title.classList.add('move');
+                main_subtitle.classList.add('move');
+                r_pro.classList.add('move');
 
-            img_ready[0] = 1;
-            input1.classList.remove('hover');
-            input1.classList.add('ready');
-            input1.innerHTML = '<svg width="90" height="90" viewBox="-14 -1 50 50" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">\n' +
-                '   <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>\n' +
-                '   <path d="M5 12l5 5l10 -10"></path>\n' +
-                '</svg>';
+                img_ready[0] = 1;
+                input1.classList.remove('hover');
+                input1.classList.add('ready');
+                input1.innerHTML = '<svg width="90" height="90" viewBox="-14 -1 50 50" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">\n' +
+                    '   <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>\n' +
+                    '   <path d="M5 12l5 5l10 -10"></path>\n' +
+                    '</svg>';
 
-            start_bt.classList.add('show_n');
-            start_bt.onmouseover = function () {
-                start_bt.classList.add('hover_n');
-                start_bt.innerHTML = '开始处理';
-            }
-            start_bt.onmouseout = function () {
-                start_bt.classList.remove('hover_n');
-                start_bt.innerHTML = '  <svg width="60" height="60"\n' +
-                    '             viewBox="-8.5 -8 50 50" stroke-width="2" stroke="currentColor" stroke-linecap="round"\n' +
-                    '             stroke-linejoin="round">\n' +
-                    '            <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>\n' +
-                    '            <path d="M5 19h14a2 2 0 0 0 1.84 -2.75l-7.1 -12.25a2 2 0 0 0 -3.5 0l-7.1 12.25a2 2 0 0 0 1.75 2.75"></path>\n' +
-                    '        </svg>';
-            }
-
-            start_bt.onclick = function () {
-                load_bg.classList.add('show');
-                container.classList.add('show');
-                loading_text.classList.add('show');
-                if (method === 0) {
-                    loading_time.innerHTML = '预计用时1~2min';
-                    loading_time.classList.add('show');
+                start_bt.classList.add('show_n');
+                start_bt.onmouseover = function () {
+                    start_bt.classList.add('hover_n');
+                    start_bt.innerHTML = '开始处理';
+                }
+                start_bt.onmouseout = function () {
+                    start_bt.classList.remove('hover_n');
+                    start_bt.innerHTML = '  <svg width="60" height="60"\n' +
+                        '             viewBox="-8.5 -8 50 50" stroke-width="2" stroke="currentColor" stroke-linecap="round"\n' +
+                        '             stroke-linejoin="round">\n' +
+                        '            <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>\n' +
+                        '            <path d="M5 19h14a2 2 0 0 0 1.84 -2.75l-7.1 -12.25a2 2 0 0 0 -3.5 0l-7.1 12.25a2 2 0 0 0 1.75 2.75"></path>\n' +
+                        '        </svg>';
                 }
 
-                let xhr = new XMLHttpRequest();
-                xhr.open('POST', url, true);
-                let formData = new FormData();
-                formData.append('status', 'upload');
-                formData.append('image', input_bt1.files[0]);
-                xhr.send(formData);
-                xhr.onreadystatechange = function () {
-                    if (xhr.readyState === XMLHttpRequest.DONE && xhr.status === 200) {
-                        loading_text.innerHTML = '解译完毕';
-                        window.location.href = xhr.responseURL;
+                start_bt.onclick = function () {
+                    load_bg.classList.add('show');
+                    container.classList.add('show');
+                    loading_text.classList.add('show');
+                    if (method === 0) {
+                        loading_time.innerHTML = '预计用时1~2min';
+                        loading_time.classList.add('show');
+                    }
+
+                    let xhr = new XMLHttpRequest();
+                    xhr.open('POST', url, true);
+                    let formData = new FormData();
+                    formData.append('status', 'upload');
+                    formData.append('image', input_bt1.files[0]);
+                    xhr.send(formData);
+                    xhr.onreadystatechange = function () {
+                        if (xhr.readyState === XMLHttpRequest.DONE && xhr.status === 200) {
+                            loading_text.innerHTML = '解译完毕';
+                            window.location.href = xhr.responseURL;
+                        }
                     }
                 }
             }

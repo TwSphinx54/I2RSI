@@ -824,16 +824,16 @@
     -webkit-transition: all 0.5s;
 }
 
-#multi_go.show{
+#multi_go.show {
     z-index: 4;
     opacity: 100%;
 }
 
-#multi_go:hover{
+#multi_go:hover {
     transform: rotateZ(360deg);
 }
 
-#multi_loading{
+#multi_loading {
     width: 80%;
     height: 80%;
     position: fixed;
@@ -854,22 +854,22 @@
     -webkit-transition: all 0.5s;
 }
 
-#multi_loading.show{
+#multi_loading.show {
     z-index: 4;
     opacity: 100%;
 }
 
-.multi_loading_logo{
+.multi_loading_logo {
     width: 200px;
     height: 200px;
     border-radius: 100px;
     color: var(--main-white);
     overflow: hidden;
-    
+
     animation: 1s rotate linear infinite;
 }
 
-.multi_loading_text{
+.multi_loading_text {
     width: 600px;
     height: 30px;
     text-align: center;
@@ -877,4 +877,16 @@
     font-weight: bold;
     font-size: 30px;
     color: var(--main-white);
+}
+
+#warning {
+    width: 600px;
+    height: 30px;
+    position: fixed;
+    top: 55%;
+    left: 15%;
+    /*border: 1px black solid;*/
+    font-family: Ubuntu, "Microsoft YaHei", serif;
+    font-size: 20px;
+    line-height: 30px;
 }
