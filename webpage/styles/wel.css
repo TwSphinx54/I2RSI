@@ -427,6 +427,7 @@
     height: 20px;
     width: 240px;
     position: absolute;
+    color: rgb(50, 50, 50);
 }
 
 #powered_words.show {
@@ -523,6 +524,10 @@
     width: 100%;
     position: fixed;
     z-index: 10;
+    display: none;
+}
+
+#mask.show {
     display: block;
 }
 
@@ -1259,4 +1264,551 @@
 #loader_text.show {
     transform: none;
     opacity: 100%;
+}
+
+.model_wrapper {
+    overflow: scroll;
+    height: 300px;
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    justify-content: left;
+    align-items: start;
+    right: -3%;
+    /*border: 1px white solid;*/
+
+    width: 0;
+
+    animation: ease-out;
+    transition: all 0.5s;
+    -webkit-transition: all 0.5s;
+}
+
+.model_wrapper.show0 {
+    width: 400px;
+    transition-delay: 1.7s;
+}
+
+.model_wrapper.showF {
+    width: 400px;
+    transition-delay: 0.7s;
+}
+
+.model_wrapper.show {
+    width: 400px;
+    transition-delay: 0.5s;
+}
+
+.model_wrapper::-webkit-scrollbar {
+    display: none;
+}
+
+.model_wrapper_title {
+    background-color: rgba(0, 0, 0, 0.2);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 0px solid rgba(0, 0, 0, 0.18);
+    box-shadow: rgba(103, 103, 103, 0.19) 0px 6px 15px 0px;
+    -webkit-box-shadow: rgba(103, 103, 103, 0.19) 0px 6px 15px 0px;
+    color: rgba(255, 255, 255, 0.6);
+
+    width: 400px;
+    height: 40px;
+    padding: 5px;
+    font-size: 20px;
+    line-height: 30px;
+    font-family: Ubuntu, "Microsoft YaHei", serif;
+    text-align: center;
+    box-sizing: border-box;
+    overflow: hidden;
+    font-weight: bold;
+
+    cursor: default;
+}
+
+.model_add {
+    background-color: rgba(0, 0, 0, 0.2);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 0px solid rgba(0, 0, 0, 0.18);
+    box-shadow: rgba(103, 103, 103, 0.19) 0px 6px 15px 0px;
+    -webkit-box-shadow: rgba(103, 103, 103, 0.19) 0px 6px 15px 0px;
+    color: rgba(255, 255, 255, 0.6);
+
+    width: 400px;
+    height: 30px;
+    padding: 3px;
+    font-size: 20px;
+    line-height: 24px;
+    font-family: Ubuntu, "Microsoft YaHei", serif;
+    text-align: center;
+    box-sizing: border-box;
+    overflow: hidden;
+    font-weight: bold;
+    border-radius: 10px;
+
+    cursor: pointer;
+    animation: ease-out;
+    transition: all 0.3s;
+    -webkit-transition: all 0.3s;
+}
+
+.model_add:hover {
+    background-color: rgba(255, 255, 255, 0.2);
+    box-shadow: rgba(173, 173, 173, 0.19) 0px 6px 15px 0px;
+    -webkit-box-shadow: rgba(173, 173, 173, 0.19) 0px 6px 15px 0px;
+    color: rgba(0, 0, 0, 0.6);
+}
+
+.model_del {
+    background-color: rgba(0, 0, 0, 0.2);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 0px solid rgba(0, 0, 0, 0.18);
+    box-shadow: rgba(103, 103, 103, 0.19) 0px 6px 15px 0px;
+    -webkit-box-shadow: rgba(103, 103, 103, 0.19) 0px 6px 15px 0px;
+    color: rgba(255, 255, 255, 0.6);
+
+    width: 400px;
+    height: 30px;
+    padding: 3px;
+    font-size: 20px;
+    line-height: 24px;
+    font-family: Ubuntu, "Microsoft YaHei", serif;
+    text-align: center;
+    box-sizing: border-box;
+    overflow: hidden;
+    font-weight: bold;
+    border-radius: 10px;
+
+    cursor: pointer;
+    animation: ease-out;
+    transition: all 0.3s;
+    -webkit-transition: all 0.3s;
+}
+
+.model_del:hover {
+    background-color: rgba(255, 0, 0, 0.4);
+    box-shadow: rgba(173, 173, 173, 0.19) 0px 6px 15px 0px;
+    -webkit-box-shadow: rgba(173, 173, 173, 0.19) 0px 6px 15px 0px;
+    color: rgba(0, 0, 0, 0.6);
+}
+
+.model_opt {
+    background-color: rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 0px solid rgba(255, 255, 255, 0.18);
+    box-shadow: rgba(142, 142, 142, 0.19) 0px 6px 15px 0px;
+    -webkit-box-shadow: rgba(142, 142, 142, 0.19) 0px 6px 15px 0px;
+    color: rgba(0, 0, 0, 0.6);
+
+    width: 400px;
+    height: 40px;
+    padding: 5px;
+    font-size: 20px;
+    line-height: 30px;
+    font-family: Ubuntu, "Microsoft YaHei", serif;
+    text-align: left;
+    box-sizing: border-box;
+    overflow: hidden;
+
+    cursor: pointer;
+    animation: ease-out;
+    transition: all 0.3s;
+    -webkit-transition: all 0.3s;
+}
+
+.model_opt:hover {
+    background-color: rgba(0, 0, 0, 0.2);
+    box-shadow: rgba(91, 91, 91, 0.19) 0px 6px 15px 0px;
+    -webkit-box-shadow: rgba(91, 91, 91, 0.19) 0px 6px 15px 0px;
+    color: rgba(255, 255, 255, 0.6);
+}
+
+.model_opt.clicked {
+    background-color: rgba(58, 69, 91, 0.6);
+    color: rgba(255, 255, 255, 0.6);
+    text-align: right;
+}
+
+.model_info {
+    background-color: rgba(58, 69, 91, 0.3);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 0px solid rgba(255, 255, 255, 0.18);
+    box-shadow: rgba(142, 142, 142, 0.19) 0px 6px 15px 0px;
+    -webkit-box-shadow: rgba(142, 142, 142, 0.19) 0px 6px 15px 0px;
+    color: rgba(255, 255, 255, 0.6);
+
+    width: 400px;
+    font-size: 15px;
+    line-height: 17px;
+    font-family: Ubuntu, "Microsoft YaHei", serif;
+    text-align: left;
+    box-sizing: border-box;
+    overflow: hidden;
+
+    height: 0;
+    padding: 0;
+
+    cursor: default;
+    animation: ease-out;
+    transition: all 0.2s;
+    -webkit-transition: all 0.2s;
+}
+
+.model_info.focus {
+    height: auto;
+    padding: 5px;
+}
+
+.panel_add {
+    position: fixed;
+    z-index: 11;
+    left: 50%;
+    margin-left: -500px;
+    top: 50%;
+    margin-top: -300px;
+    width: 1000px;
+    height: 600px;
+    background-image: url("../imgs/add_model.png");
+    backdrop-filter: blur(15px);
+    -webkit-backdrop-filter: blur(15px);
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    box-shadow: rgba(142, 142, 142, 0.19) 0px 6px 15px 0px;
+    -webkit-box-shadow: rgba(142, 142, 142, 0.19) 0px 6px 15px 0px;
+    border-radius: 15px;
+
+    display: none;
+}
+
+.panel_add.show {
+    display: block;
+}
+
+#panel_add_leave {
+    position: absolute;
+    width: 50px;
+    height: 50px;
+    border-radius: 10px;
+    font-family: Ubuntu, "Microsoft YaHei", serif;
+    font-weight: bold;
+    right: 80px;
+    top: 70px;
+    background-color: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    box-shadow: rgba(152, 152, 152, 0.19) 0px 6px 15px 0px;
+    -webkit-box-shadow: rgba(152, 152, 152, 0.19) 0px 6px 15px 0px;
+    color: rgb(50, 50, 50, 0.9);
+
+    cursor: pointer;
+}
+
+#panel_add_leave:hover {
+    background-color: rgba(217, 37, 37, 0.7);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    color: rgba(255, 255, 255, 0.9);
+}
+
+#panel_upload_title {
+    position: absolute;
+    width: 300px;
+    font-family: Ubuntu, "Microsoft YaHei", serif;
+    font-weight: bold;
+    font-size: 60px;
+    left: 80px;
+    top: 50px;
+    color: rgb(50, 50, 50);
+}
+
+#panel_upload_requirements {
+    position: absolute;
+    width: 300px;
+    font-family: Ubuntu, "Microsoft YaHei", serif;
+    font-size: 15px;
+    left: 80px;
+    bottom: 80px;
+    color: rgb(50, 50, 50);
+}
+
+#panel_upload_bt {
+    position: absolute;
+    width: 240px;
+    height: 50px;
+    line-height: 50px;
+    font-family: Ubuntu, "Microsoft YaHei", serif;
+    left: 80px;
+    top: 220px;
+    border-radius: 10px;
+    font-size: 20px;
+    font-weight: bold;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    background-color: rgb(11, 94, 235, 0.7);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    box-shadow: rgba(8, 69, 168, 0.19) 0px 6px 15px 0px;
+    -webkit-box-shadow: rgba(8, 69, 168, 0.19) 0px 6px 15px 0px;
+    color: rgb(255, 255, 255, 0.9);
+
+    display: none;
+
+    cursor: pointer;
+    animation: ease-out;
+    transition: all 0.2s;
+    -webkit-transition: all 0.2s;
+}
+
+#panel_upload_bt.show {
+    display: flex;
+}
+
+#panel_upload_bt:hover {
+    background-color: rgba(221, 225, 231, 0.7);
+    box-shadow: rgba(152, 152, 152, 0.19) 0px 6px 15px 0px;
+    -webkit-box-shadow: rgba(152, 152, 152, 0.19) 0px 6px 15px 0px;
+    color: rgb(50, 50, 50, 0.9);
+}
+
+#panel_upload_bt.clicked {
+    background-color: rgb(21, 215, 196, 0.7);
+    box-shadow: none;
+    -webkit-box-shadow: none;
+    color: rgb(222, 226, 232, 0.9);
+}
+
+#panel_upload_bt.wrong {
+    background-color: rgba(217, 37, 37, 0.7);
+    box-shadow: none;
+    -webkit-box-shadow: none;
+    color: rgb(222, 226, 232, 0.9);
+}
+
+
+#panel_upload_info {
+    position: absolute;
+    width: auto;
+    height: 30px;
+    line-height: 30px;
+    font-family: Ubuntu, "Microsoft YaHei", serif;
+    left: 330px;
+    top: 230px;
+    padding: 0 10px 0 10px;
+    border-radius: 10px;
+    font-size: 20px;
+    text-align: center;
+    background-color: rgba(255, 255, 255, 0.3);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    box-shadow: rgba(152, 152, 152, 0.19) 0px 6px 15px 0px;
+    -webkit-box-shadow: rgba(152, 152, 152, 0.19) 0px 6px 15px 0px;
+    color: rgb(50, 50, 50, 0.9);
+}
+
+#panel_upload_name {
+    position: absolute;
+    width: 240px;
+    height: 50px;
+    line-height: 50px;
+    font-family: Ubuntu, "Microsoft YaHei", serif;
+    left: 80px;
+    top: 150px;
+    border-radius: 10px;
+    font-size: 20px;
+    font-weight: bold;
+    outline: none;
+    border: none;
+    text-align: center;
+    box-sizing: border-box;
+    background-color: rgba(255, 255, 255, 0.3);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    box-shadow: rgba(152, 152, 152, 0.19) 0px 6px 15px 0px;
+    -webkit-box-shadow: rgba(152, 152, 152, 0.19) 0px 6px 15px 0px;
+    color: rgb(50, 50, 50, 0.9);
+
+    cursor: text;
+    animation: ease-out;
+    transition: all 0.1s;
+    -webkit-transition: all 0.1s;
+}
+
+#panel_upload_name:focus {
+    background-color: rgba(50, 50, 50, 0.2);
+    box-shadow: rgba(103, 103, 103, 0.19) 0px 6px 15px 0px;
+    -webkit-box-shadow: rgba(103, 103, 103, 0.19) 0px 6px 15px 0px;
+    color: rgba(255, 255, 255, 0.6);
+}
+
+#panel_upload_desc {
+    position: absolute;
+    width: 580px;
+    height: 50px;
+    line-height: 50px;
+    font-family: Ubuntu, "Microsoft YaHei", serif;
+    left: 340px;
+    top: 150px;
+    border-radius: 10px;
+    font-size: 20px;
+    font-weight: bold;
+    outline: none;
+    border: none;
+    text-align: center;
+    box-sizing: border-box;
+    background-color: rgba(255, 255, 255, 0.3);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    box-shadow: rgba(152, 152, 152, 0.19) 0px 6px 15px 0px;
+    -webkit-box-shadow: rgba(152, 152, 152, 0.19) 0px 6px 15px 0px;
+    color: rgb(50, 50, 50, 0.9);
+
+    cursor: text;
+    animation: ease-out;
+    transition: all 0.1s;
+    -webkit-transition: all 0.1s;
+}
+
+#panel_upload_desc:focus {
+    background-color: rgba(50, 50, 50, 0.2);
+    box-shadow: rgba(103, 103, 103, 0.19) 0px 6px 15px 0px;
+    -webkit-box-shadow: rgba(103, 103, 103, 0.19) 0px 6px 15px 0px;
+    color: rgba(255, 255, 255, 0.6);
+}
+
+#panel_upload_desc:disabled {
+    cursor: not-allowed;
+    background-color: rgba(10, 10, 10, 0.2);
+    color: rgba(80, 80, 80, 0.6);
+}
+
+.panel_del {
+    position: fixed;
+    z-index: 11;
+    left: 50%;
+    margin-left: -400px;
+    top: 50%;
+    margin-top: -200px;
+    width: 800px;
+    height: 400px;
+    background-image: url("../imgs/add_model.png");
+    backdrop-filter: blur(15px);
+    -webkit-backdrop-filter: blur(15px);
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    box-shadow: rgba(142, 142, 142, 0.19) 0px 6px 15px 0px;
+    -webkit-box-shadow: rgba(142, 142, 142, 0.19) 0px 6px 15px 0px;
+    border-radius: 15px;
+
+    display: none;
+}
+
+.panel_del.show {
+    display: block;
+}
+
+#panel_del_title {
+    position: absolute;
+    width: 500px;
+    font-family: Ubuntu, "Microsoft YaHei", serif;
+    font-weight: bold;
+    font-size: 50px;
+    left: 60px;
+    top: 40px;
+    color: rgb(50, 50, 50);
+}
+
+#panel_del_confirm {
+    position: absolute;
+    width: 140px;
+    height: 50px;
+    line-height: 50px;
+    font-family: Ubuntu, "Microsoft YaHei", serif;
+    left: 60px;
+    bottom: 60px;
+    border-radius: 10px;
+    font-size: 20px;
+    font-weight: bold;
+    text-align: center;
+    background-color: rgb(229, 51, 51, 0.6);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    box-shadow: rgba(8, 69, 168, 0.19) 0px 6px 15px 0px;
+    -webkit-box-shadow: rgba(8, 69, 168, 0.19) 0px 6px 15px 0px;
+    color: rgb(255, 255, 255, 0.9);
+
+    cursor: pointer;
+}
+
+#panel_del_confirm:hover {
+    background-color: rgb(229, 51, 51);
+    box-shadow: none;
+    -webkit-box-shadow: none;
+}
+
+#panel_del_cancel {
+    position: absolute;
+    width: 140px;
+    height: 50px;
+    line-height: 50px;
+    font-family: Ubuntu, "Microsoft YaHei", serif;
+    left: 220px;
+    bottom: 60px;
+    border-radius: 10px;
+    font-size: 20px;
+    font-weight: bold;
+    text-align: center;
+    background-color: rgba(255, 255, 255, 0.3);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    box-shadow: rgba(152, 152, 152, 0.19) 0px 6px 15px 0px;
+    -webkit-box-shadow: rgba(152, 152, 152, 0.19) 0px 6px 15px 0px;
+    color: rgb(50, 50, 50, 0.9);
+
+    cursor: pointer;
+}
+
+#panel_del_cancel:hover {
+    background-color: rgba(255, 255, 255);
+    box-shadow: none;
+    -webkit-box-shadow: none;
+}
+
+#panel_del_name {
+    position: absolute;
+    width: 680px;
+    font-family: Ubuntu, "Microsoft YaHei", serif;
+    font-weight: bold;
+    font-size: 30px;
+    left: 60px;
+    top: 110px;
+    border-radius: 10px;
+    padding: 10px;
+    box-sizing: border-box;
+    background-color: rgba(255, 255, 255, 0.3);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    box-shadow: rgba(152, 152, 152, 0.19) 0px 6px 15px 0px;
+    -webkit-box-shadow: rgba(152, 152, 152, 0.19) 0px 6px 15px 0px;
+    color: rgb(50, 50, 50);
+}
+
+#panel_del_desc {
+    position: absolute;
+    width: 500px;
+    font-family: Ubuntu, "Microsoft YaHei", serif;
+    font-size: 20px;
+    left: 60px;
+    top: 170px;
+    border-radius: 10px;
+    height: 100px;
+    color: rgb(50, 50, 50);
+    /*border: 1px black solid;*/
+    overflow-y: scroll;
+}
+
+#panel_del_desc::-webkit-scrollbar {
+    display: none;
 }

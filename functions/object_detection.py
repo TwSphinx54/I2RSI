@@ -1,12 +1,6 @@
-import paddlers as pdrs
 from paddlers import transforms as T
 import cv2 as cv
 import time
-
-
-def load_object_detection(model_path):
-    predictor = pdrs.deploy.Predictor(model_path)
-    return predictor
 
 
 def cal_coord(rate, bbox):

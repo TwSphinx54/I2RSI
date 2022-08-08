@@ -5,7 +5,7 @@ import cv2 as cv
 from functions.object_classification import add_alpha
 
 
-def load_object_extraction(model_path):
+def load_model(model_path):
     predictor = pdrs.deploy.Predictor(model_path)
     return predictor
 

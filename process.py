@@ -3,19 +3,21 @@ import os
 import json
 from flask import Flask, flash, request, redirect, url_for, render_template
 from urllib.request import urlretrieve
-from functions.object_detection import load_object_detection, object_detection
-from functions.object_classification import load_object_classification, object_classification, add_alpha
-from functions.object_extraction import load_object_extraction, object_extraction, oe_mix
-from functions.change_detection import load_change_detection, change_detection
+from functions.object_detection import object_detection
+from functions.object_classification import object_classification, add_alpha
+from functions.object_extraction import load_model, object_extraction, oe_mix
+from functions.change_detection import change_detection
 from functions.road_repair import roads_repair
 import cv2 as cv
 import numpy as np
 import shutil
+import sqlite3
 
 UPLOAD_FOLDER = './webpage/res'
 WEIGHT_FOLDER = './weights'
+WEIGHT_DB = './weights/weights.db'
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg'}
-MODELS = ['playground', 'aircraft', 'oiltank', 'overpass']
+# MODELS = ['playground', 'aircraft', 'oiltank', 'overpass']
 
 app = Flask(__name__, template_folder="./webpage", static_folder='./webpage', static_url_path="")
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
@@ -97,19 +99,77 @@ def welcome():
         return render_template('welcome.html', animation=animation)
     elif request.method == 'POST':
         global pro, model, o_threshold, h_threshold
-        pro = request.values['pro']
-        if pro == '0':
-            model = load_object_extraction(WEIGHT_FOLDER + '/object_extraction/')
-        elif pro == '1':
-            model = load_change_detection(WEIGHT_FOLDER + '/change_detection/')
-            o_threshold = int(request.values['o_thres'])
-            h_threshold = int(request.values['h_thres'])
-        elif pro == '2':
-            pro_type = int(request.values['type'])
-            model = load_object_detection(WEIGHT_FOLDER + '/object_detection/' + MODELS[pro_type])
-        elif pro == '3':
-            model = load_object_classification(WEIGHT_FOLDER + '/object_classification')
-        return redirect(url_for('upload_file'))
+        status = request.values['status']
+        if status == 'model':
+            con = sqlite3.connect(WEIGHT_DB)
+            cur = con.cursor()
+            f_type = request.values['f_type']
+            od_type = request.values['od_type']
+            q_res = cur.execute("SELECT id,name,desc FROM weights WHERE func=(?) AND od_class=(?)",
+                                (f_type, od_type))
+            res = {}
+            for row in q_res:
+                res[row[0]] = [row[1], row[2]]
+            con.close()
+            return json.dumps(res)
+        elif status == 'load':
+            con = sqlite3.connect(WEIGHT_DB)
+            cur = con.cursor()
+            pro = request.values['pro']
+            pro_type = request.values['type']
+            model_no = int(request.values['model_no'])
+            model_path = ''
+
+            if pro == '1':
+                q_res = cur.execute("SELECT path FROM weights WHERE func=(?) AND od_class=(?)",
+                                    (pro, pro_type))
+                model_path = q_res.fetchall()[model_no][0]
+                o_threshold = int(request.values['o_thres'])
+                h_threshold = int(request.values['h_thres'])
+            else:
+                q_res = cur.execute("SELECT path FROM weights WHERE func=(?) AND od_class=(?)",
+                                    (pro, pro_type))
+                model_path = q_res.fetchall()[model_no][0]
+
+            model = load_model(model_path)
+            con.close()
+            return redirect(url_for('upload_file'))
+        elif status == 'upload':
+            pro = request.values['pro']
+            pro_type = request.values['type']
+            model_zip = request.files['model']
+            model_name = request.values['name']
+            model_desc = request.values['desc']
+
+            save_path = WEIGHT_FOLDER + '/' + model_name.replace(' ', '_') + '/'
+            zip_path = os.path.join(WEIGHT_FOLDER, model_zip.filename)
+            model_zip.save(zip_path)
+            shutil.unpack_archive(zip_path, save_path)
+            os.remove(zip_path)
+            if set(os.listdir(save_path)) == {'model.pdiparams', 'model.pdiparams.info', 'model.pdmodel', 'model.yml',
+                                              'pipeline.yml'}:
+                con = sqlite3.connect(WEIGHT_DB)
+                cur = con.cursor()
+                last_id = cur.execute("SELECT id FROM weights ORDER BY id desc limit 0,1").fetchone()[0]
+                cur.execute(
+                    "INSERT INTO weights VALUES ((?), (?), (?), (?), (?), (?))",
+                    (last_id + 1, model_name, save_path, int(pro), model_desc, pro_type))
+                con.commit()
+                con.close()
+                return 'DONE'
+            else:
+                shutil.rmtree(save_path)
+                return 'WRONG'
+        elif status == 'del':
+            model_id = int(request.values['model_id'])
+            con = sqlite3.connect(WEIGHT_DB)
+            cur = con.cursor()
+            rm_path = cur.execute("SELECT path FROM weights WHERE id=(?)", (model_id,)).fetchone()[0]
+            shutil.rmtree(rm_path)
+            cur.execute("DELETE FROM weights WHERE id=(?)", (model_id,))
+            con.commit()
+            con.close()
+            return 'DONE'
 
 
 @app.route('/upload', methods=['GET', 'POST'])
@@ -350,4 +410,6 @@ def main_process():
 
 
 if __name__ == '__main__':
+    if not os.path.exists(UPLOAD_FOLDER):
+        os.mkdir(UPLOAD_FOLDER)
     app.run(port=8080, debug=True)

@@ -1,14 +1,6 @@
-import os
-
-import paddlers as pdrs
 import numpy as np
 import cv2 as cv
 import time
-
-
-def load_object_classification(model_path):  # 创建python解释器
-    predictor = pdrs.deploy.Predictor(model_path)
-    return predictor
 
 
 def split_type(label_map, num):  # 分类别

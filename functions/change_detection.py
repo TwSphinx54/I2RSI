@@ -1,14 +1,8 @@
-import paddlers as pdrs
 import cv2 as cv
 import numpy as np
 import time
 from skimage import morphology
 from functions.object_classification import add_alpha
-
-
-def load_change_detection(model_path):
-    predictor = pdrs.deploy.Predictor(model_path)
-    return predictor
 
 
 def repair(img, o_threshold, h_threshold):

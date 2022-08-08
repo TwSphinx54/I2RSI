@@ -40,10 +40,11 @@
         </div>
     </div>
     <div id="left_up">
-        <div style="font-size: 2em; font-weight: bold" id="logo_words1">I2RSI PROJECT<br></div>
-        <div style="font-size: 0.9em" id="logo_words2">VARIOUS REMOTE SENSING IMAGE<br></div>
-        <div style="font-size: 1.38em;" id="logo_words3">INTERPRETATION</div>
-        <div style="font-size: 1.38em; font-weight: bold" id="logo_words4">&nbsp;&nbsp;SYS</div>
+        <div style="font-size: 2em; font-weight: bold; color: rgb(50, 50, 50);" id="logo_words1">I2RSI PROJECT<br></div>
+        <div style="font-size: 0.9em; color: rgb(50, 50, 50);" id="logo_words2">VARIOUS REMOTE SENSING IMAGE<br></div>
+        <div style="font-size: 1.38em; color: rgb(50, 50, 50);" id="logo_words3">INTERPRETATION</div>
+        <div style="font-size: 1.38em; font-weight: bold; color: rgb(50, 50, 50);" id="logo_words4">&nbsp;&nbsp;SYS
+        </div>
     </div>
     <div id="right_down">
         <div id="powered_words">
@@ -57,6 +58,7 @@
             <div class="intro_img"></div>
             <div class="intro">OBJECT<br>EXTRACTION</div>
             <div class='go'>开始处理</div>
+            <div class="model_wrapper"></div>
         </div>
         <div class="function">
             <div class="intro_img"></div>
@@ -72,6 +74,7 @@
                     <div class="cd_para_name">空洞阈值</div>
                 </div>
             </div>
+            <div class="model_wrapper"></div>
         </div>
         <div class="function">
             <div class="intro_img"></div>
@@ -83,11 +86,13 @@
                 <div class="od_type">OVERPASS</div>
             </div>
             <div class='go'>开始处理</div>
+            <div class="model_wrapper"></div>
         </div>
         <div class="function">
             <div class="intro_img"></div>
             <div class="intro">OBJECT<br>CLASSIFICATION</div>
             <div class='go'>开始处理</div>
+            <div class="model_wrapper"></div>
         </div>
     </div>
     <div class="function_bt">
@@ -239,11 +244,53 @@
             </div>
         </div>
     </div>
+    <div class="panel_add">
+        <div id="panel_upload_title">上传模型</div>
+        <input type="text" id="panel_upload_name" value="模型名称">
+        <input type="text" id="panel_upload_desc" value="模型描述">
+        <input type="file" id="upload" style="display:none">
+        <div id="panel_upload_bt" title="上传">
+            <svg width="50" height="50" viewBox="-3 -4 35 35" stroke-width="3" stroke="currentColor" fill="none"
+                 stroke-linecap="round" stroke-linejoin="round">
+                <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                <path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2 -2v-2"></path>
+                <polyline points="7 9 12 4 17 9"></polyline>
+                <line x1="12" y1="4" x2="12" y2="16"></line>
+            </svg>
+        </div>
+        <div id="panel_add_leave" title="离开">
+            <svg width="50" height="50" viewBox="-7 -6 35 35" stroke-width="3" stroke="currentColor" fill="none"
+                 stroke-linecap="round" stroke-linejoin="round">
+                <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                <path d="M14 8v-2a2 2 0 0 0 -2 -2h-7a2 2 0 0 0 -2 2v12a2 2 0 0 0 2 2h7a2 2 0 0 0 2 -2v-2"></path>
+                <path d="M7 12h14l-3 -3m0 6l3 -3"></path>
+            </svg>
+        </div>
+        <div id="panel_upload_requirements"><span style="font-weight: bold; font-size: 20px">上传须知</span><br>
+            1. 请上传百度paddlepaddle标准静态图模型<br>
+            2. 请上传.zip格式压缩包<br>
+            3. 压缩包内需包含五个静态图模型文件：<br>
+            &nbsp&nbsp&nbsp model.pdiparams<br>
+            &nbsp&nbsp&nbsp model.pdiparams.info<br>
+            &nbsp&nbsp&nbsp model.pdmodel<br>
+            &nbsp&nbsp&nbsp model.yml<br>
+            &nbsp&nbsp&nbsp pipeline.yml
+        </div>
+    </div>
+    <div class="panel_del">
+        <div id="panel_del_title">确认要<span style="color: rgb(229,51,51)">删除</span>模型吗</div>
+        <div id="panel_del_name"></div>
+        <div id="panel_del_desc"></div>
+        <div id="panel_del_confirm">删除</div>
+        <div id="panel_del_cancel">取消</div>
+    </div>
+    <div id="mask"></div>
 </div>
 
 <script>
     let url = 'http://127.0.0.1:8080/welcome'
     const r_flag = '{{animation}}';
+
     // const r_flag = {{flag}};
 
     const wrapper = document.getElementsByClassName('pre_wrapper')[0];
@@ -273,6 +320,340 @@
     const loader_text = document.getElementById('loader_text');
     const cd_para_name = document.getElementsByClassName('cd_para_name');
     const cd_para_value = document.getElementsByClassName('cd_para_value');
+    const model_wrapper = document.getElementsByClassName('model_wrapper');
+    const mask = document.getElementById('mask');
+    const panel_add = document.getElementsByClassName('panel_add')[0];
+    const panel_upload_bt = document.getElementById('panel_upload_bt');
+    const upload_bt = document.getElementById('upload');
+    const panel_add_leave = document.getElementById('panel_add_leave');
+    const panel_upload_name = document.getElementById('panel_upload_name');
+    const panel_upload_desc = document.getElementById('panel_upload_desc');
+    const panel_del = document.getElementsByClassName('panel_del')[0];
+    const panel_del_name = document.getElementById('panel_del_name');
+    const panel_del_desc = document.getElementById('panel_del_desc');
+    const panel_del_confirm = document.getElementById('panel_del_confirm');
+    const panel_del_cancel = document.getElementById('panel_del_cancel');
+
+    let models_flag = [];
+    let keys = [];
+    let models, pro_g, pro_type_g;
+
+    function encodeHtml(html) {
+        return html && html.replace ?
+            (
+                html.replace(/&/g, "&amp;")
+                    .replace(/ /g, "&nbsp;")
+                    .replace(/\b&nbsp;+/g, " ")
+                    .replace(/</g, "&lt;")
+                    .replace(/>/g, "&gt;")
+                    .replace(/\\/g, "&#92;")
+                    .replace(/\'/g, "&#39;")
+                    .replace(/\"/g, "&quot;")
+                    .replace(/\n/g, "<br/>")
+                    .replace(/\r/g, "")
+            )
+            : html;
+    }
+
+    function checkPathName(name) {
+        let e = ['/', '\\', ':', '?', '*', '|', '"', '\'', '<', '>', '$'];
+        let flag = true;
+        for (let i in e) {
+            if (name.indexOf(e[i]) !== -1) {
+                flag = false;
+                break;
+            }
+        }
+        return flag;
+    }
+
+
+    function get_model(f_type, od_type) {
+        pro_g = f_type;
+        pro_type_g = od_type;
+
+        let xhr = new XMLHttpRequest();
+        xhr.open('POST', url, true);
+        let formData = new FormData();
+        formData.append('status', 'model');
+        formData.append('f_type', f_type);
+        formData.append('od_type', od_type);
+        xhr.send(formData);
+        xhr.onreadystatechange = function () {
+            if (xhr.readyState === XMLHttpRequest.DONE && xhr.status === 200) {
+                models = JSON.parse(xhr.responseText);
+
+                model_wrapper[f_type].innerHTML = '';
+                const model_title = document.createElement('div');
+                model_title.className = 'model_wrapper_title';
+                model_wrapper[f_type].appendChild(model_title);
+                model_title.innerHTML = '选择模型';
+                models_flag = [];
+
+                keys = [];
+                for (let key in models) {
+                    keys.push(key);
+                    const model_opt = document.createElement('div');
+                    model_opt.className = 'model_opt';
+                    model_wrapper[f_type].appendChild(model_opt);
+                    model_opt.innerHTML = encodeHtml(models[key][0]);
+                    const model_info = document.createElement('div');
+                    model_info.className = 'model_info';
+                    model_wrapper[f_type].appendChild(model_info);
+                    model_info.innerHTML = '模型描述：' + encodeHtml(models[key][1]);
+
+                    models_flag.push(false);
+                }
+                models_flag[0] = true;
+                const model_add = document.createElement('div');
+                model_add.className = 'model_add';
+                model_wrapper[f_type].appendChild(model_add);
+                model_add.innerHTML = '+';
+                model_add.title = '添加模型';
+
+                model_add.onclick = function () {
+                    panel_add.classList.add('show');
+                    mask.classList.add('show');
+                }
+
+                const model_del = document.createElement('div');
+                model_del.className = 'model_del';
+                model_wrapper[f_type].appendChild(model_del);
+                model_del.innerHTML = '×';
+                model_del.title = '删除模型';
+
+                model_del.onclick = function () {
+                    panel_del.classList.add('show');
+                    mask.classList.add('show');
+                    panel_del_name.innerHTML = encodeHtml(models[keys[models_flag.indexOf(true)]][0]);
+                    panel_del_desc.innerHTML = encodeHtml(models[keys[models_flag.indexOf(true)]][1]);
+                }
+
+                const model_opts = model_wrapper[f_type].getElementsByClassName('model_opt');
+                const model_infos = model_wrapper[f_type].getElementsByClassName('model_info');
+                model_opts[0].classList.add('clicked');
+                model_infos[0].classList.add('focus');
+                for (let t = 0; t < model_opts.length; t++) {
+                    model_opts[t].onclick = function () {
+                        if (models_flag[t] === false) {
+                            let i = models_flag.indexOf(true);
+                            models_flag[i] = false;
+                            model_opts[i].classList.remove('clicked');
+                            model_infos[i].classList.remove('focus');
+                            models_flag[t] = true;
+                            model_opts[t].classList.add('clicked');
+                            model_infos[t].classList.add('focus');
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    get_model(0, -1);
+
+    panel_del_cancel.onclick = function () {
+        panel_del.classList.remove('show');
+        mask.classList.remove('show');
+    }
+
+    panel_del_confirm.onclick = function () {
+        panel_del_confirm.style.cursor = 'wait';
+        panel_del_confirm.disabled = true;
+        panel_del_confirm.innerHTML = '删除&nbsp&nbsp<svg width="50" height="50" viewBox="-3 -5 35 35" stroke-width="3" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">\n' +
+                '   <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>\n' +
+                '   <line x1="12" y1="6" x2="12" y2="3"></line>\n' +
+                '   <line x1="16.25" y1="7.75" x2="18.4" y2="5.6"></line>\n' +
+                '   <line x1="18" y1="12" x2="21" y2="12"></line>\n' +
+                '   <line x1="16.25" y1="16.25" x2="18.4" y2="18.4"></line>\n' +
+                '   <line x1="12" y1="18" x2="12" y2="21"></line>\n' +
+                '   <line x1="7.75" y1="16.25" x2="5.6" y2="18.4"></line>\n' +
+                '   <line x1="6" y1="12" x2="3" y2="12"></line>\n' +
+                '   <line x1="7.75" y1="7.75" x2="5.6" y2="5.6"></line>\n' +
+                '</svg>';
+        let xhr = new XMLHttpRequest();
+        xhr.open('POST', url, true);
+        let formData = new FormData();
+        formData.append('status', 'del');
+        formData.append('model_id', keys[models_flag.indexOf(true)].toString());
+        xhr.send(formData);
+        xhr.onreadystatechange = function () {
+            if (xhr.readyState === XMLHttpRequest.DONE && xhr.status === 200) {
+                panel_del_confirm.style.cursor = 'pointer';
+                panel_del_confirm.disabled = false;
+                panel_del.classList.remove('show');
+                mask.classList.remove('show');
+                get_model(pro_g, pro_type_g);
+            }
+        }
+    }
+
+
+    let i_name = panel_upload_name.value;
+    let i_desc = panel_upload_desc.value;
+    panel_upload_name.onfocus = function () {
+        if (panel_upload_name.value === i_name) {
+            panel_upload_name.value = "";
+        }
+    }
+    panel_upload_name.onblur = function () {
+        if (panel_upload_name.value === "") {
+            panel_upload_name.value = i_name;
+        }
+        if (panel_upload_name.value !== i_name && panel_upload_desc.value !== i_desc) {
+            panel_upload_bt.classList.add('show');
+        }
+        if (!checkPathName(panel_upload_name.value)) {
+            if (document.getElementById('panel_upload_info')) {
+                document.getElementById('panel_upload_info').remove();
+            }
+            const upload_info = document.createElement('div');
+            upload_info.id = 'panel_upload_info';
+            panel_add.appendChild(upload_info);
+            upload_info.innerHTML = '错误！模型名称中含有非法字符 / \\ : ? * | " \' < > $';
+            panel_upload_desc.disabled = true;
+        } else {
+            for (let key in models) {
+                if (panel_upload_name.value === models[key][0]) {
+                    if (document.getElementById('panel_upload_info')) {
+                        document.getElementById('panel_upload_info').remove();
+                    }
+                    const upload_info = document.createElement('div');
+                    upload_info.id = 'panel_upload_info';
+                    panel_add.appendChild(upload_info);
+                    upload_info.innerHTML = '错误！模型名称已存在！';
+                    panel_upload_desc.disabled = true;
+                    break;
+                } else {
+                    if (document.getElementById('panel_upload_info')) {
+                        document.getElementById('panel_upload_info').remove();
+                    }
+                    panel_upload_desc.disabled = false;
+                }
+            }
+        }
+    }
+    panel_upload_desc.onfocus = function () {
+        if (panel_upload_desc.value === i_desc) {
+            panel_upload_desc.value = "";
+        }
+    }
+    panel_upload_desc.onblur = function () {
+        if (panel_upload_desc.value === "") {
+            panel_upload_desc.value = i_desc;
+        }
+        if (panel_upload_name.value !== i_name && panel_upload_desc.value !== i_desc) {
+            panel_upload_bt.classList.add('show');
+        }
+    }
+
+    panel_upload_bt.onclick = function () {
+        upload_bt.click();
+    }
+    upload_bt.addEventListener('change', function () {
+        if (document.getElementById('panel_upload_info')) {
+            document.getElementById('panel_upload_info').remove();
+        }
+        const upload_info = document.createElement('div');
+        upload_info.id = 'panel_upload_info';
+        panel_add.appendChild(upload_info);
+        let file_path = upload_bt.value;
+        let pos = file_path.lastIndexOf("\\");
+        let filename = file_path.substring(pos + 1);
+        let ext_name = filename.substring(filename.lastIndexOf("."), filename.length);
+        if (ext_name === '.zip') {
+            panel_upload_bt.innerHTML = '上传中&nbsp&nbsp&nbsp&nbsp<svg width="50" height="50" viewBox="-3 -5 35 35" stroke-width="3" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">\n' +
+                '   <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>\n' +
+                '   <line x1="12" y1="6" x2="12" y2="3"></line>\n' +
+                '   <line x1="16.25" y1="7.75" x2="18.4" y2="5.6"></line>\n' +
+                '   <line x1="18" y1="12" x2="21" y2="12"></line>\n' +
+                '   <line x1="16.25" y1="16.25" x2="18.4" y2="18.4"></line>\n' +
+                '   <line x1="12" y1="18" x2="12" y2="21"></line>\n' +
+                '   <line x1="7.75" y1="16.25" x2="5.6" y2="18.4"></line>\n' +
+                '   <line x1="6" y1="12" x2="3" y2="12"></line>\n' +
+                '   <line x1="7.75" y1="7.75" x2="5.6" y2="5.6"></line>\n' +
+                '</svg>';
+            panel_upload_bt.style.cursor = 'wait';
+            panel_upload_bt.disabled = true;
+            upload_info.innerHTML = filename;
+            let xhr = new XMLHttpRequest();
+            xhr.open('POST', url, true);
+            let formData = new FormData();
+            formData.append('status', 'upload');
+            formData.append('pro', pro_g);
+            formData.append('type', pro_type_g);
+            formData.append('name', panel_upload_name.value);
+            formData.append('desc', panel_upload_desc.value);
+            formData.append('model', upload_bt.files[0]);
+            xhr.send(formData);
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState === XMLHttpRequest.DONE && xhr.status === 200) {
+                    panel_upload_bt.style.cursor = 'pointer';
+                    panel_upload_bt.disabled = false;
+                    if (xhr.responseText === 'DONE') {
+                        panel_upload_bt.innerHTML = '<svg width="50" height="50" viewBox="-3 -4 35 35" stroke-width="3" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">\n' +
+                            '   <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>\n' +
+                            '   <path d="M7 12l5 5l10 -10"></path>\n' +
+                            '   <path d="M2 12l5 5m5 -5l5 -5"></path>\n' +
+                            '</svg>';
+                        if (panel_upload_bt.classList.contains('wrong')) {
+                            panel_upload_bt.classList.remove('wrong');
+                        }
+                        panel_upload_bt.classList.add('clicked');
+                        get_model(pro_g, pro_type_g);
+                    } else {
+                        panel_upload_bt.innerHTML = '<svg width="50" height="50" viewBox="-3 -4 35 35" stroke-width="3" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">\n' +
+                            '   <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>\n' +
+                            '   <path d="M12 19v.01"></path>\n' +
+                            '   <path d="M12 15v-10"></path>\n' +
+                            '</svg>';
+                        if (panel_upload_bt.classList.contains('clicked')) {
+                            panel_upload_bt.classList.remove('clicked');
+                        }
+                        panel_upload_bt.classList.add('wrong');
+                        upload_info.innerHTML = '错误！压缩包内非标准静态图模型文件，请查看上传须知';
+                    }
+                }
+            }
+        } else {
+            panel_upload_bt.innerHTML = '<svg width="50" height="50" viewBox="-3 -4 35 35" stroke-width="3" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">\n' +
+                '   <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>\n' +
+                '   <path d="M12 19v.01"></path>\n' +
+                '   <path d="M12 15v-10"></path>\n' +
+                '</svg>';
+            if (panel_upload_bt.classList.contains('clicked')) {
+                panel_upload_bt.classList.remove('clicked');
+            }
+            panel_upload_bt.classList.add('wrong');
+            upload_info.innerHTML = '错误！上传文件不是.zip压缩包！';
+        }
+    })
+
+    panel_add_leave.onclick = function () {
+        panel_add.classList.remove('show');
+        mask.classList.remove('show');
+        panel_upload_name.value = "模型名称";
+        panel_upload_desc.value = "模型描述";
+        panel_upload_bt.innerHTML = '<svg width="50" height="50" viewBox="-3 -4 35 35" stroke-width="3" stroke="currentColor" fill="none"\n' +
+            '                 stroke-linecap="round" stroke-linejoin="round">\n' +
+            '                <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>\n' +
+            '                <path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2 -2v-2"></path>\n' +
+            '                <polyline points="7 9 12 4 17 9"></polyline>\n' +
+            '                <line x1="12" y1="4" x2="12" y2="16"></line>\n' +
+            '            </svg>';
+        if (panel_upload_bt.classList.contains('clicked')) {
+            panel_upload_bt.classList.remove('clicked');
+        }
+        if (panel_upload_bt.classList.contains('wrong')) {
+            panel_upload_bt.classList.remove('wrong');
+        }
+        if (panel_upload_bt.classList.contains('show')) {
+            panel_upload_bt.classList.remove('show');
+        }
+        if (document.getElementById('panel_upload_info')) {
+            document.getElementById('panel_upload_info').remove();
+        }
+    }
 
     if (r_flag === 'False') {
         wrapper.style.display = 'none';
@@ -297,6 +678,7 @@
         go[0].classList.add('showF');
         left_down.classList.add('showF');
         bt_alt.classList.add('show');
+        model_wrapper[0].classList.add('showF');
         for (let i = 0; i < alt_opt.length; i++) {
             alt_opt[i].classList.add('showF' + i.toString())
         }
@@ -353,6 +735,7 @@
             intro[0].classList.add('show0');
             intro_img[0].classList.add('show0');
             go[0].classList.add('show0');
+            model_wrapper[0].classList.add('show0');
             left_down.classList.add('show');
             bt_alt.classList.add('show');
             for (let i = 0; i < alt_opt.length; i++) {
@@ -368,7 +751,7 @@
 
     let func_flag = [1, 0, 0, 0]
     let alt_flag = [1, 2, 3]
-    let type = 0;
+    let type = -1;
     let func_name = ['目标提取', '变化检测', '目标检测', '地物分类'];
     for (let i = 0; i < alt_opt.length; i++) {
         alt_opt[i].onclick = function () {
@@ -417,6 +800,13 @@
                         go[prev].classList.remove('showF');
                     }
                     go[prev].classList.remove('show');
+                    if (model_wrapper[prev].classList.contains('show0')) {
+                        model_wrapper[prev].classList.remove('show0');
+                    }
+                    if (model_wrapper[prev].classList.contains('showF')) {
+                        model_wrapper[prev].classList.remove('showF');
+                    }
+                    model_wrapper[prev].classList.remove('show');
 
                     if (prev === 2) {
                         for (let k = 0; k < od_types.length; k++) {
@@ -445,8 +835,10 @@
                 intro[t].classList.add('show');
                 intro_img[t].classList.add('show');
                 go[t].classList.add('show');
+                model_wrapper[t].classList.add('show');
 
                 if (t === 2) {
+                    type = 0;
                     for (let i = 0; i < od_types.length; i++) {
                         od_types[i].classList.add('show' + i.toString())
                     }
@@ -464,12 +856,13 @@
                                 flag[i] = 1;
                                 type = i;
                                 od_types[i].classList.add('clicked');
+                                get_model(t, i);
                             }
                         }
                     }
-                }
-
-                if (t === 1) {
+                    get_model(t, 0);
+                } else if (t === 1) {
+                    type = -1;
                     for (let i = 0; i < cd_para_name.length; i++) {
                         cd_para_name[i].classList.add('show' + i.toString())
                         cd_para_value[i].classList.add('show' + i.toString())
@@ -488,8 +881,11 @@
                                 cd_para_name[i].classList.remove("active");
                             }
                         }
-
                     }
+                    get_model(t, -1);
+                } else {
+                    type = -1;
+                    get_model(t, -1);
                 }
             }
         }
@@ -504,10 +900,7 @@
         }
 
         go[i].onclick = function () {
-            const mask = document.createElement('div');
-            mask.id = 'mask';
-            document.getElementById('background').appendChild(mask);
-
+            mask.classList.add('show');
             function_bt[func_flag.indexOf(1)].classList.add('focus');
 
             if (r_flag === 'False') {
@@ -535,25 +928,30 @@
                 let xhr = new XMLHttpRequest();
                 xhr.open('POST', url, true);
                 let formData = new FormData();
-                formData.append('pro', pro_m)
-                formData.append('o_thres', cd_para_value[0].value)
-                formData.append('h_thres', cd_para_value[1].value)
-                xhr.send(formData)
+                formData.append('status', 'load');
+                formData.append('pro', pro_m.toString());
+                formData.append('type', type);
+                formData.append('model_no', models_flag.indexOf(true).toString());
+                formData.append('o_thres', cd_para_value[0].value);
+                formData.append('h_thres', cd_para_value[1].value);
+                xhr.send(formData);
                 xhr.onreadystatechange = function () {
                     if (xhr.readyState === XMLHttpRequest.DONE && xhr.status === 200) {
-                        window.location.href = xhr.responseURL
+                        window.location.href = xhr.responseURL;
                     }
                 }
             } else {
                 let xhr = new XMLHttpRequest();
                 xhr.open('POST', url, true);
                 let formData = new FormData();
-                formData.append('pro', pro_m)
-                formData.append('type', type)
-                xhr.send(formData)
+                formData.append('status', 'load');
+                formData.append('pro', pro_m.toString());
+                formData.append('type', type);
+                formData.append('model_no', models_flag.indexOf(true).toString());
+                xhr.send(formData);
                 xhr.onreadystatechange = function () {
                     if (xhr.readyState === XMLHttpRequest.DONE && xhr.status === 200) {
-                        window.location.href = xhr.responseURL
+                        window.location.href = xhr.responseURL;
                     }
                 }
             }
