@@ -1411,12 +1411,16 @@
     font-family: Ubuntu, "Microsoft YaHei", serif;
     text-align: left;
     box-sizing: border-box;
-    overflow: hidden;
+    overflow-x: scroll;
 
     cursor: pointer;
     animation: ease-out;
     transition: all 0.3s;
     -webkit-transition: all 0.3s;
+}
+
+.model_opt::-webkit-scrollbar {
+    display: none;
 }
 
 .model_opt:hover {
@@ -1465,7 +1469,6 @@
 
 .panel_add {
     position: fixed;
-    z-index: 11;
     left: 50%;
     margin-left: -500px;
     top: 50%;
@@ -1480,11 +1483,22 @@
     -webkit-box-shadow: rgba(142, 142, 142, 0.19) 0px 6px 15px 0px;
     border-radius: 15px;
 
-    display: none;
+    opacity: 0;
+    z-index: -1;
+    filter: blur(10px);
+    transform: translateY(30px);
+
+    animation: ease-out;
+    transition: all 0.3s;
+    -webkit-transition: all 0.3s;
 }
 
 .panel_add.show {
-    display: block;
+    opacity: 100%;
+    z-index: 11;
+    filter: blur(0);
+    transform: translateY(0);
+    transition: all 0.3s, z-index 0s;
 }
 
 #panel_add_leave {
@@ -1687,14 +1701,13 @@
 
 .panel_del {
     position: fixed;
-    z-index: 11;
     left: 50%;
     margin-left: -400px;
     top: 50%;
     margin-top: -200px;
     width: 800px;
     height: 400px;
-    background-image: url("../imgs/add_model.png");
+    background-image: url("../imgs/del_model.png");
     backdrop-filter: blur(15px);
     -webkit-backdrop-filter: blur(15px);
     border: 1px solid rgba(255, 255, 255, 0.18);
@@ -1702,11 +1715,23 @@
     -webkit-box-shadow: rgba(142, 142, 142, 0.19) 0px 6px 15px 0px;
     border-radius: 15px;
 
-    display: none;
+    opacity: 0;
+    z-index: -1;
+    filter: blur(10px);
+    transform: translateY(30px);
+
+    animation: ease-out;
+    transition: all 0.3s;
+    -webkit-transition: all 0.3s;
 }
 
 .panel_del.show {
-    display: block;
+    opacity: 100%;
+    z-index: 11;
+    filter: blur(0);
+    transform: translateY(0);
+
+    transition: all 0.3s, z-index 0s;
 }
 
 #panel_del_title {
@@ -1793,6 +1818,11 @@
     box-shadow: rgba(152, 152, 152, 0.19) 0px 6px 15px 0px;
     -webkit-box-shadow: rgba(152, 152, 152, 0.19) 0px 6px 15px 0px;
     color: rgb(50, 50, 50);
+    overflow-x: scroll;
+}
+
+#panel_del_name::-webkit-scrollbar {
+    display: none;
 }
 
 #panel_del_desc {
