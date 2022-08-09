@@ -970,6 +970,12 @@
     -webkit-transition: all 0.5s, width 0.5s 0.7s, color 0.3s 1s;
 }
 
+.cd_para_value::-webkit-outer-spin-button,
+.cd_para_value::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
 .go {
     background-color: rgba(0, 0, 0, 0.2);
     backdrop-filter: blur(12px);
@@ -1267,14 +1273,14 @@
 }
 
 .model_wrapper {
-    overflow: scroll;
+    overflow-y: scroll;
     height: 300px;
     position: absolute;
     display: flex;
     flex-direction: column;
     justify-content: left;
     align-items: start;
-    right: -3%;
+    right: -20px;
     /*border: 1px white solid;*/
 
     width: 0;
@@ -1345,7 +1351,6 @@
     box-sizing: border-box;
     overflow: hidden;
     font-weight: bold;
-    border-radius: 10px;
 
     cursor: pointer;
     animation: ease-out;
@@ -1379,7 +1384,6 @@
     box-sizing: border-box;
     overflow: hidden;
     font-weight: bold;
-    border-radius: 10px;
 
     cursor: pointer;
     animation: ease-out;
@@ -1515,7 +1519,7 @@
     -webkit-backdrop-filter: blur(12px);
     box-shadow: rgba(152, 152, 152, 0.19) 0px 6px 15px 0px;
     -webkit-box-shadow: rgba(152, 152, 152, 0.19) 0px 6px 15px 0px;
-    color: rgb(50, 50, 50, 0.9);
+    color: rgba(50, 50, 50, 0.9);
 
     cursor: pointer;
 }
@@ -1620,7 +1624,7 @@
     -webkit-backdrop-filter: blur(12px);
     box-shadow: rgba(152, 152, 152, 0.19) 0px 6px 15px 0px;
     -webkit-box-shadow: rgba(152, 152, 152, 0.19) 0px 6px 15px 0px;
-    color: rgb(50, 50, 50, 0.9);
+    color: rgba(50, 50, 50, 0.9);
 }
 
 #panel_upload_name {
@@ -1643,7 +1647,7 @@
     -webkit-backdrop-filter: blur(12px);
     box-shadow: rgba(152, 152, 152, 0.19) 0px 6px 15px 0px;
     -webkit-box-shadow: rgba(152, 152, 152, 0.19) 0px 6px 15px 0px;
-    color: rgb(50, 50, 50, 0.9);
+    color: rgba(50, 50, 50, 0.9);
 
     cursor: text;
     animation: ease-out;
@@ -1678,7 +1682,7 @@
     -webkit-backdrop-filter: blur(12px);
     box-shadow: rgba(152, 152, 152, 0.19) 0px 6px 15px 0px;
     -webkit-box-shadow: rgba(152, 152, 152, 0.19) 0px 6px 15px 0px;
-    color: rgb(50, 50, 50, 0.9);
+    color: rgba(50, 50, 50, 0.9);
 
     cursor: text;
     animation: ease-out;
@@ -1762,7 +1766,7 @@
     -webkit-backdrop-filter: blur(12px);
     box-shadow: rgba(8, 69, 168, 0.19) 0px 6px 15px 0px;
     -webkit-box-shadow: rgba(8, 69, 168, 0.19) 0px 6px 15px 0px;
-    color: rgb(255, 255, 255, 0.9);
+    color: rgba(255, 255, 255, 0.9);
 
     cursor: pointer;
 }
@@ -1790,7 +1794,7 @@
     -webkit-backdrop-filter: blur(12px);
     box-shadow: rgba(152, 152, 152, 0.19) 0px 6px 15px 0px;
     -webkit-box-shadow: rgba(152, 152, 152, 0.19) 0px 6px 15px 0px;
-    color: rgb(50, 50, 50, 0.9);
+    color: rgba(50, 50, 50, 0.9);
 
     cursor: pointer;
 }
@@ -1841,4 +1845,211 @@
 
 #panel_del_desc::-webkit-scrollbar {
     display: none;
+}
+
+#en_bt {
+    position: absolute;
+    width: 35px;
+    height: 115px;
+    font-family: Ubuntu, "Microsoft YaHei", serif;
+    font-weight: bold;
+    font-size: 25px;
+    line-height: 27px;
+    text-align: center;
+    right: 380px;
+    box-sizing: border-box;
+    padding: 5px;
+    background-color: rgba(255, 255, 255, 0.3);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    box-shadow: rgba(152, 152, 152, 0.19) 0px 6px 15px 0px;
+    -webkit-box-shadow: rgba(152, 152, 152, 0.19) 0px 6px 15px 0px;
+    color: rgb(50, 50, 50);
+
+    cursor: pointer;
+    animation: ease-out;
+    transition: all 0.2s;
+    -webkit-transition: all 0.2s;
+}
+
+#en_bt:hover {
+    background-color: rgba(0, 0, 255, 0.4);
+    color: rgba(255, 255, 255, 0.6);
+}
+
+.panel_en {
+    position: fixed;
+    left: 50%;
+    margin-left: -300px;
+    top: 50%;
+    margin-top: -350px;
+    width: 600px;
+    height: 700px;
+    backdrop-filter: blur(15px);
+    -webkit-backdrop-filter: blur(15px);
+    background-color: rgba(255, 255, 255, 0.3);
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    box-shadow: rgba(142, 142, 142, 0.19) 0px 6px 15px 0px;
+    -webkit-box-shadow: rgba(142, 142, 142, 0.19) 0px 6px 15px 0px;
+    border-radius: 15px;
+
+    opacity: 0;
+    z-index: -1;
+    filter: blur(10px);
+    transform: translateY(30px);
+
+    animation: ease-out;
+    transition: all 0.3s;
+    -webkit-transition: all 0.3s;
+}
+
+.panel_en.show {
+    opacity: 100%;
+    z-index: 11;
+    filter: blur(0);
+    transform: translateY(0);
+    transition: all 0.3s, z-index 0s;
+}
+
+#panel_en_title {
+    position: absolute;
+    width: 500px;
+    font-family: Ubuntu, "Microsoft YaHei", serif;
+    font-weight: bold;
+    font-size: 50px;
+    left: 60px;
+    top: 50px;
+    color: rgb(50, 50, 50);
+}
+
+#panel_en_confirm {
+    position: absolute;
+    width: 140px;
+    height: 50px;
+    line-height: 50px;
+    font-family: Ubuntu, "Microsoft YaHei", serif;
+    left: 60px;
+    bottom: 60px;
+    border-radius: 10px;
+    font-size: 20px;
+    font-weight: bold;
+    text-align: center;
+    background-color: rgba(51, 93, 229, 0.6);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    box-shadow: rgba(8, 69, 168, 0.19) 0px 6px 15px 0px;
+    -webkit-box-shadow: rgba(8, 69, 168, 0.19) 0px 6px 15px 0px;
+    color: rgba(255, 255, 255, 0.9);
+
+    cursor: pointer;
+}
+
+#panel_en_confirm:hover {
+    background-color: rgb(51, 93, 229);
+    box-shadow: none;
+    -webkit-box-shadow: none;
+}
+
+#panel_en_confirm.error {
+    background-color: rgba(0, 0, 0, 0.2);
+    box-shadow: rgba(91, 91, 91, 0.19) 0px 6px 15px 0px;
+    -webkit-box-shadow: rgba(91, 91, 91, 0.19) 0px 6px 15px 0px;
+    color: rgba(255, 255, 255, 0.6);
+    cursor: not-allowed;
+}
+
+#panel_en_cancel {
+    position: absolute;
+    width: 140px;
+    height: 50px;
+    line-height: 50px;
+    font-family: Ubuntu, "Microsoft YaHei", serif;
+    left: 220px;
+    bottom: 60px;
+    border-radius: 10px;
+    font-size: 20px;
+    font-weight: bold;
+    text-align: center;
+    background-color: rgba(255, 255, 255, 0.3);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    box-shadow: rgba(152, 152, 152, 0.19) 0px 6px 15px 0px;
+    -webkit-box-shadow: rgba(152, 152, 152, 0.19) 0px 6px 15px 0px;
+    color: rgba(50, 50, 50, 0.9);
+
+    cursor: pointer;
+}
+
+#panel_en_cancel:hover {
+    background-color: rgba(255, 255, 255);
+    box-shadow: none;
+    -webkit-box-shadow: none;
+}
+
+#panel_en_wrapper {
+    overflow-y: scroll;
+    height: 430px;
+    width: 480px;
+    position: absolute;
+    left: 60px;
+    top: 130px;
+    display: flex;
+    flex-direction: column;
+    justify-content: left;
+    align-items: start;
+    /*border: 1px white solid;*/
+
+    font-size: 30px;
+    font-weight: bold;
+    text-align: center;
+    font-family: Ubuntu, "Microsoft YaHei", serif;
+    color: rgba(40, 40, 40, 0.8);
+}
+
+#panel_en_wrapper::-webkit-scrollbar {
+    display: none;
+}
+
+.en_model_opt {
+    background-color: rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 0px solid rgba(255, 255, 255, 0.18);
+    box-shadow: rgba(142, 142, 142, 0.19) 0px 6px 15px 0px;
+    -webkit-box-shadow: rgba(142, 142, 142, 0.19) 0px 6px 15px 0px;
+    color: rgba(0, 0, 0, 0.6);
+
+    width: 480px;
+    height: 45px;
+    padding: 5px;
+    font-size: 25px;
+    line-height: 35px;
+    border-radius: 10px;
+    margin-bottom: 3px;
+    font-family: Ubuntu, "Microsoft YaHei", serif;
+    text-align: left;
+    box-sizing: border-box;
+    overflow-x: scroll;
+
+    cursor: pointer;
+    animation: ease-out;
+    transition: all 0.3s;
+    -webkit-transition: all 0.3s;
+}
+
+.en_model_opt::-webkit-scrollbar {
+    display: none;
+}
+
+.en_model_opt:hover {
+    background-color: rgba(0, 0, 0, 0.2);
+    box-shadow: rgba(91, 91, 91, 0.19) 0px 6px 15px 0px;
+    -webkit-box-shadow: rgba(91, 91, 91, 0.19) 0px 6px 15px 0px;
+    color: rgba(255, 255, 255, 0.6);
+}
+
+.en_model_opt.clicked {
+    background-color: rgba(58, 69, 91, 0.6);
+    color: rgba(255, 255, 255, 0.6);
+    text-align: right;
 }
