@@ -66,11 +66,11 @@
             <div class='go'>开始处理</div>
             <div id="cd_para_wrapper">
                 <div class="cd_para">
-                    <input class="cd_para_value" type="text" name="object" value="200"/>
+                    <input class="cd_para_value" type="number" name="object" value="200"/>
                     <div class="cd_para_name">小块阈值</div>
                 </div>
                 <div class="cd_para">
-                    <input class="cd_para_value" type="text" name="hole" value="200"/>
+                    <input class="cd_para_value" type="number" name="hole" value="200"/>
                     <div class="cd_para_name">空洞阈值</div>
                 </div>
             </div>
@@ -461,16 +461,16 @@
         panel_del_confirm.style.cursor = 'wait';
         panel_del_confirm.disabled = true;
         panel_del_confirm.innerHTML = '删除&nbsp&nbsp<svg width="50" height="50" viewBox="-3 -5 35 35" stroke-width="3" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">\n' +
-                '   <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>\n' +
-                '   <line x1="12" y1="6" x2="12" y2="3"></line>\n' +
-                '   <line x1="16.25" y1="7.75" x2="18.4" y2="5.6"></line>\n' +
-                '   <line x1="18" y1="12" x2="21" y2="12"></line>\n' +
-                '   <line x1="16.25" y1="16.25" x2="18.4" y2="18.4"></line>\n' +
-                '   <line x1="12" y1="18" x2="12" y2="21"></line>\n' +
-                '   <line x1="7.75" y1="16.25" x2="5.6" y2="18.4"></line>\n' +
-                '   <line x1="6" y1="12" x2="3" y2="12"></line>\n' +
-                '   <line x1="7.75" y1="7.75" x2="5.6" y2="5.6"></line>\n' +
-                '</svg>';
+            '   <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>\n' +
+            '   <line x1="12" y1="6" x2="12" y2="3"></line>\n' +
+            '   <line x1="16.25" y1="7.75" x2="18.4" y2="5.6"></line>\n' +
+            '   <line x1="18" y1="12" x2="21" y2="12"></line>\n' +
+            '   <line x1="16.25" y1="16.25" x2="18.4" y2="18.4"></line>\n' +
+            '   <line x1="12" y1="18" x2="12" y2="21"></line>\n' +
+            '   <line x1="7.75" y1="16.25" x2="5.6" y2="18.4"></line>\n' +
+            '   <line x1="6" y1="12" x2="3" y2="12"></line>\n' +
+            '   <line x1="7.75" y1="7.75" x2="5.6" y2="5.6"></line>\n' +
+            '</svg>';
         let xhr = new XMLHttpRequest();
         xhr.open('POST', url, true);
         let formData = new FormData();
@@ -879,6 +879,9 @@
                             if (cd_para_value[i].value === "") {
                                 cd_para_value[i].value = temp;
                                 cd_para_name[i].classList.remove("active");
+                            }
+                            if (cd_para_value[i].value < 0) {
+                                cd_para_value[i].value = 0;
                             }
                         }
                     }

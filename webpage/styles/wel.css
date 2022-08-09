@@ -970,6 +970,11 @@
     -webkit-transition: all 0.5s, width 0.5s 0.7s, color 0.3s 1s;
 }
 
+.cd_para_value::-webkit-outer-spin-button,
+.cd_para_value::-webkit-inner-spin-button{
+    -webkit-appearance: none;
+}
+
 .go {
     background-color: rgba(0, 0, 0, 0.2);
     backdrop-filter: blur(12px);
