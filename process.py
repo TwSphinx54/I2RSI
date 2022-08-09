@@ -6,7 +6,7 @@ from urllib.request import urlretrieve
 from functions.object_detection import object_detection
 from functions.object_classification import object_classification, add_alpha
 from functions.object_extraction import load_model, object_extraction, oe_mix
-from functions.change_detection import change_detection, change_detection_en
+from functions.change_detection import change_detection
 from functions.road_repair import roads_repair
 import cv2 as cv
 import numpy as np
@@ -21,8 +21,7 @@ ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg'}
 
 app = Flask(__name__, template_folder="./webpage", static_folder='./webpage', static_url_path="")
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
-pro, model, model_en, loc, score, period, shape, areas = [0] * 8
-en = False
+pro, model, loc, score, period, shape, areas = [0] * 7
 o_threshold, h_threshold = [200, 200]
 
 
@@ -99,7 +98,7 @@ def welcome():
         animation = request.args.get('animation')
         return render_template('welcome.html', animation=animation)
     elif request.method == 'POST':
-        global pro, model, model_en, o_threshold, h_threshold, en
+        global pro, model, o_threshold, h_threshold
         status = request.values['status']
         if status == 'model':
             con = sqlite3.connect(WEIGHT_DB)
@@ -114,42 +113,18 @@ def welcome():
             con.close()
             return json.dumps(res)
         elif status == 'load':
-            en = False
             con = sqlite3.connect(WEIGHT_DB)
             cur = con.cursor()
             pro = request.values['pro']
             model_id = int(request.values['model_id'])
-            model_path = ''
 
+            q_res = cur.execute("SELECT path FROM weights WHERE id=(?)", (model_id,))
+            model_path = q_res.fetchone()[0]
             if pro == '1':
-                q_res = cur.execute("SELECT path FROM weights WHERE id=(?)", (model_id,))
-                model_path = q_res.fetchone()[0]
                 o_threshold = int(request.values['o_thres'])
                 h_threshold = int(request.values['h_thres'])
-            else:
-                q_res = cur.execute("SELECT path FROM weights WHERE id=(?)", (model_id,))
-                model_path = q_res.fetchone()[0]
 
             model = load_model(model_path)
-            con.close()
-            return redirect(url_for('upload_file'))
-        elif status == 'ensemble':
-            en = True
-            con = sqlite3.connect(WEIGHT_DB)
-            cur = con.cursor()
-            pro = request.values['pro']
-            model_id = int(request.values['model_id'])
-            en_model_id = int(request.values['en_model_id'])
-
-            q_res = cur.execute("SELECT path FROM weights WHERE id=(?)", (model_id, ))
-            model_path = q_res.fetchone()[0]
-            q_res = cur.execute("SELECT path FROM weights WHERE id=(?)", (en_model_id,))
-            en_model_path = q_res.fetchone()[0]
-            o_threshold = int(request.values['o_thres'])
-            h_threshold = int(request.values['h_thres'])
-
-            model = load_model(model_path)
-            model_en = load_model(en_model_path)
             con.close()
             return redirect(url_for('upload_file'))
         elif status == 'upload':
@@ -214,12 +189,8 @@ def upload_file():
                     B = os.path.join(app.config['UPLOAD_FOLDER'], filename2)
                     file1.save(A)
                     file2.save(B)
-                    if en:
-                        res, alpha, score, period, mixed = change_detection_en(A, B, model, model_en, o_threshold,
-                                                                               h_threshold)
-                    else:
-                        res, alpha, score, period, mixed = change_detection(A, B, model, o_threshold,
-                                                                            h_threshold)
+                    res, alpha, score, period, mixed = change_detection(A, B, model, o_threshold,
+                                                                        h_threshold)
                     shape = list(res.shape)
                     cv.imwrite(UPLOAD_FOLDER + '/result.png', res)
                     cv.imwrite(UPLOAD_FOLDER + '/change.png', alpha)

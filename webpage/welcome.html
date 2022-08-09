@@ -74,7 +74,6 @@
                     <div class="cd_para_name">空洞阈值</div>
                 </div>
             </div>
-            <div id="en_bt">模<br>型<br>集<br>成</div>
             <div class="model_wrapper"></div>
         </div>
         <div class="function">
@@ -285,12 +284,6 @@
         <div id="panel_del_confirm">删除</div>
         <div id="panel_del_cancel">取消</div>
     </div>
-    <div class="panel_en">
-        <div id="panel_en_title">请进行集成的模型</div>
-        <div id="panel_en_wrapper"></div>
-        <div id="panel_en_confirm">确定</div>
-        <div id="panel_en_cancel">取消</div>
-    </div>
     <div id="mask"></div>
 </div>
 
@@ -340,15 +333,9 @@
     const panel_del_desc = document.getElementById('panel_del_desc');
     const panel_del_confirm = document.getElementById('panel_del_confirm');
     const panel_del_cancel = document.getElementById('panel_del_cancel');
-    const en_bt = document.getElementById('en_bt');
-    const panel_en = document.getElementsByClassName('panel_en')[0];
-    const panel_en_confirm = document.getElementById('panel_en_confirm');
-    const panel_en_cancel = document.getElementById('panel_en_cancel');
-    const panel_en_wrapper = document.getElementById('panel_en_wrapper');
 
     let models_flag = [];
     let keys = [];
-    let en_models_flag = [];
     let models, pro_g, pro_type_g;
 
     function encodeHtml(html) {
@@ -668,69 +655,6 @@
         }
     }
 
-    en_bt.onclick = function () {
-        panel_en.classList.add('show');
-        mask.classList.add('show');
-        en_models_flag = [];
-
-        if (Object.keys(models).length < 2) {
-            panel_en_confirm.disabled = true;
-            panel_en_wrapper.innerHTML = '无可用模型';
-            panel_en_confirm.classList.add('error');
-            en_models_flag.push(true);
-        } else {
-            panel_en_confirm.disabled = false;
-            panel_en_wrapper.innerHTML = '';
-            if (panel_en_confirm.classList.contains('error')) {
-                panel_en_confirm.classList.remove('error');
-            }
-            const model_none = document.createElement('div');
-            model_none.className = 'en_model_opt';
-            panel_en_wrapper.appendChild(model_none);
-            model_none.innerHTML = encodeHtml('不集成');
-            en_models_flag.push(true);
-
-            let now_model = keys[models_flag.indexOf(true)];
-            for (let key in models) {
-                if (key === now_model) {
-                    continue;
-                }
-                const model_opt = document.createElement('div');
-                model_opt.className = 'en_model_opt';
-                panel_en_wrapper.appendChild(model_opt);
-                model_opt.innerHTML = encodeHtml(models[key][0]);
-                en_models_flag.push(false);
-            }
-
-            const en_model_opts = panel_en_wrapper.getElementsByClassName('en_model_opt');
-            en_model_opts[0].classList.add('clicked');
-            for (let t = 0; t < en_model_opts.length; t++) {
-                en_model_opts[t].onclick = function () {
-                    if (en_models_flag[t] === false) {
-                        let i = en_models_flag.indexOf(true);
-                        en_models_flag[i] = false;
-                        en_model_opts[i].classList.remove('clicked');
-                        en_models_flag[t] = true;
-                        en_model_opts[t].classList.add('clicked');
-                    }
-                }
-            }
-        }
-    }
-
-    panel_en_confirm.onclick = function () {
-        panel_en.classList.remove('show');
-        mask.classList.remove('show');
-    }
-
-    panel_en_cancel.onclick = function () {
-        let i = en_models_flag.indexOf(true);
-        en_models_flag[i] = false;
-        en_models_flag[0] = true;
-        panel_en.classList.remove('show');
-        mask.classList.remove('show');
-    }
-
     if (r_flag === 'False') {
         wrapper.style.display = 'none';
         d_circle.style.display = 'none';
@@ -1004,37 +928,18 @@
             let pro_m = func_flag.indexOf(1);
 
             if (pro_m === 1) {
-                let en_model_no = en_models_flag.indexOf(true);
-                if (en_model_no === 0) {
-                    let xhr = new XMLHttpRequest();
-                    xhr.open('POST', url, true);
-                    let formData = new FormData();
-                    formData.append('status', 'load');
-                    formData.append('pro', pro_m.toString());
-                    formData.append('model_id', keys[models_flag.indexOf(true)].toString());
-                    formData.append('o_thres', cd_para_value[0].value);
-                    formData.append('h_thres', cd_para_value[1].value);
-                    xhr.send(formData);
-                    xhr.onreadystatechange = function () {
-                        if (xhr.readyState === XMLHttpRequest.DONE && xhr.status === 200) {
-                            window.location.href = xhr.responseURL;
-                        }
-                    }
-                } else {
-                    let xhr = new XMLHttpRequest();
-                    xhr.open('POST', url, true);
-                    let formData = new FormData();
-                    formData.append('status', 'ensemble');
-                    formData.append('pro', pro_m.toString());
-                    formData.append('model_id', keys[models_flag.indexOf(true)].toString());
-                    formData.append('en_model_id', keys[en_models_flag.indexOf(true)].toString());
-                    formData.append('o_thres', cd_para_value[0].value);
-                    formData.append('h_thres', cd_para_value[1].value);
-                    xhr.send(formData);
-                    xhr.onreadystatechange = function () {
-                        if (xhr.readyState === XMLHttpRequest.DONE && xhr.status === 200) {
-                            window.location.href = xhr.responseURL;
-                        }
+                let xhr = new XMLHttpRequest();
+                xhr.open('POST', url, true);
+                let formData = new FormData();
+                formData.append('status', 'load');
+                formData.append('pro', pro_m.toString());
+                formData.append('model_id', keys[models_flag.indexOf(true)].toString());
+                formData.append('o_thres', cd_para_value[0].value);
+                formData.append('h_thres', cd_para_value[1].value);
+                xhr.send(formData);
+                xhr.onreadystatechange = function () {
+                    if (xhr.readyState === XMLHttpRequest.DONE && xhr.status === 200) {
+                        window.location.href = xhr.responseURL;
                     }
                 }
             } else {
