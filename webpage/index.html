@@ -362,6 +362,16 @@
                 let reader = new FileReader();
                 reader.onload = function (e) {
                     data1 = e.target.result;
+                    let img = new Image();
+                    img.src = data1;
+                    img.onload = function () {
+                        let h = img.height;
+                        let w = img.width;
+                        warning.innerHTML = '分辨率为 ' + h.toString() + ' × ' + w.toString();
+                        if (h > 1200 || w > 1200) {
+                            warning.innerHTML += ' * 影像较大，耗时可能较长...';
+                        }
+                    }
 
                     img_prev.style.backgroundImage = 'url(' + data1 + ')';
                     img_prev.style.backgroundSize = '70%';
@@ -434,6 +444,16 @@
                 let reader = new FileReader();
                 reader.onload = function (e) {
                     data2 = e.target.result;
+                    let img = new Image();
+                    img.src = data2;
+                    img.onload = function () {
+                        let h = img.height;
+                        let w = img.width;
+                        warning.innerHTML = '分辨率为 ' + h.toString() + ' × ' + w.toString();
+                        if (h > 1200 || w > 1200) {
+                            warning.innerHTML += '影像较大，耗时可能较长...';
+                        }
+                    }
 
                     img_prev2.style.backgroundImage = 'url(' + data2 + ')';
                     img_prev2.style.backgroundSize = '70%';
@@ -623,6 +643,16 @@
                 let reader = new FileReader();
                 reader.onload = function (e) {
                     data1 = e.target.result;
+                    let img = new Image();
+                    img.src = data1;
+                    img.onload = function () {
+                        let h = img.height;
+                        let w = img.width;
+                        warning.innerHTML = '分辨率为 ' + h.toString() + ' × ' + w.toString();
+                        if (h > 1200 || w > 1200) {
+                            warning.innerHTML += '影像较大，耗时可能较长...';
+                        }
+                    }
 
                     img_prev.style.backgroundImage = 'url(' + data1 + ')';
                     img_prev.style.backgroundSize = '70%';
