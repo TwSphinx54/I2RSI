@@ -114,16 +114,16 @@
 
 ## 开源项目鸣谢
 
-[古代飞](https://aistudio.baidu.com/aistudio/personalcenter/thirdview/1047644)：[【官方】第十一届 “中国软件杯”百度遥感赛项：目标提取功能](https://aistudio.baidu.com/aistudio/projectdetail/3792610) 
-[lzzzzzm](https://aistudio.baidu.com/aistudio/personalcenter/thirdview/653110)：[【十一届软件杯】遥感解译赛道：变化检测任务——预赛第四名方案分享](https://aistudio.baidu.com/aistudio/projectdetail/4283153) 
-[trainer](https://aistudio.baidu.com/aistudio/personalcenter/thirdview/58424)：[【方案分享】第十一届 “中国软件杯”大学生软件设计大赛遥感解译赛道 比赛方案分享](https://aistudio.baidu.com/aistudio/projectdetail/4146154) 
-[lawliet7](https://aistudio.baidu.com/aistudio/personalcenter/thirdview/2193157)：[【十一届软件杯】变换检测方案分享](https://aistudio.baidu.com/aistudio/projectdetail/4128982) 
-[白金之星Henry](https://aistudio.baidu.com/aistudio/personalcenter/thirdview/721533)：[第十一届中国软件杯遥感变化检测预选赛16名解决方案](https://aistudio.baidu.com/aistudio/projectdetail/4124345) 
-[你好，我是帅哥](https://aistudio.baidu.com/aistudio/personalcenter/thirdview/510194)：[【软件杯】变化检测，面向小白只调参上85](https://aistudio.baidu.com/aistudio/projectdetail/4117697) 
-[wcfun](https://aistudio.baidu.com/aistudio/personalcenter/thirdview/2188691)：[【方案分享】第十一届“中国软件杯”百度遥感赛项：变化检测功能](https://aistudio.baidu.com/aistudio/projectdetail/3809358) 
-[PaddleCV-SIG/PaddleRS](https://github.com/PaddleCV-SIG/PaddleRS) 
-[PaddlePaddle/PaddleSeg](https://github.com/PaddlePaddle/PaddleSeg) 
-[justchenhao/BIT_CD](https://github.com/justchenhao/BIT_CD)
+[古代飞](https://aistudio.baidu.com/aistudio/personalcenter/thirdview/1047644)：[【官方】第十一届 “中国软件杯”百度遥感赛项：目标提取功能](https://aistudio.baidu.com/aistudio/projectdetail/3792610)   
+[lzzzzzm](https://aistudio.baidu.com/aistudio/personalcenter/thirdview/653110)：[【十一届软件杯】遥感解译赛道：变化检测任务——预赛第四名方案分享](https://aistudio.baidu.com/aistudio/projectdetail/4283153)   
+[trainer](https://aistudio.baidu.com/aistudio/personalcenter/thirdview/58424)：[【方案分享】第十一届 “中国软件杯”大学生软件设计大赛遥感解译赛道 比赛方案分享](https://aistudio.baidu.com/aistudio/projectdetail/4146154)   
+[lawliet7](https://aistudio.baidu.com/aistudio/personalcenter/thirdview/2193157)：[【十一届软件杯】变换检测方案分享](https://aistudio.baidu.com/aistudio/projectdetail/4128982)   
+[白金之星Henry](https://aistudio.baidu.com/aistudio/personalcenter/thirdview/721533)：[第十一届中国软件杯遥感变化检测预选赛16名解决方案](https://aistudio.baidu.com/aistudio/projectdetail/4124345)   
+[你好，我是帅哥](https://aistudio.baidu.com/aistudio/personalcenter/thirdview/510194)：[【软件杯】变化检测，面向小白只调参上85](https://aistudio.baidu.com/aistudio/projectdetail/4117697)   
+[wcfun](https://aistudio.baidu.com/aistudio/personalcenter/thirdview/2188691)：[【方案分享】第十一届“中国软件杯”百度遥感赛项：变化检测功能](https://aistudio.baidu.com/aistudio/projectdetail/3809358)   
+[PaddleCV-SIG/PaddleRS](https://github.com/PaddleCV-SIG/PaddleRS)   
+[PaddlePaddle/PaddleSeg](https://github.com/PaddlePaddle/PaddleSeg)   
+[justchenhao/BIT_CD](https://github.com/justchenhao/BIT_CD)  
 
 ## Update log  
 
