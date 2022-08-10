@@ -12,33 +12,43 @@
 
    `git clone https://github.com/TwSphinx54/I2RSI.git`
 
-2. [下载](##权重下载)并将用模型权重数据替换`./weights`文件夹
+2. [下载](##权重下载)并将用模型权重数据替换`.\weights`文件夹
 
-3. 解压PaddleRS工具包
+3. 确保计算机上拥有Anaconda虚拟环境，运行`@deploy.bat`自动部署运行环境
 
-   ` unzip ./PaddleRS.zip`
+4. **全自动运行**
 
-4. 安装百度PaddlePaddle深度学习框架，参考[官方文档](https://www.paddlepaddle.org.cn/)。CPU版本的安装命令
+   1. 部署完成后运行`@run.bat`，等待一段时间后刷新网页
 
-   `python -m pip install paddlepaddle==2.3.0 -i https://mirror.baidu.com/pypi/simple`
+   2. 欲使用桌面版应用，运行`@desktop.bat`
 
-5. 安装PaddleRS
+5. **手动运行**：
 
-   `pip install -e ./PaddleRS`
+   1. ```bash
+      conda activate I2RSI
+      python .\process.py
+      ```
 
-6. 安装Flask
+      服务启动后，通过浏览器访问`http://127.0.0.1:8080/welcome`即可开始使用应用
 
-   `pip install flask`
+   2. ```bash
+      conda activate I2RSI
+      python .\webstart.py
+      ```
 
-7. 运行应用
+      桌面端启动
 
-   `python process.py`
 
-8. 访问`http://127.0.0.1:8080/welcome`即可开始使用应用
+## 应用卸载
+
+```bash
+rmdir /s /q .\I2RSI
+conda remove -n I2RSI --all --y
+```
 
 ## 使用教程
 
-**I2RSI系统**包含了四大基础功能以及三大创新特色功能：
+**I2RSI系统**包含了四大基础功能以及四大创新特色功能：
 
 > 基础功能：
 >
@@ -47,8 +57,8 @@
 >
 > 创新特色：
 >
-> | 道路提取半自动补全 | 在线卫星影像选择 | 遥感影像批处理 |
-> | :----------------: | :--------------: | :------------: |
+> | 道路提取半自动补全 | 在线卫星影像选择 | 遥感影像批处理 | 自定义模型管理 |
+> | :----------------: | :--------------: | :------------: | :------------: |
 
 本项目提供了测试demo数据集，请使用`unzip ./data_demo.zip`获取测试数据
 
@@ -85,7 +95,7 @@
    
      <img src='./imgs/OC.jpg'>
    
-6. 此外还有三大创新功能欢迎体验：
+6. 此外还有四大创新功能欢迎体验：
    * **道路提取半自动补全**：在目标提取的详细展示界面，点击开始补全，可以对框选区域内提取的道路目标进行半自动补全，在左侧放大图中可以看到补全后的效果图，点击确定按钮则可以应用当前的补全；
    
      <img src='./imgs/complete.jpg'>
@@ -97,10 +107,22 @@
    * **遥感影像批处理**：在上传图片时，可以点击批处理按钮，进入批处理模式，选择多张影像，选择后可以预览并删除不需要的影像，然后点击处理按钮开始对选择的图像进行批量解译。解译完成后进去解译结果界面，鼠标悬浮可以查看单张影像的解译结果参数，点击可以对该结果进行交互，交互效果与单张影像解译时相同。
    
      <img src='./imgs/multi.jpg'>
+     
+   * **自定义模型管理**：在模型选择界面，可以看到右方的模型管理面板，选中模型可以查看其相应的模型描述，选中想要的模型，点击开始处理可以使用该模型进行图像解译。
+   
+     <img src='./imgs/management.jpg'>
+   
+     点击添加模型按钮，弹出上传模型窗口，通过该窗口可以自定义上传模型的名称及其描述，系统会自动判断上传文件内容是否可用，且考虑到了XSS攻击的应对。
+   
+     <img src='./imgs/add.jpg'>
+   
+     点击删除模型按钮，会弹出确认窗口，二次确认是否删除当前选中的模型。
+   
+     <img src='./imgs/del.jpg'>
 
 ## 权重下载
 
-[百度网盘](https://pan.baidu.com/s/1n-OyRpdndSzMS_XGpztVCw) 提取码：`IRSI`
+[百度网盘](https://pan.baidu.com/s/1ZocI8F_ILV7O_-WoajZ_7Q) 提取码：`IRSI`
 
 如果链接失效请联系邮箱：`panxurs@whu.edu.cn`
 
@@ -108,7 +130,7 @@
 
 本项目使用的模型均基于[百度PaddlePaddle深度学习框架](https://www.paddlepaddle.org.cn/)，使用百度深度学习平台[AI Studio](https://aistudio.baidu.com/aistudio/index)进行训练。
 
-本项目使用的变化检测模型详细训练方案请见[【十一届软件杯】双时相遥感图像建筑物变化检测](https://aistudio.baidu.com/aistudio/projectdetail/4296935)
+本项目使用的变化检测模型详细训练方案获得百度AI Studio**精品**项目认证，请见[【十一届软件杯】双时相遥感图像建筑物变化检测](https://aistudio.baidu.com/aistudio/projectdetail/4296935)
 
 本项目是第十一届“中国软件杯”大学生软件设计大赛比赛成果，比赛详情请见[比赛官网](http://cnsoftbei.com/)
 

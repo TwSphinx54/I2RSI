@@ -405,4 +405,4 @@ def main_process():
 if __name__ == '__main__':
     if not os.path.exists(UPLOAD_FOLDER):
         os.mkdir(UPLOAD_FOLDER)
-    app.run(port=8080, debug=True)
+    app.run(port=8080)
