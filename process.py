@@ -12,6 +12,7 @@ import cv2 as cv
 import numpy as np
 import shutil
 import sqlite3
+import random
 
 UPLOAD_FOLDER = './webpage/res'
 WEIGHT_FOLDER = './weights'
@@ -232,6 +233,9 @@ def upload_file():
                 return redirect(url_for('main_process'))
         elif status == 'multi':
             no = request.values['no']
+            res_path = UPLOAD_FOLDER + '/result'
+            if not os.path.exists(res_path):
+                os.mkdir(res_path)
             if not os.path.exists(UPLOAD_FOLDER + '/multi'):
                 os.mkdir(UPLOAD_FOLDER + '/multi')
             multi_path = UPLOAD_FOLDER + '/multi/' + no
@@ -248,6 +252,7 @@ def upload_file():
                 res, roads, score, period, mixed, score_map = object_extraction(save_path, model)
                 shape = list(res.shape)
                 cv.imwrite(multi_path + '/result.png', res)
+                cv.imwrite(res_path + '/result' + no + '_' + str(random.random()) + '.png', res)
                 cv.imwrite(multi_path + '/roads.png', roads)
                 cv.imwrite(multi_path + '/mixed.png', mixed)
                 np.save(UPLOAD_FOLDER + '/score.npy', score_map[:, :, 1])
@@ -259,6 +264,7 @@ def upload_file():
                 res, loc, score, period = object_detection(save_path, model)
                 shape = list(res.shape)
                 cv.imwrite(multi_path + '/result.png', res)
+                cv.imwrite(res_path + '/result' + no + '_' + str(random.random()) + '.png', res)
                 paras = {'loc': loc, 'score': score, 'period': period, 'shape': shape}
                 paras_json = json.dumps(paras)
                 with open(multi_path + '/paras.json', 'w') as file:
@@ -266,6 +272,7 @@ def upload_file():
             elif pro == '3':
                 res, types, score, period, areas, mixed = object_classification(save_path, model)
                 cv.imwrite(multi_path + '/result.png', res)
+                cv.imwrite(res_path + '/result' + no + '_' + str(random.random()) + '.png', res)
                 cv.imwrite(multi_path + '/mixed.png', mixed)
                 shape = list(res.shape)
                 for k in range(4):
@@ -276,6 +283,8 @@ def upload_file():
                     file.write(paras_json)
             is_end = request.values['is_end']
             if is_end == 'yes':
+                shutil.make_archive(UPLOAD_FOLDER + '/result', 'zip', res_path)
+                shutil.rmtree(res_path)
                 return redirect(url_for('main_process', multi=True, no=no))
             else:
                 return 'DONE'
