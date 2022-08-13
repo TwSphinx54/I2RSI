@@ -1350,7 +1350,7 @@
     box-sizing: border-box;
     overflow: hidden;
     font-weight: bold;
-    border-radius: 10px;
+    /*border-radius: 10px;*/
 
     cursor: pointer;
     animation: ease-out;
@@ -1384,7 +1384,7 @@
     box-sizing: border-box;
     overflow: hidden;
     font-weight: bold;
-    border-radius: 10px;
+    /*border-radius: 10px;*/
 
     cursor: pointer;
     animation: ease-out;
